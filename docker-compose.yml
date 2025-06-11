@@ -1,0 +1,6 @@
+services:
+  restapi:
+    image: ${DOCKER_REGISTRY-}restapi
+    build:
+      context: .
+      dockerfile: RestAPI/Dockerfile
