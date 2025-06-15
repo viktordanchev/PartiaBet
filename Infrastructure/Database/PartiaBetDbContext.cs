@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database
 {
-    internal class PartiaBetDbContext
+    public class PartiaBetDbContext : DbContext
     {
+        public PartiaBetDbContext(DbContextOptions<PartiaBetDbContext> options)
+            : base(options)
+        {
+        }
     }
 }
