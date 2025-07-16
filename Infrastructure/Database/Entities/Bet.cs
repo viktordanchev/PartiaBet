@@ -13,8 +13,7 @@ namespace Infrastructure.Database.Entities
 
         public DateTime DateAndTime { get; set; } = DateTime.Now;
 
-        [Required]
-        public DateTime Duration { get; set; }
+        public TimeSpan Duration { get; set; }
 
         [Required]
         [ForeignKey(nameof(FirstPlayer))]
