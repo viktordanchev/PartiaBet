@@ -5,20 +5,18 @@ namespace Infrastructure.Database.Entities
     public class User
     {
         [Key]
-        public string Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         [MaxLength()]
-        public string Email { get; set; } = null!;
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string Username { get; set; } = null!;
+        public string Username { get; set; } = string.Empty;
 
         [Required]
-        public string PasswordHash { get; set; } = null!;
+        public string PasswordHash { get; set; } = string.Empty;
 
         public decimal Balance { get; set; }
-
-
     }
 }
