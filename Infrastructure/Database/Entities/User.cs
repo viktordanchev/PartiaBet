@@ -17,6 +17,8 @@ namespace Infrastructure.Database.Entities
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
 
+        public DateTime Penalty { get; set; }
+
         public decimal Balance { get; set; }
     }
 }
