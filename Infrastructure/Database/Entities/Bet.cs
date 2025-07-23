@@ -16,6 +16,9 @@ namespace Infrastructure.Database.Entities
         public TimeSpan Duration { get; set; }
 
         [Required]
+        public string Game { get; set; } = string.Empty;
+
+        [Required]
         [ForeignKey(nameof(FirstPlayer))]
         public string FirstPlayerId { get; set; } = string.Empty;
         public User FirstPlayer { get; set; } = null!;

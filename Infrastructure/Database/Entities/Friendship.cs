@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Database.Entities
 {
@@ -8,13 +9,17 @@ namespace Infrastructure.Database.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public string UserId { get; set; } = string.Empty;
-        public User User { get; set; }
+        [ForeignKey(nameof(User))]
+        public Guid UserId { get; set; }
+        public User User { get; set; } = null!;
 
-        public string FriendId { get; set; }
-        public User Friend { get; set; }
+        [Required]
+        [ForeignKey(nameof(Friend))]
+        public Guid FriendId { get; set; }
+        public User Friend { get; set; } = null!;
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         public bool IsAccepted { get; set; }
     }
 }

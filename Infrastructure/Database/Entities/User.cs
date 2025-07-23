@@ -4,6 +4,11 @@ namespace Infrastructure.Database.Entities
 {
     public class User
     {
+        public User()
+        {
+            Friends = new List<Friendship>();
+        }
+
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -20,5 +25,7 @@ namespace Infrastructure.Database.Entities
         public DateTime Penalty { get; set; }
 
         public decimal Balance { get; set; }
+
+        public ICollection<Friendship> Friends { get; set; }
     }
 }
