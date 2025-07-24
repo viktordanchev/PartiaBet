@@ -1,4 +1,5 @@
-﻿using Infrastructure.Database.Entities;
+﻿using Infrastructure.Database.Configs;
+using Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database
@@ -16,5 +17,13 @@ namespace Infrastructure.Database
         public DbSet<Bet> Bets { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfiguration(new FriendshipConfig());
+
+            base.OnModelCreating(builder);
+        }
     }
 }
