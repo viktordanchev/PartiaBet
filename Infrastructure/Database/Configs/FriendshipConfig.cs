@@ -10,12 +10,12 @@ namespace Infrastructure.Database.Configs
         {
             builder
                 .HasOne(f => f.User)
-                .WithMany()
+                .WithMany(u => u.SentFriendRequests)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder
                 .HasOne(f => f.Friend)
-                .WithMany()
+                .WithMany(u => u.ReceivedFriendRequests)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

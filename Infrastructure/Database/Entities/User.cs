@@ -6,7 +6,8 @@ namespace Infrastructure.Database.Entities
     {
         public User()
         {
-            Friends = new List<Friendship>();
+            SentFriendRequests = new List<Friendship>();
+            ReceivedFriendRequests = new List<Friendship>();
         }
 
         [Key]
@@ -28,6 +29,7 @@ namespace Infrastructure.Database.Entities
 
         public decimal Balance { get; set; }
 
-        public ICollection<Friendship> Friends { get; set; }
+        public ICollection<Friendship> SentFriendRequests { get; set; }
+        public ICollection<Friendship> ReceivedFriendRequests { get; set; }
     }
 }
