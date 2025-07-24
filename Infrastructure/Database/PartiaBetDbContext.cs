@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Infrastructure.Database.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database
 {
@@ -8,5 +9,12 @@ namespace Infrastructure.Database
             : base(options)
         {
         }
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserRole> UsersRoles { get; set; }
+        public DbSet<UserRoleType> UserRoleTypes { get; set; }
+        public DbSet<Bet> Bets { get; set; }
+        public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }

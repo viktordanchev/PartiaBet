@@ -9,13 +9,15 @@ namespace Infrastructure.Database.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
+
+        [ForeignKey(nameof(UserId))]
         public User User { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(RoleType))]
         public Guid RoleTypeId { get; set; }
+
+        [ForeignKey(nameof(RoleTypeId))]
         public UserRoleType RoleType { get; set; } = null!;
     }
 }

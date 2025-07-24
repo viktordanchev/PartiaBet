@@ -20,12 +20,14 @@ namespace Infrastructure.Database.Entities
         public TransactionType Type { get; set; }
 
         [Required]
-        [ForeignKey(nameof(Receiver))]
         public string ReceiverId { get; set; } = string.Empty;
+
+        [ForeignKey(nameof(ReceiverId))]
         public User Receiver { get; set; } = null!;
 
-        [ForeignKey(nameof(Sender))]
         public string SenderId { get; set; } = string.Empty;
+
+        [ForeignKey(nameof(SenderId))]
         public User? Sender { get; set; }
     }
 }

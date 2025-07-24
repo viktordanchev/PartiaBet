@@ -19,13 +19,15 @@ namespace Infrastructure.Database.Entities
         public string Game { get; set; } = string.Empty;
 
         [Required]
-        [ForeignKey(nameof(FirstPlayer))]
         public string FirstPlayerId { get; set; } = string.Empty;
+
+        [ForeignKey(nameof(FirstPlayerId))]
         public User FirstPlayer { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(SecondPlayer))]
         public string SecondPlayerId { get; set; } = string.Empty;
+
+        [ForeignKey(nameof(SecondPlayerId))]
         public User SecondPlayer { get; set; } = null!;
     }
 }

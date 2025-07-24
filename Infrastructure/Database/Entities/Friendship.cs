@@ -9,13 +9,15 @@ namespace Infrastructure.Database.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
+
+        [ForeignKey(nameof(UserId))]
         public User User { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(Friend))]
         public Guid FriendId { get; set; }
+
+        [ForeignKey(nameof(FriendId))]
         public User Friend { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
