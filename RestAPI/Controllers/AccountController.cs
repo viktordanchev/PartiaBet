@@ -9,6 +9,8 @@ namespace RestAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register()
         {
+
+
             return Ok();
         }
     }
