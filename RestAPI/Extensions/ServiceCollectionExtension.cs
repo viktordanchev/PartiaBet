@@ -1,4 +1,6 @@
-﻿using Infrastructure.Database;
+﻿using Core.Interfaces.Repositories;
+using Infrastructure.Database;
+using Infrastructure.Database.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -40,6 +42,11 @@ namespace RestAPI.Extensions
                     ClockSkew = TimeSpan.Zero
                 };
             });
+        }
+
+        public static void AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IUserRepository, UserRepository>();
         }
     }
 }

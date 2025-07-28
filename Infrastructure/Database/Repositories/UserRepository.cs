@@ -1,12 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Core.Interfaces.Repositories;
+using Infrastructure.Database.Entities;
 
 namespace Infrastructure.Database.Repositories
 {
-    internal class UserRepository
+    public class UserRepository : IUserRepository
     {
+        private readonly PartiaBetDbContext _database;
+
+        public UserRepository(PartiaBetDbContext database)
+        {
+            _database = database;
+        }
+
+        public async Task AddUserAsync()
+        {
+            //await _database.Users.AddAsync(
+            //new User
+            //{
+            //    Email = ,
+            //    Username = ,
+            //    PasswordHash = ,
+            //    ImageUrl = 
+            //});
+            await _database.SaveChangesAsync();
+        }
     }
 }
