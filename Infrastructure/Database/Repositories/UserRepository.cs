@@ -1,5 +1,4 @@
 ﻿using Core.Interfaces.Repositories;
-using Infrastructure.Database.Entities;
 
 namespace Infrastructure.Database.Repositories
 {

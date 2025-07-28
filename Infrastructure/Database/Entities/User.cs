@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.Constants;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Database.Entities
 {
@@ -14,14 +15,18 @@ namespace Infrastructure.Database.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        [MaxLength()]
+        [MaxLength(Validations.User.EmailMaxLength)]
         public string Email { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(Validations.User.UsernameMaxLength)]
         public string Username { get; set; } = string.Empty;
 
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime RegisteredAt { get; set; }
 
         public string? ImageUrl { get; set; }
 

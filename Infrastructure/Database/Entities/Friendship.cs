@@ -20,7 +20,7 @@ namespace Infrastructure.Database.Entities
         [ForeignKey(nameof(FriendId))]
         public User Friend { get; set; } = null!;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; }
 
         public bool IsAccepted { get; set; }
     }

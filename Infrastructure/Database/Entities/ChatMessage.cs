@@ -21,7 +21,7 @@ namespace Infrastructure.Database.Entities
         public User Receiver { get; set; } = null!;
 
         [Required]
-        public DateTime DateAndTime { get; set; } = DateTime.UtcNow;
+        public DateTime DateAndTime { get; set; }
 
         [Required]
         public string Message { get; set; } = string.Empty;

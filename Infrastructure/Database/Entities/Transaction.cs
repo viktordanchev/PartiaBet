@@ -12,7 +12,7 @@ namespace Infrastructure.Database.Entities
         [Required]
         public decimal Amount { get; set; }
 
-        public DateTime DateAndTime { get; set; } = DateTime.Now;
+        public DateTime DateAndTime { get; set; }
 
         public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
 

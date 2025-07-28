@@ -155,7 +155,8 @@ namespace Infrastructure.Database.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("text");
@@ -167,9 +168,13 @@ namespace Infrastructure.Database.Migrations
                     b.Property<DateTime>("Penalty")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
 
                     b.HasKey("Id");
 

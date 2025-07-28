@@ -28,9 +28,10 @@ namespace Infrastructure.Database.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Username = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
+                    Username = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    RegisteredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ImageUrl = table.Column<string>(type: "text", nullable: true),
                     Penalty = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Balance = table.Column<decimal>(type: "numeric", nullable: false)
