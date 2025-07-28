@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Core.DTOs.Requests.Account;
+using Microsoft.AspNetCore.Mvc;
 
 namespace RestAPI.Controllers
 {
@@ -7,7 +8,7 @@ namespace RestAPI.Controllers
     public class AccountController : Controller
     {
         [HttpPost("register")]
-        public async Task<IActionResult> Register()
+        public async Task<IActionResult> Register(RegisterUserRequest data)
         {
             return Ok();
         }

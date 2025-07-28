@@ -48,5 +48,21 @@ namespace RestAPI.Extensions
         {
             services.AddScoped<IUserRepository, UserRepository>();
         }
+
+        public static void AddCorsExtension(this IServiceCollection services, IConfiguration config)
+        {
+            var allowedOrigin = config["AllowedOrigin"]!;
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.WithOrigins(allowedOrigin)
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .AllowCredentials();
+                });
+            });
+        }
     }
 }

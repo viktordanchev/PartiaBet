@@ -1,8 +1,38 @@
 import React from 'react';
 import Logo from '../assets/images/logo.png';
 import Dices from '../assets/images/dices.png';
+import { formatInTimeZone } from 'date-fns-tz';
 
 function LoginPage() {
+    const formattedDate = formatInTimeZone(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone, "yyyy-MM-dd'T'HH:mm:ss");
+    
+    const data = {
+        email: 'uisername@gmail.com',
+        username: 'username',
+        password: 'password',
+        confirmPassword: 'password',
+        registeredAt : formattedDate
+    };
+
+    const signUp = async () => {
+        try {
+            const response = await fetch('https://localhost:7182/api/account/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error('Sign up failed');
+            }
+            // Handle success (e.g., redirect, show message)
+        } catch (error) {
+            // Handle error (e.g., show error message)
+            console.error(error);
+        }
+    };
+
     return (
         <div className="min-h-screen flex justify-center">
             <div className="max-w-screen-xl m-0 sm:m-10 bg-gray-800 text-gray-100 shadow sm:rounded-lg p-6 flex flex-col justify-evenly lg:w-1/2 xl:w-5/12 sm:p-12">
@@ -51,7 +81,7 @@ function LoginPage() {
                             <input
                                 className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                                 type="password" placeholder="Password" />
-                            <button
+                            <button onClick={signUp}
                                 className="mt-5 tracking-wide font-semibold bg-maincolor text-gray-800 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                                 <span className="ml-3">
                                     Sign Up

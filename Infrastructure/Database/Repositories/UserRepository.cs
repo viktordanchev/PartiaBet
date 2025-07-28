@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces.Repositories;
+using Infrastructure.Database.Entities;
 
 namespace Infrastructure.Database.Repositories
 {
@@ -19,6 +20,7 @@ namespace Infrastructure.Database.Repositories
             //    Email = ,
             //    Username = ,
             //    PasswordHash = ,
+            //    RegisteredAt = ,
             //    ImageUrl = 
             //});
             await _database.SaveChangesAsync();

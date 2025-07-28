@@ -1,6 +1,6 @@
 ﻿namespace Core.Constants
 {
-    public class Errors
+    public class ErrorMessages
     {
     }
 }

@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\Responses\" />
+    <Folder Include="Interfaces\Services\" />
+  </ItemGroup>
+
 </Project>
