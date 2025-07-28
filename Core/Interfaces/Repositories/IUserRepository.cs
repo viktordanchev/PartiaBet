@@ -1,6 +1,7 @@
 ﻿namespace Core.Interfaces.Repositories
 {
-    public class IUserRepository
+    public interface IUserRepository
     {
+        Task AddUserAsync();
     }
 }
