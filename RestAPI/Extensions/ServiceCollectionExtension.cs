@@ -1,4 +1,6 @@
 ﻿using Core.Interfaces.Repositories;
+using Core.Interfaces.Services;
+using Core.Services;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -47,6 +49,11 @@ namespace RestAPI.Extensions
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+        }
+
+        public static void AddServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUserService, UserService>();
         }
 
         public static void AddCorsExtension(this IServiceCollection services, IConfiguration config)

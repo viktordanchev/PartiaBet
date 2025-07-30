@@ -1,7 +1,9 @@
-﻿namespace Core.Interfaces.Repositories
+﻿using Core.DTOs.Requests.Account;
+
+namespace Core.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        Task AddUserAsync();
+        Task AddUserAsync(RegisterUserRequest data);
     }
 }

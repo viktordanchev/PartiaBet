@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.DTOs.Requests.Account;
+using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
 
 namespace Infrastructure.Database.Repositories
@@ -12,17 +13,16 @@ namespace Infrastructure.Database.Repositories
             _database = database;
         }
 
-        public async Task AddUserAsync()
+        public async Task AddUserAsync(RegisterUserRequest data)
         {
-            //await _database.Users.AddAsync(
-            //new User
-            //{
-            //    Email = ,
-            //    Username = ,
-            //    PasswordHash = ,
-            //    RegisteredAt = ,
-            //    ImageUrl = 
-            //});
+            await _database.Users.AddAsync(
+            new User
+            {
+                Email = data.Email,
+                Username = data.Email,
+                PasswordHash = data.Password,
+                RegisteredAt = data.RegisteredAt
+            });
             await _database.SaveChangesAsync();
         }
     }
