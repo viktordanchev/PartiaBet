@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(PartiaBetDbContext))]
-    [Migration("20250728141759_InitialCreate")]
+    [Migration("20250730060022_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -180,6 +180,9 @@ namespace Infrastructure.Database.Migrations
                         .HasColumnType("character varying(16)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

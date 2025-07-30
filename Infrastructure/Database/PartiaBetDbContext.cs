@@ -22,6 +22,7 @@ namespace Infrastructure.Database
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new FriendshipConfig());
+            builder.ApplyConfiguration(new UserConfig());
 
             base.OnModelCreating(builder);
         }

@@ -219,6 +219,12 @@ namespace Infrastructure.Database.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UsersRoles_RoleTypeId",
                 table: "UsersRoles",
                 column: "RoleTypeId");

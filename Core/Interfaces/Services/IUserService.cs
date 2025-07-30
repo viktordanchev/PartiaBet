@@ -4,6 +4,6 @@ namespace Core.Interfaces.Services
 {
     public interface IUserService
     {
-        Task RegisterUser(RegisterUserRequest data);
+        Task RegisterUserAsync(RegisterUserRequest data);
     }
 }

@@ -40,7 +40,7 @@ namespace RestAPI.Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = config["JwtToken:Issuer"],
                     ValidAudience = config["JwtToken:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtToken:Key"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtToken:Key"]!)),
                     ClockSkew = TimeSpan.Zero
                 };
             });

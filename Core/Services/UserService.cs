@@ -13,9 +13,9 @@ namespace Core.Services
             _userRepository = userRepository;
         }
 
-        public Task RegisterUser(RegisterUserRequest data)
+        public async Task RegisterUserAsync(RegisterUserRequest data)
         {
-            await _userRepository.AddUser(data);
+            await _userRepository.AddUserAsync(data);
         }
     }
 }
