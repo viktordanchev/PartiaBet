@@ -6,6 +6,7 @@ using Infrastructure.Database.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RestAPI.Filters;
 using System.Text;
 
 namespace RestAPI.Extensions
