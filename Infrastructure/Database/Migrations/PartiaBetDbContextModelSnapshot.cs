@@ -179,7 +179,12 @@ namespace Infrastructure.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("UX_User_Email");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasDatabaseName("UX_User_Username");
 
                     b.ToTable("Users");
                 });

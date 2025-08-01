@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace RestAPI.Extensions
 {
@@ -69,6 +70,14 @@ namespace RestAPI.Extensions
                            .AllowAnyHeader()
                            .AllowCredentials();
                 });
+            });
+        }
+
+        public static void AddControllersExtension(this IServiceCollection services)
+        {
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<ExceptionFilter>();
             });
         }
     }

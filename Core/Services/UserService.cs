@@ -15,6 +15,8 @@ namespace Core.Services
 
         public async Task RegisterUserAsync(RegisterUserRequest data)
         {
+            var (emailExists, usernameExists) = await _userRepository.IsUserDataUniqueAsync(data.Email, data.Username);
+
             await _userRepository.AddUserAsync(data);
         }
     }

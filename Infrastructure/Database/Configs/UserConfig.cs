@@ -10,7 +10,13 @@ namespace Infrastructure.Database.Configs
         {
             builder
                 .HasIndex(u => u.Email)
-                .IsUnique();
+                .IsUnique() 
+                .HasDatabaseName("UX_User_Email");
+
+            builder
+                .HasIndex(u => u.Username)
+                .IsUnique()
+                .HasDatabaseName("UX_User_Username");
         }
     }
 }
