@@ -1,4 +1,4 @@
-﻿namespace Core.Constants
+﻿namespace Common.Constants
 {
     public class Messages
     {

@@ -1,7 +1,9 @@
-﻿using Core.Constants;
+﻿using Common.Constants;
+using Common.Exceptions;
 using Core.DTOs.Requests.Account;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -32,14 +34,10 @@ namespace Infrastructure.Database.Repositories
             }
             catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
             {
-                var message = ErrorMessages.RegisteredEmail;
-                
-                if (pgEx.ConstraintName == "UX_User_Username")
-                    message = ErrorMessages.UsedUsername;
+                var message = pgEx.ConstraintName == "UX_User_Username" 
+                    ? ErrorMessages.UsedUsername : ErrorMessages.RegisteredEmail;
 
-                var resultEx = new Exception(message);
-                resultEx.Data["Type"] = "Conflict";
-                throw resultEx;
+                throw new ApiException(message, StatusCodes.Status409Conflict);
             }
         }
 

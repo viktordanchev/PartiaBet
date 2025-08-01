@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace RestAPI.Extensions
@@ -15,13 +16,8 @@ namespace RestAPI.Extensions
         public void OnException(ExceptionContext context)
         {
             var exception = context.Exception;
-            var type = context.Exception.Data["Type"]?.ToString();
-
-            int statusCode = type switch
-            {
-                "Conflict" => StatusCodes.Status409Conflict,
-                _ => StatusCodes.Status500InternalServerError
-            };
+            var statusCode = exception is ApiException apiEx ? 
+                apiEx.StatusCode : StatusCodes.Status500InternalServerError;
 
             context.Result = new ObjectResult(new { error = exception.Message })
             {

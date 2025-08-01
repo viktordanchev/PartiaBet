@@ -1,4 +1,4 @@
-﻿using Core.Constants;
+﻿using Common.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace Core.DTOs.Requests.Account
