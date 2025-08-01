@@ -78,6 +78,11 @@ namespace RestAPI.Extensions
             services.AddControllers(options =>
             {
                 options.Filters.Add<ExceptionFilter>();
+                options.Filters.Add<ModelStateValidationFilter>();
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             });
         }
     }
