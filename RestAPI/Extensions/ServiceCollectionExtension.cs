@@ -1,8 +1,11 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Interfaces.ExternalServices;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
+using Infrastructure.Services;
+using Infrastructure.Services.Configs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -54,6 +57,7 @@ namespace RestAPI.Extensions
 
         public static void AddServices(this IServiceCollection services)
         {
+            services.AddTransient<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IUserService, UserService>();
         }
 
@@ -84,6 +88,11 @@ namespace RestAPI.Extensions
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+        }
+
+        public static void AddConfigs(this IServiceCollection services, IConfiguration config)
+        {
+            services.Configure<EmailSenderConfig>(config.GetSection("EmailSettings"));
         }
     }
 }
