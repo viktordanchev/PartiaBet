@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.ExternalServices;
+﻿using Common.Exceptions;
+using Core.Interfaces.ExternalServices;
 using Infrastructure.Services.Configs;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Hosting;
@@ -41,7 +42,7 @@ namespace Infrastructure.Services
         /// <summary>
         /// This method send emails.
         /// </summary>
-        private async Task<bool> SendEmailAsync(string toEmail, string subject, string htmlMessage)
+        private async Task SendEmailAsync(string toEmail, string subject, string htmlMessage)
         {
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_config.From));
@@ -56,12 +57,10 @@ namespace Infrastructure.Services
                 await smtp.AuthenticateAsync(_config.Username, _config.Password);
                 await smtp.SendAsync(email);
                 await smtp.DisconnectAsync(true);
-
-                return true;
             }
-            catch
+            catch(Exception ex)
             {
-                return false;
+                throw new ApiException($"Error sending email: {ex.Message}");
             }
         }
     }

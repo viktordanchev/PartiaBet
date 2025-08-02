@@ -6,5 +6,6 @@ namespace Core.Interfaces.Repositories
     {
         Task AddUserAsync(RegisterUserRequest data);
         Task<(bool emailExists, bool usernameExists)> IsUserDataUniqueAsync(string email, string username);
+        Task<bool> IsUserExistAsync(string email);
     }
 }

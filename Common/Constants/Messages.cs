@@ -1,6 +1,7 @@
 ﻿namespace Common.Constants
 {
-    public class Messages
+    public static class Messages
     {
+        public const string NewVrfCode = "Verification code is sended";
     }
 }

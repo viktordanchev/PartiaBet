@@ -24,13 +24,18 @@ namespace Core.Services
             var (emailExists, usernameExists) = await _userRepository.IsUserDataUniqueAsync(data.Email, data.Username);
 
             if (emailExists)
-                throw new ApiException(ErrorMessages.RegisteredEmail, StatusCodes.Status409Conflict);
+                throw new ApiException(ErrorMessages.UsedEmail, StatusCodes.Status409Conflict);
             else if (usernameExists)
                 throw new ApiException(ErrorMessages.UsedUsername, StatusCodes.Status409Conflict);
 
             data.Password = _passwordHasher.HashPassword(null!, data.Password);
 
             await _userRepository.AddUserAsync(data);
+        }
+
+        public async Task<bool> IsUserExistAsync(string email)
+        {
+            return await _userRepository.IsUserExistAsync(email);
         }
     }
 }

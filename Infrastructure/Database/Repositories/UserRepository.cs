@@ -4,6 +4,7 @@ using Core.DTOs.Requests.Account;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -35,7 +36,7 @@ namespace Infrastructure.Database.Repositories
             catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
             {
                 var message = pgEx.ConstraintName == "UX_User_Username" 
-                    ? ErrorMessages.UsedUsername : ErrorMessages.RegisteredEmail;
+                    ? ErrorMessages.UsedUsername : ErrorMessages.UsedEmail;
 
                 throw new ApiException(message, StatusCodes.Status409Conflict);
             }
@@ -51,6 +52,11 @@ namespace Infrastructure.Database.Repositories
             var usernameExists = existingUsers.Any(u => u.Username == username);
 
             return (emailExists, usernameExists);
+        }
+
+        public async Task<bool> IsUserExistAsync(string email)
+        {
+            return await _database.Users.AnyAsync(u => u.Email == email);
         }
     }
 }
