@@ -59,6 +59,7 @@ namespace RestAPI.Extensions
         {
             services.AddTransient<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAccountTokenService, AccountTokenService>();
         }
 
         public static void AddCorsExtension(this IServiceCollection services, IConfiguration config)

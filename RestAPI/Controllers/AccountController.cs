@@ -1,8 +1,6 @@
 ﻿using Core.DTOs.Requests.Account;
 using Core.Interfaces.Services;
-using Core.Interfaces.ExternalServices;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using static Common.Constants.ErrorMessages;
 using static Common.Constants.Messages;
 
@@ -13,16 +11,13 @@ namespace RestAPI.Controllers
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IMemoryCache _memoryCache;
-        private readonly IEmailSenderService _emailSender;
+        private readonly IAccountTokenService _accountTokenService;
 
-        public AccountController(IUserService userService, 
-            IMemoryCache memoryCache,
-            IEmailSenderService emailSender)
+        public AccountController(IUserService userService,
+            IAccountTokenService accountTokenService)
         {
             _userService = userService;
-            _memoryCache = memoryCache;
-            _emailSender = emailSender;
+            _accountTokenService = accountTokenService;
         }
 
         [HttpPost("register")]
@@ -41,10 +36,7 @@ namespace RestAPI.Controllers
                 return BadRequest(new { Error = UsedEmail });
             }
 
-            var token = Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
-            var isSended = await _emailSender.SendVrfCode(email, token);
-
-            _memoryCache.Set(token.ToLower(), email, TimeSpan.FromMinutes(1));
+            await _accountTokenService.SendVerificationCodeAsync(email);
 
             return Ok(new { Message = NewVrfCode });
         }
