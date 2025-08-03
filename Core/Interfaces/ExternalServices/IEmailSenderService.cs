@@ -2,7 +2,7 @@
 {
     public interface IEmailSenderService
     {
-        Task<bool> SendVrfCode(string toEmail, string vrfCode);
-        Task<bool> SendPasswordRecoverLink(string toEmail, string token);
+        Task SendVrfCode(string toEmail, string vrfCode);
+        Task SendPasswordRecoverLink(string toEmail, string token);
     }
 }

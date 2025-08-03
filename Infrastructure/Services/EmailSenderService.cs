@@ -19,15 +19,15 @@ namespace Infrastructure.Services
             _environment = environment;
         }
 
-        public async Task<bool> SendVrfCode(string toEmail, string vrfCode)
+        public async Task SendVrfCode(string toEmail, string vrfCode)
         {
             var subject = "Confirm your registration!";
             var message = $"<h2>Your verification code: <strong>{vrfCode}</strong>.</h2>";
 
-            return await SendEmailAsync(toEmail, subject, message);
+            await SendEmailAsync(toEmail, subject, message);
         }
 
-        public async Task<bool> SendPasswordRecoverLink(string toEmail, string token)
+        public async Task SendPasswordRecoverLink(string toEmail, string token)
         {
             var baseUrl = _environment.IsDevelopment()
                 ? "http://localhost:5173"
@@ -36,7 +36,7 @@ namespace Infrastructure.Services
             var subject = "Password recover!";
             var message = $"<a href='{baseUrl}/account/recoverPassword?token={token}' style='display: inline-block; padding: 10px 20px; background-color: #01bfa5; color: white; text-decoration: none; border-radius: 0.75rem; font-size: 16px;'>Recover Password</a>";
 
-            return await SendEmailAsync(toEmail, subject, message);
+            await SendEmailAsync(toEmail, subject, message);
         }
 
         /// <summary>
