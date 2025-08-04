@@ -37,5 +37,12 @@ namespace Core.Services
         {
             return await _userRepository.IsUserExistAsync(email);
         }
+
+        public async Task UpdatePasswordAsync(string email, string password)
+        {
+            password = _passwordHasher.HashPassword(null!, password);
+
+            await _userRepository.UpdatePasswordAsync(email, password);
+        }
     }
 }

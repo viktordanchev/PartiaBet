@@ -23,6 +23,9 @@ namespace RestAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserRequest data)
         {
+            if(_accountTokenService.IsTokenValid(data.Email, data.VerificationCode))
+                return BadRequest(new { Error = InvalidVrfCode });
+
             await _userService.RegisterUserAsync(data);
 
             return Ok();
@@ -31,14 +34,44 @@ namespace RestAPI.Controllers
         [HttpPost("sendVrfCode")]
         public async Task<IActionResult> SendVerificationCode([FromBody] string email)
         {
-            if (await _userService.IsUserExistAsync(email))
+            if (!await _userService.IsUserExistAsync(email))
             {
-                return BadRequest(new { Error = UsedEmail });
+                return BadRequest(new { Error = NotRegistered });
             }
 
             await _accountTokenService.SendVerificationCodeAsync(email);
 
             return Ok(new { Message = NewVrfCode });
+        }
+
+        [HttpPost("sendRecoverPassLink")]
+        public async Task<IActionResult> SendRecoverPasswordLink([FromBody] string email)
+        {
+            if (!await _userService.IsUserExistAsync(email))
+            {
+                return BadRequest(new { Error = NotRegistered });
+            }
+
+            await _accountTokenService.SendRecoverPassLinkAsync(email);
+
+            return Ok(new { Message = SendedPassRecoverLink });
+        }
+
+        [HttpPost("recoverPass")]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordRequest data)
+        {
+            if (!await _userService.IsUserExistAsync(data.Email))
+            {
+                return BadRequest(new { Error = NotRegistered });
+            }
+            else if(_accountTokenService.IsTokenValid(data.Email, data.Token))
+            {
+                return BadRequest(new { Error = InvalidToken });
+            }
+            
+            await _userService.UpdatePasswordAsync(data.Email, data.Password);
+
+            return Ok();
         }
     }
 }
