@@ -11,6 +11,9 @@ namespace Core.DTOs.Requests.Account
         public string Email { get; set; } = string.Empty;
 
         [Required]
+        public string VerificationCode { get; set; } = string.Empty;
+
+        [Required]
         [StringLength(Validations.User.UsernameMaxLength)]
         public string Username { get; set; } = string.Empty;
 
