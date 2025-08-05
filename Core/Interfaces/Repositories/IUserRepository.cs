@@ -1,4 +1,5 @@
 ﻿using Core.DTOs.Requests.Account;
+using Core.DTOs.Shared;
 
 namespace Core.Interfaces.Repositories
 {
@@ -7,6 +8,7 @@ namespace Core.Interfaces.Repositories
         Task AddUserAsync(RegisterUserRequest data);
         Task<(bool emailExists, bool usernameExists)> IsUserDataUniqueAsync(string email, string username);
         Task<bool> IsUserExistAsync(string email);
-        Task UpdatePasswordAsync(string email, string password);
+        Task UpdatePasswordAsync(string email, string passwordHash);
+        Task<UserDTO> GetByEmailAsync(string email);
     }
 }

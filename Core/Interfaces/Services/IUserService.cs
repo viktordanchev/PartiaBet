@@ -7,5 +7,6 @@ namespace Core.Interfaces.Services
         Task RegisterUserAsync(RegisterUserRequest data);
         Task<bool> IsUserExistAsync(string email);
         Task UpdatePasswordAsync(string email, string password);
+        Task<bool> IsLoginDataValidAsync(LoginRequest request);
     }
 }

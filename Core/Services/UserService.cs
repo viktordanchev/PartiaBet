@@ -44,5 +44,15 @@ namespace Core.Services
 
             await _userRepository.UpdatePasswordAsync(email, password);
         }
+
+        public async Task<bool> IsLoginDataValidAsync(LoginRequest request)
+        {
+            var user = await _userRepository.GetByEmailAsync(request.Email);
+
+            if (user == null)
+                return false;
+
+            return _passwordHasher.VerifyHashedPassword(null!, user.PasswordHash, request.Password) == PasswordVerificationResult.Success;
+        }
     }
 }

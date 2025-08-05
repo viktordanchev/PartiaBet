@@ -1,6 +1,7 @@
 ﻿using Common.Constants;
 using Common.Exceptions;
 using Core.DTOs.Requests.Account;
+using Core.DTOs.Shared;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
 using Microsoft.AspNetCore.Http;
@@ -58,13 +59,31 @@ namespace Infrastructure.Database.Repositories
             return await _database.Users.AnyAsync(u => u.Email == email);
         }
 
-        public async Task UpdatePasswordAsync(string email, string password)
+        public async Task UpdatePasswordAsync(string email, string passwordHash)
         {
             var user = await _database.Users.FirstAsync(u => u.Email == email);
 
-            user.PasswordHash = password;
+            user.PasswordHash = passwordHash;
 
             await _database.SaveChangesAsync();
+        }
+
+        public async Task<UserDTO> GetByEmailAsync(string email)
+        {
+            return await _database.Users
+                .AsNoTracking()
+                .Where(u => u.Email == email)
+                .Select(u => new UserDTO()
+                {
+                    Email = email,
+                    Username = u.Username,
+                    PasswordHash = u.PasswordHash,
+                    RegisteredAt = u.RegisteredAt,
+                    ImageUrl = u.ImageUrl,
+                    Balance = u.Balance,
+                    Penalty = u.Penalty
+                })
+                .FirstAsync();
         }
     }
 }

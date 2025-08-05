@@ -20,6 +20,33 @@ namespace RestAPI.Controllers
             _accountTokenService = accountTokenService;
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequest data)
+        {
+            if (!await _userService.IsLoginDataValidAsync(data))
+                return BadRequest(new { Error = InvalidLoginData });
+
+            var userClaims = await _userService.GetUserClaimsAsync(request.Email);
+            var accessToken = _jwtTokenService.GenerateAccessToken(userClaims);
+
+            if (request.RememberMe)
+            {
+                var refreshToken = _jwtTokenService.GenerateRefreshToken();
+
+                Response.Cookies.Append("refreshToken", refreshToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    IsEssential = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.Now.AddMonths(int.Parse(_configs["Cookies:RefreshJWTTokenMonths"])),
+                });
+            }
+
+            return Ok(new { Token = accessToken });
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserRequest data)
         {
