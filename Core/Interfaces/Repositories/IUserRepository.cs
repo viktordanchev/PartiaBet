@@ -9,6 +9,6 @@ namespace Core.Interfaces.Repositories
         Task<(bool emailExists, bool usernameExists)> IsUserDataUniqueAsync(string email, string username);
         Task<bool> IsUserExistAsync(string email);
         Task UpdatePasswordAsync(string email, string passwordHash);
-        Task<UserDTO> GetByEmailAsync(string email);
+        Task<UserDto> GetByEmailAsync(string email);
     }
 }

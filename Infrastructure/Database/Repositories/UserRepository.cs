@@ -68,12 +68,12 @@ namespace Infrastructure.Database.Repositories
             await _database.SaveChangesAsync();
         }
 
-        public async Task<UserDTO> GetByEmailAsync(string email)
+        public async Task<UserDto> GetByEmailAsync(string email)
         {
             return await _database.Users
                 .AsNoTracking()
                 .Where(u => u.Email == email)
-                .Select(u => new UserDTO()
+                .Select(u => new UserDto()
                 {
                     Email = email,
                     Username = u.Username,
@@ -82,6 +82,21 @@ namespace Infrastructure.Database.Repositories
                     ImageUrl = u.ImageUrl,
                     Balance = u.Balance,
                     Penalty = u.Penalty
+                })
+                .FirstAsync();
+        }
+
+        public async Task<UserClaimsDto> GetClaimsAsync(string email)
+        {
+            return await _database.Users
+                .AsNoTracking()
+                .Where(u => u.Email == email)
+                .Select(u => new UserClaimsDto()
+                {
+                    Id = u.Id.ToString(),
+                    Email = email,
+                    Username = u.Username,
+                    Roles = u.Roles.Select(r => r.RoleType.Name).ToList(),
                 })
                 .FirstAsync();
         }
