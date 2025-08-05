@@ -1,6 +1,7 @@
 ﻿using Common.Constants;
 using Common.Exceptions;
 using Core.DTOs.Requests.Account;
+using Core.DTOs.Shared;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
@@ -47,12 +48,17 @@ namespace Core.Services
 
         public async Task<bool> IsLoginDataValidAsync(LoginRequest request)
         {
-            var user = await _userRepository.GetByEmailAsync(request.Email);
+            var userPasswordHash = await _userRepository.GetUserPasswordHashAsync(request.Email);
 
-            if (user == null)
+            if (userPasswordHash == null)
                 return false;
 
-            return _passwordHasher.VerifyHashedPassword(null!, user.PasswordHash, request.Password) == PasswordVerificationResult.Success;
+            return _passwordHasher.VerifyHashedPassword(null!, userPasswordHash, request.Password) == PasswordVerificationResult.Success;
+        }
+
+        public async Task<UserClaimsDto> GetClaimsAsync(string email)
+        {
+            return await _userRepository.GetUserClaimsByEmailAsync(email);
         }
     }
 }

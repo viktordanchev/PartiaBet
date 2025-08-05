@@ -26,7 +26,7 @@ namespace RestAPI.Controllers
             if (!await _userService.IsLoginDataValidAsync(data))
                 return BadRequest(new { Error = InvalidLoginData });
 
-            var userClaims = await _userService.GetUserClaimsAsync(request.Email);
+            var userClaims = await _userService.GetClaimsAsync(data.Email);
             var accessToken = _jwtTokenService.GenerateAccessToken(userClaims);
 
             if (request.RememberMe)

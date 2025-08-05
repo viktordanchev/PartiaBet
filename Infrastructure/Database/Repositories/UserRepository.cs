@@ -5,6 +5,7 @@ using Core.DTOs.Shared;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -68,35 +69,26 @@ namespace Infrastructure.Database.Repositories
             await _database.SaveChangesAsync();
         }
 
-        public async Task<UserDto> GetByEmailAsync(string email)
+        public async Task<string?> GetUserPasswordHashAsync(string email)
         {
             return await _database.Users
                 .AsNoTracking()
                 .Where(u => u.Email == email)
-                .Select(u => new UserDto()
-                {
-                    Email = email,
-                    Username = u.Username,
-                    PasswordHash = u.PasswordHash,
-                    RegisteredAt = u.RegisteredAt,
-                    ImageUrl = u.ImageUrl,
-                    Balance = u.Balance,
-                    Penalty = u.Penalty
-                })
-                .FirstAsync();
+                .Select(u => u.PasswordHash)
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<UserClaimsDto> GetClaimsAsync(string email)
+        public async Task<UserClaimsDto> GetUserClaimsByEmailAsync(string email)
         {
             return await _database.Users
                 .AsNoTracking()
                 .Where(u => u.Email == email)
-                .Select(u => new UserClaimsDto()
+                .Select(u => new UserClaimsDto
                 {
                     Id = u.Id.ToString(),
-                    Email = email,
+                    Email = u.Email,
                     Username = u.Username,
-                    Roles = u.Roles.Select(r => r.RoleType.Name).ToList(),
+                    Roles = u.Roles.Select(r => r.RoleType.Name).ToList()
                 })
                 .FirstAsync();
         }
