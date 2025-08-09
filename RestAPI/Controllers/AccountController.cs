@@ -12,12 +12,15 @@ namespace RestAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly IAccountTokenService _accountTokenService;
+        private readonly IJwtTokenService _jwtTokenService;
 
         public AccountController(IUserService userService,
-            IAccountTokenService accountTokenService)
+            IAccountTokenService accountTokenService,
+            IJwtTokenService jwtTokenService)
         {
             _userService = userService;
             _accountTokenService = accountTokenService;
+            _jwtTokenService = jwtTokenService;
         }
 
         [HttpPost("login")]
@@ -29,19 +32,10 @@ namespace RestAPI.Controllers
             var userClaims = await _userService.GetClaimsAsync(data.Email);
             var accessToken = _jwtTokenService.GenerateAccessToken(userClaims);
 
-            if (request.RememberMe)
+            if (data.RememberMe)
             {
                 var refreshToken = _jwtTokenService.GenerateRefreshToken();
-
-                Response.Cookies.Append("refreshToken", refreshToken,
-                new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    IsEssential = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.Now.AddMonths(int.Parse(_configs["Cookies:RefreshJWTTokenMonths"])),
-                });
+                _jwtTokenService.SetRefreshTokenCookie(refreshToken);
             }
 
             return Ok(new { Token = accessToken });

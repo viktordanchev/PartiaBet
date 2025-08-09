@@ -1,6 +1,7 @@
 ﻿using Core.DTOs.Shared;
 using Core.Interfaces.Services;
 using Core.Services.Configs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,12 +17,15 @@ namespace Core.Services
     {
         private JwtTokenConfig _jwtTokenConfig;
         private CookiesConfig _cookiesConfig;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public JwtTokenService(IOptions<JwtTokenConfig> jwtOptions,
-            IOptions<CookiesConfig> cookiesOptions)
+            IOptions<CookiesConfig> cookiesOptions,
+            IHttpContextAccessor httpContextAccessor)
         {
             _jwtTokenConfig = jwtOptions.Value;
             _cookiesConfig = cookiesOptions.Value;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -77,6 +81,22 @@ namespace Core.Services
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        /// <summary>
+        /// Set refresh token to cookie.
+        /// </summary>
+        public void SetRefreshTokenCookie(string refreshToken)
+        {
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken,
+                    new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        IsEssential = true,
+                        SameSite = SameSiteMode.None,
+                        Expires = DateTime.Now.AddMonths(_cookiesConfig.RefreshJWTTokenMonths)
+                    });
         }
     }
 }
