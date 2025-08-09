@@ -9,6 +9,7 @@ builder.Services.AddCorsExtension(builder.Configuration);
 builder.Services.AddControllersExtension();
 builder.Services.AddRepositories();
 builder.Services.AddServices();
+builder.Services.AddMemoryCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

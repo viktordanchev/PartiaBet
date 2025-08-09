@@ -7,6 +7,7 @@ using Infrastructure.Database.Repositories;
 using Infrastructure.Services;
 using Infrastructure.Services.Configs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestAPI.Filters;
@@ -60,6 +61,7 @@ namespace RestAPI.Extensions
             services.AddTransient<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountTokenService, AccountTokenService>();
+            services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
         }
 
         public static void AddCorsExtension(this IServiceCollection services, IConfiguration config)

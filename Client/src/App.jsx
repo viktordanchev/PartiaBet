@@ -1,8 +1,25 @@
+import React from 'react';
+import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom';
+
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+
+import Footer from './components/Footer';
+import Header from './components/Header';
+
 function App() {
     return (
-        <div>
-            <h1 className="text-3xl font-bold text-red-500 underline">Welocme!</h1>
-        </div>
+        <BrowserRouter>
+            <Header />
+            <main>
+                <Routes>
+                    <Route path="/" element={<Navigate to="/home" />} />
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                </Routes>
+            </main>
+            <Footer />
+        </BrowserRouter>
     );
 }
 
