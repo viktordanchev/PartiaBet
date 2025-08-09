@@ -1,0 +1,1 @@
+export const fetchError = 'There was problem fetching the data!';
