@@ -2,7 +2,7 @@ import React from 'react';
 
 const NavigationBar = () => {
     return (
-        <nav className="w-1/3 bg-gray-100 rounded-xl opacity-45 border-2 border-gray-500">
+        <nav className="w-96 rounded-xl bg-gray-900 border border-maincolor shadow shadow-maincolor">
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/bets">Bets</a></li>
