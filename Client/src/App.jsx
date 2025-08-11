@@ -11,7 +11,7 @@ function App() {
     return (
         <BrowserRouter>
             <Header />
-            <main>
+            <main className="p-6">
                 <Routes>
                     <Route path="/" element={<Navigate to="/home" />} />
                     <Route path="/home" element={<HomePage />} />
