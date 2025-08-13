@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useLoading } from '../contexts/LoadingContext';
 
-function LoginPage() {
+function RegisterPage() {
     const navigate = useNavigate();
     const { setIsLoading } = useLoading();
     const [showPassword, setShowPassword] = useState(false);
@@ -29,12 +29,21 @@ function LoginPage() {
 
     return (
         <section className="w-90 mx-auto p-8 border border-maincolor bg-gray-900 rounded-xl shadow-lg shadow-gray-900 space-y-6">
-            <p className="text-3xl text-center text-maincolor">Welocme back</p>
+            <p className="text-3xl text-center text-maincolor">Welocme</p>
             <Formik
                 initialValues={{ username: '', password: '', rememberMe: false }}
                 onSubmit={handleLogin}
             >
-                <Form className="flex flex-col text-maincolor focus:text-white">
+                <Form className="flex flex-col text-maincolor">
+                    <div>
+                        <Field
+                            className="w-full py-1 px-2 border-b border-maincolor mb-6 focus:border-white focus:outline-none"
+                            placeholder="Email"
+                            type="email"
+                            name="email"
+                        />
+                        <ErrorMessage name="email" component="div" className="text-red-500" />
+                    </div>
                     <div>
                         <Field
                             className="w-full py-1 px-2 border-b border-maincolor mb-6 focus:border-white focus:outline-none"
@@ -43,6 +52,22 @@ function LoginPage() {
                             name="username"
                         />
                         <ErrorMessage name="email" component="div" className="text-red-500" />
+                    </div>
+                    <div>
+                        <div className="relative mb-6">
+                            <Field
+                                className="w-full py-1 px-2 border-b border-maincolor focus:border-white focus:outline-none pr-8"
+                                placeholder="Password"
+                                type={showPassword ? 'text' : 'password'}
+                                name="password"
+                            />
+                            <FontAwesomeIcon
+                                icon={showPassword ? faEye : faEyeSlash}
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                                onClick={() => setShowPassword(!showPassword)}
+                            />
+                        </div>
+                        <ErrorMessage name="password" component="div" className="text-red-500" />
                     </div>
                     <div>
                         <div className="relative">
@@ -78,26 +103,13 @@ function LoginPage() {
                                 d="M272.1 107.7c38.8-.6 76.3 14 104.4 40.8l77.7-77.7C405 24.6 339.7-.8 272.1 0 169.2 0 75.1 58 28.9 150l90.4 70.1c21.5-64.5 81.8-112.4 152.8-112.4z"
                                 fill="#ea4335" />
                         </svg>
-                        <span>Sign in with Google</span>
+                        <span>Sign up with Google</span>
                     </button>
-                    <div className="flex items-center justify-between mt-2">
-                        <label className="inline-flex items-center cursor-pointer">
-                            <Field
-                                type="checkbox"
-                                name="rememberMe"
-                                className="form-checkbox text-blue-600 cursor-pointer"
-                            />
-                            <span className="ml-1 text-white hover:text-gray-200">Remember me</span>
-                        </label>
-                        <a href="/account/recoverPassword" className="inline-block align-baseline text-sm text-blue-600 underline hover:text-blue-800">
-                            Forgot Password?
-                        </a>
-                    </div>
                     <div className="text-center mt-6">
                         <button
                             className="bg-maincolor text-gray-800 font-medium py-2 px-4 rounded hover:bg-[#81e4dc] hover:cursor-pointer"
                             type="submit">
-                            Sign In
+                            Sign Up
                         </button>
                     </div>
                 </Form>
@@ -106,4 +118,4 @@ function LoginPage() {
     );
 }
 
-export default LoginPage;
+export default RegisterPage;
