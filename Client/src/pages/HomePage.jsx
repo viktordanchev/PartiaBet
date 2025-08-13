@@ -8,7 +8,6 @@ function HomePage() {
             <NavigationBar />
             <div className="border-l-2 border-maincolor mx-6"></div>
             <GamesList />
-            <article></article>
         </section>
     );
 }

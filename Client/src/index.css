@@ -3,3 +3,17 @@
 @theme {
     --color-maincolor: #51dacf;
 }
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rotate {
+    animation: spin 2s linear infinite;
+}
