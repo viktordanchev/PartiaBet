@@ -17,3 +17,26 @@
 .rotate {
     animation: spin 2s linear infinite;
 }
+
+.perspective {
+    perspective: 1000px;
+}
+
+.flip-container {
+    transition: transform 0.7s;
+    transform-style: preserve-3d;
+}
+
+.flip-180 {
+    transform: rotateY(180deg);
+}
+
+.flip-front,
+.flip-back {
+    backface-visibility: hidden;
+    width: 100%;
+}
+
+.flip-back {
+    transform: rotateY(180deg);
+}
