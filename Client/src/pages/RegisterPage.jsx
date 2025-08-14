@@ -73,14 +73,9 @@ function RegisterPage() {
                         <div className="relative">
                             <Field
                                 className="w-full py-1 px-2 border-b border-maincolor focus:border-white focus:outline-none pr-8"
-                                placeholder="Password"
+                                placeholder="Confirm password"
                                 type={showPassword ? 'text' : 'password'}
-                                name="password"
-                            />
-                            <FontAwesomeIcon
-                                icon={showPassword ? faEye : faEyeSlash}
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                                onClick={() => setShowPassword(!showPassword)}
+                                name="Confirm password"
                             />
                         </div>
                         <ErrorMessage name="password" component="div" className="text-red-500" />
