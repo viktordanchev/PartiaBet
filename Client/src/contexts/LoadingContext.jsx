@@ -9,8 +9,8 @@ export const LoadingProvider = ({ children }) => {
     return (
         <LoadingContext.Provider value={{ setIsLoading }}>
             {isLoading && (
-                <div className="fixed z-50 flex inset-0 items-start justify-center bg-black/30">
-                    <img src={Dice} className="mt-3 rotate w-18" />
+                <div className="fixed z-50 flex inset-0 items-center justify-center bg-black/40">
+                    <img src={Dice} className="mt-3 rotate w-30" />
                 </div>
             )}
             {children}

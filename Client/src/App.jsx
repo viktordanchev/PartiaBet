@@ -15,7 +15,7 @@ function App() {
         <LoadingProvider>
             <BrowserRouter>
                 <Header />
-                <main className="p-6">
+                <main className="flex-grow flex">
                     <Routes>
                         <Route path="/" element={<Navigate to="/home" />} />
                         <Route path="/home" element={<HomePage />} />

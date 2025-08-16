@@ -4,9 +4,8 @@ import GamesList from '../components/homePage/GamesList';
 
 function HomePage() {
     return (
-        <section className="flex">
+        <section className="flex-grow flex">
             <NavigationBar />
-            <div className="border-l-2 border-maincolor mx-6"></div>
             <GamesList />
         </section>
     );
