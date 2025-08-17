@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import FriendsPage from './pages/FriendsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 import Footer from './components/Footer';
@@ -25,6 +26,8 @@ function App() {
                     <Route path="*" element={<NotFoundPage />} />
 
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/friends" element={<FriendsPage />} />
+
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                 </Routes>

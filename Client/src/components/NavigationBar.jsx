@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faMedal, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faMedal, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 
 const NavigationBar = () => {
     return (
@@ -11,32 +11,28 @@ const NavigationBar = () => {
                 className={({ isActive }) =>
                     `rounded-2xl p-3 flex items-center space-x-2 hover:bg-gray-900 hover:cursor-pointer ${isActive ? 'bg-gray-900' : 'bg-gray-800'}`
                 }
-                end
-            >
+                end>
                 <FontAwesomeIcon icon={faHouse} /><p>Home</p>
             </NavLink>
             <NavLink
-                to="/results"
+                to="/leaderboard"
                 className={({ isActive }) =>
                     `rounded-2xl p-3 flex items-center space-x-2 hover:bg-gray-900 hover:cursor-pointer ${isActive ? 'bg-gray-900' : 'bg-gray-800'}`
-                }
-            >
+                }>
                 <FontAwesomeIcon icon={faMedal} /><p>Leaderboard</p>
             </NavLink>
             <NavLink
-                to="/bets"
+                to="/friends"
                 className={({ isActive }) =>
-                    `rounded-2xl p-3 hover:bg-gray-900 hover:cursor-pointer ${isActive ? 'bg-gray-900' : 'bg-gray-800'}`
-                }
-            >
-                Bets
+                    `rounded-2xl p-3 flex items-center space-x-2 hover:bg-gray-900 hover:cursor-pointer ${isActive ? 'bg-gray-900' : 'bg-gray-800'}`
+                }>
+                <FontAwesomeIcon icon={faUserGroup} /><p>Friends</p>
             </NavLink>
             <NavLink
                 to="/profile"
                 className={({ isActive }) =>
                     `rounded-2xl p-3 flex items-center space-x-2 hover:bg-gray-900 hover:cursor-pointer ${isActive ? 'bg-gray-900' : 'bg-gray-800'}`
-                }
-            >
+                }>
                 <FontAwesomeIcon icon={faUser} /><p>Profile</p>
             </NavLink>
         </nav>
