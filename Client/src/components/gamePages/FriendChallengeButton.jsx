@@ -10,7 +10,7 @@ const FriendChallengeButton = () => {
     useClickOutside(dropdownRef, () => setShowFriends(false));
 
     return (
-        <div className={`relative px-6 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer ${showFriends ? "scale-105" : "hover:scale-105"
+        <div className={`relative px-4 py-2 rounded-xl bg-blue-600 text-white text-lg font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer ${showFriends ? "scale-105" : "hover:scale-105"
             }`}
             onClick={() => setShowFriends(!showFriends)}
         >

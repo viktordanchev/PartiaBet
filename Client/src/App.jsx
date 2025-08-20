@@ -23,16 +23,18 @@ function App() {
             <Header />
             <main className="flex-grow flex">
                 {!hideNav && <NavigationBar />}
-                <Routes>
-                    <Route path="*" element={<NotFoundPage />} />
+                <div className="flex-1 flex justify-center items-center">
+                    <Routes>
+                        <Route path="*" element={<NotFoundPage />} />
 
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/friends" element={<FriendsPage />} />
-                    <Route path="/games/chess" element={<ChessGamePage />} />
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/friends" element={<FriendsPage />} />
+                        <Route path="/games/chess" element={<ChessGamePage />} />
 
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                </Routes>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                    </Routes>
+                </div>
             </main>
             <Footer />
         </LoadingProvider>
