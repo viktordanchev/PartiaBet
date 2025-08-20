@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const FriendCard = ({ username, isOnline }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
-        <article className="h-25 w-70 bg-gray-900 rounded-xl border border-gray-500 shadow-xl shadow-gray-900 p-3 flex items-center gap-2 transform transition-transform duration-300 hover:scale-105 hover:cursor-pointer hover:border-white">
+        <article
+            className={`bg-gray-900 rounded-xl border border-gray-500 shadow-xl shadow-gray-900 p-3 flex items-center gap-2 transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:border-white ${isOpen ? 'h-50 w-140' : 'h-25 w-70 hover:scale-105'}`}
+            onClick={() => setIsOpen(!isOpen)}>
             <img src="https://via.placeholder.com/80"
                 className="w-16 h-16 rounded-full object-cover border-2 border-gray-500" />
             <div className="flex flex-col">
