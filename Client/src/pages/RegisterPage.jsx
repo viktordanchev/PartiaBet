@@ -53,6 +53,22 @@ function RegisterPage() {
                         />
                         <ErrorMessage name="email" component="div" className="text-red-500" />
                     </div>
+                    <div className="relative w-full mb-6">
+                        <Field
+                            className="w-full py-1 px-2 pr-20 border-b border-maincolor focus:text-gray-300 focus:border-gray-300 focus:outline-none"
+                            placeholder="Verification code"
+                            type="text"
+                            name="vrfCode"
+                        />
+                        <button
+                            type="button"
+                            className="absolute right-0 top-0 h-full text-maincolor text-lg font-medium hover:cursor-pointer hover:text-gray-300"
+                            onClick={() => console.log("Get code clicked")}
+                        >
+                            Get code
+                        </button>
+                        <ErrorMessage name="vrfCode" component="div" className="text-red-500 mt-1" />
+                    </div>
                     <div>
                         <div className="relative mb-6">
                             <Field

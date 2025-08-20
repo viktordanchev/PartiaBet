@@ -1,19 +1,40 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 @theme {
     --color-maincolor: #51dacf;
 }
 
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
+@layer utilities {
+    .scrollbar-main {
+        scrollbar-width: auto;
+        scrollbar-color: #51dacf #1f2937;
     }
 
-    to {
-        transform: rotate(360deg);
+        .scrollbar-main::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+
+        .scrollbar-main::-webkit-scrollbar-thumb {
+            background-color: #51dacf;
+            border-radius: 4px;
+        }
+
+    .scrollbar-sidebar {
+        scrollbar-width: thin;
+        scrollbar-color: #51dacf #111827;
     }
+
+        .scrollbar-sidebar::-webkit-scrollbar-track {
+            background: #111827;
+        }
+
+        .scrollbar-sidebar::-webkit-scrollbar-thumb {
+            background-color: #51dacf;
+            border-radius: 3px;
+        }
 }
 
-.rotate {
-    animation: spin 2s linear infinite;
+html, body {
+    height: 100%;
+    overflow: auto;
 }

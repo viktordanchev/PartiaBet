@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import FriendsPage from './pages/FriendsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import ChessGamePage from './pages/ChessGamePage';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -27,6 +28,7 @@ function App() {
 
                     <Route path="/" element={<HomePage />} />
                     <Route path="/friends" element={<FriendsPage />} />
+                    <Route path="/games/chess" element={<ChessGamePage />} />
 
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />

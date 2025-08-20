@@ -4,7 +4,7 @@ import Logo from '../assets/images/logo.png';
 const Header = () => {
     return (
         <header className="bg-gray-900 h-24 p-6 flex justify-between items-center">
-            <a href="/home" className="text-center">
+            <a href="/" className="text-center">
                 <img src={Logo} className="h-14" />
             </a>
             <div className="space-x-4">
