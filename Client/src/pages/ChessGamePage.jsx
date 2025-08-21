@@ -15,7 +15,7 @@ function ChessGamePage() {
             <Matches />
 
             <article className="col-span-2 bg-gray-800 p-6 rounded border border-gray-500 shadow-xl shadow-gray-900 flex flex-col gap-3">
-                <h2 className="text-2xl font-bold text-gray-300 mb-2 text-center">
+                <h2 className="text-gray-300 text-3xl font-semibold mb-2 text-center">
                     How to Play Chess
                 </h2>
                 <p className="text-gray-400">
