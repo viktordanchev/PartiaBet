@@ -1,12 +1,12 @@
 ﻿import React from 'react';
 import ChessImg from '../assets/images/chess.jpg';
-import TopPlayers from '../components/gamePages/TopPlayers';
-import GameInfo from '../components/gamePages/GameInfo';
-import Matches from '../components/gamePages/Matches';
+import TopPlayers from '../components/GamePages/TopPlayers';
+import GameInfo from '../components/GamePages/GameInfo';
+import Matches from '../components/GamePages/Matches';
 
 function ChessGamePage() {
     return (
-        <section className="flex-grow p-6 grid grid-cols-2 gap-6">
+        <section className="flex-grow grid grid-cols-2 gap-6">
             <GameInfo
                 gameName={'Chess'}
                 gameImg={ChessImg}
@@ -14,7 +14,7 @@ function ChessGamePage() {
             <TopPlayers />
             <Matches />
 
-            <article className="col-span-2 bg-gray-800 p-6 rounded-xl border border-gray-500 shadow-xl shadow-gray-900 flex flex-col gap-3">
+            <article className="col-span-2 bg-gray-800 p-6 rounded border border-gray-500 shadow-xl shadow-gray-900 flex flex-col gap-3">
                 <h2 className="text-2xl font-bold text-gray-300 mb-2 text-center">
                     How to Play Chess
                 </h2>

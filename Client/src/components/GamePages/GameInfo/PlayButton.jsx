@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useClickOutside } from '../../hooks/useClickOutside';
+import { useClickOutside } from '../../../hooks/useClickOutside';
 
 function PlayButton() {
     const [showStakeOptions, setShowStakeOptions] = useState(false);

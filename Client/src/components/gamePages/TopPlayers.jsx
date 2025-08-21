@@ -2,7 +2,7 @@
 
 const TopPlayers = () => {
     return (
-        <article className="bg-gray-800 p-6 rounded-xl border border-gray-500 shadow-xl shadow-gray-900 text-gray-300 flex flex-col space-y-6">
+        <article className="bg-gray-800 p-6 rounded border border-gray-500 shadow-xl shadow-gray-900 text-gray-300 flex flex-col space-y-6">
             <h2 className="text-2xl font-bold text-center">
                 Top 3 Players
             </h2>

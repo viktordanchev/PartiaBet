@@ -1,10 +1,10 @@
 ﻿import React from 'react';
-import FriendCard from '../components/friendsPage/FriendCard';
-import SearchBar from '../components/friendsPage/SearchBar';
+import FriendCard from '../components/FriendsPage/FriendCard';
+import SearchBar from '../components/FriendsPage/SearchBar';
 
 function FriendsPage() {
     return (
-        <section className="flex-grow p-6 flex flex-col justify-start items-center gap-6">
+        <section className="flex-grow flex flex-col justify-start items-center gap-6">
             <SearchBar />
             <article className="w-full flex flex-wrap justify-center gap-3">
                 <FriendCard

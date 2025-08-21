@@ -23,7 +23,7 @@ function App() {
             <Header />
             <main className="flex-grow flex">
                 {!hideNav && <NavigationBar />}
-                <div className="flex-1 flex justify-center items-center">
+                <div className="flex-1 flex justify-center p-6">
                     <Routes>
                         <Route path="*" element={<NotFoundPage />} />
 
