@@ -7,9 +7,8 @@ const Matches = () => {
             <h2 className="text-gray-300 text-3xl font-semibold text-center">
                 Tables
             </h2>
-            <section className="flex flex-col">
+            <section className="space-y-6">
                 <MatchList isCasualGame={false} />
-                <div className="border-t border-gray-500 my-6"></div>
                 <MatchList isCasualGame={true} />
             </section>
         </article>

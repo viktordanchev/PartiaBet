@@ -3,9 +3,9 @@ import MatchCard from './MatchCard';
 
 const MatchList = ({ isCasualGame }) => {
     return (
-        <article className="space-y-3 p-3 rounded [box-shadow:inset_0_0_30px_rgba(81,218,207,0.3)]">
+        <article className="space-y-3">
             <h3 className="text-2xl text-center">{isCasualGame ? 'Casual Play' : 'Play with bets'}</h3>
-            <ul className="grid grid-cols-3 gap-3">
+            <ul className="grid grid-cols-3 gap-3 p-3 rounded [box-shadow:inset_0_0_30px_rgba(81,218,207,0.3)]">
                 <MatchCard
                     isCasualGame={isCasualGame}
                     isMatchStarted={true}
