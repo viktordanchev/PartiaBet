@@ -3,7 +3,7 @@ import QuestionMark from '../../../assets/images/question-mark.png';
 
 const MatchCard = ({ isCasualGame, isMatchStarted }) => {
     return (
-        <li className="w-full p-2 flex flex-col items-center gap-3 rounded-xl shadow-md shadow-gray-900 border border-gray-700 bg-gray-900">
+        <li className="w-full p-2 flex flex-col items-center gap-3 rounded-xl border border-gray-700 bg-gray-900">
             <div className="w-full flex items-center text-sm">
                 <div className="flex-1 flex flex-col items-center">
                     <img src="" className="rounded-lg border border-gray-500 h-15 w-15" />
