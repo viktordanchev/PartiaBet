@@ -17,7 +17,7 @@ const MatchCard = ({ isCasualGame, isMatchStarted }) => {
                     <p className="text-xs">Raiting: 2789</p>
                 </div>
             </div>
-            <button className={`py-1 px-3 rounded-xl text-white font-medium transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105 ${isMatchStarted ? 'bg-red-600' : 'bg-green-600'}`}>
+            <button className={`py-1 px-3 rounded-xl text-white font-medium border-2 border-gray-500 transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105 ${isMatchStarted ? 'bg-red-600' : 'bg-green-600'}`}>
                 {isMatchStarted ? (
                     <>
                         <span className="inline-block w-2 h-2 rounded-full bg-white mr-1"></span>

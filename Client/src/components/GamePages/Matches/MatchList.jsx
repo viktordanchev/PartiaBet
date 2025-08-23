@@ -19,7 +19,7 @@ const MatchList = ({ isCasualGame }) => {
                     isMatchStarted={false}
                 />
                 <div className="col-span-3 m-auto">
-                    <button className="py-2 px-6 rounded-xl bg-blue-600 text-lg text-white font-semibold shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105">
+                    <button className="py-2 px-6 rounded-xl bg-blue-600 text-lg text-white font-semibold border-2 border-gray-500 transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105">
                         Load more
                     </button>
                 </div>

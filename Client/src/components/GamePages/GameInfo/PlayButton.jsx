@@ -12,7 +12,7 @@ function PlayButton() {
     useClickOutside(dropdownRef, () => setShowStakeOptions(false));
 
     return (
-        <div className={`relative px-4 py-2 rounded-xl bg-green-600 text-white text-lg font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer ${showStakeOptions ? "scale-105" : "hover:scale-105"
+        <div className={`relative px-4 py-2 rounded-xl bg-green-600 text-white text-lg font-medium border-2 border-gray-500 transform transition-all duration-300 ease-in-out hover:cursor-pointer ${showStakeOptions ? "scale-105" : "hover:scale-105"
             }`}
             onClick={() => setShowStakeOptions(!showStakeOptions)}
         >
