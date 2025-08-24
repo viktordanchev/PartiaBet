@@ -28,26 +28,6 @@ function HomePage() {
                 gameName={'Sixty-Six'}
                 playersCount={6}
             />
-            <GameCard
-                gameImg={ChessImg}
-                gameName={'Chess'}
-                playersCount={12}
-            />
-            <GameCard
-                gameImg={ChessImg}
-                gameName={'Backgammon'}
-                playersCount={57}
-            />
-            <GameCard
-                gameImg={ChessImg}
-                gameName={'Belote'}
-                playersCount={144}
-            />
-            <GameCard
-                gameImg={ChessImg}
-                gameName={'Sixty-Six'}
-                playersCount={6}
-            />
         </section>
     );
 }

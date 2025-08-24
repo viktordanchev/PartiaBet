@@ -12,7 +12,7 @@ const GameRules = ({ game }) => {
     const RulesComponent = rulesComponents[game]
 
     return (
-        <article className="col-span-2 text-gray-300 bg-gray-800 p-6 rounded border border-gray-500 shadow-xl shadow-gray-900 flex flex-col gap-3">
+        <article className="col-span-2 text-gray-300 bg-gray-800 p-6 rounded border border-gray-500 shadow-xl shadow-gray-900 flex flex-col gap-6">
             <h2 className="text-3xl font-semibold text-center">
                 Game Rules
             </h2>
