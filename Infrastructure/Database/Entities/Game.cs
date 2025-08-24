@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Database.Entities
 {
-    public class UserRoleType
+    public class Game
     {
         [Key]
         public int Id { get; set; }

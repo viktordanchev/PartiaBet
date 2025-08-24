@@ -9,6 +9,9 @@ namespace Infrastructure.Database.Configs
         public void Configure(EntityTypeBuilder<Friendship> builder)
         {
             builder
+                .HasKey(f => new { f.UserId, f.FriendId });
+
+            builder
                 .HasOne(f => f.User)
                 .WithMany(u => u.SentFriendRequests)
                 .OnDelete(DeleteBehavior.Cascade);

@@ -22,40 +22,6 @@ namespace Infrastructure.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Infrastructure.Database.Entities.Bet", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("DateAndTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("interval");
-
-                    b.Property<Guid>("FirstPlayerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Game")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SecondPlayerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FirstPlayerId");
-
-                    b.HasIndex("SecondPlayerId");
-
-                    b.ToTable("Bets");
-                });
-
             modelBuilder.Entity("Infrastructure.Database.Entities.ChatMessage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -86,29 +52,65 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Infrastructure.Database.Entities.Friendship", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FriendId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("FriendId")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("IsAccepted")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "FriendId");
 
                     b.HasIndex("FriendId");
 
-                    b.HasIndex("UserId");
+                    b.ToTable("Friendship");
+                });
 
-                    b.ToTable("Friendships");
+            modelBuilder.Entity("Infrastructure.Database.Entities.Game", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("Infrastructure.Database.Entities.Match", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("BetAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("DateAndTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("MatchHistory");
                 });
 
             modelBuilder.Entity("Infrastructure.Database.Entities.Transaction", b =>
@@ -141,7 +143,7 @@ namespace Infrastructure.Database.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("TransactionHistory");
                 });
 
             modelBuilder.Entity("Infrastructure.Database.Entities.User", b =>
@@ -189,14 +191,34 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Infrastructure.Database.Entities.UserRole", b =>
+            modelBuilder.Entity("Infrastructure.Database.Entities.UserMatch", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("PlayerId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RoleTypeId")
+                    b.Property<Guid>("MatchId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("TeamNumber")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PlayerId", "MatchId");
+
+                    b.HasIndex("MatchId");
+
+                    b.ToTable("UserMatch");
+                });
+
+            modelBuilder.Entity("Infrastructure.Database.Entities.UserRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("RoleTypeId")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -212,9 +234,11 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Infrastructure.Database.Entities.UserRoleType", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -223,25 +247,6 @@ namespace Infrastructure.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserRoleTypes");
-                });
-
-            modelBuilder.Entity("Infrastructure.Database.Entities.Bet", b =>
-                {
-                    b.HasOne("Infrastructure.Database.Entities.User", "FirstPlayer")
-                        .WithMany()
-                        .HasForeignKey("FirstPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Database.Entities.User", "SecondPlayer")
-                        .WithMany()
-                        .HasForeignKey("SecondPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FirstPlayer");
-
-                    b.Navigation("SecondPlayer");
                 });
 
             modelBuilder.Entity("Infrastructure.Database.Entities.ChatMessage", b =>
@@ -282,6 +287,17 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Infrastructure.Database.Entities.Match", b =>
+                {
+                    b.HasOne("Infrastructure.Database.Entities.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+                });
+
             modelBuilder.Entity("Infrastructure.Database.Entities.Transaction", b =>
                 {
                     b.HasOne("Infrastructure.Database.Entities.User", "Receiver")
@@ -301,6 +317,25 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("Infrastructure.Database.Entities.UserMatch", b =>
+                {
+                    b.HasOne("Infrastructure.Database.Entities.Match", "Match")
+                        .WithMany("Players")
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Database.Entities.User", "Player")
+                        .WithMany("MatchHistory")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+
+                    b.Navigation("Player");
+                });
+
             modelBuilder.Entity("Infrastructure.Database.Entities.UserRole", b =>
                 {
                     b.HasOne("Infrastructure.Database.Entities.UserRoleType", "RoleType")
@@ -310,7 +345,7 @@ namespace Infrastructure.Database.Migrations
                         .IsRequired();
 
                     b.HasOne("Infrastructure.Database.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Roles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -320,9 +355,18 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Infrastructure.Database.Entities.Match", b =>
+                {
+                    b.Navigation("Players");
+                });
+
             modelBuilder.Entity("Infrastructure.Database.Entities.User", b =>
                 {
+                    b.Navigation("MatchHistory");
+
                     b.Navigation("ReceivedFriendRequests");
+
+                    b.Navigation("Roles");
 
                     b.Navigation("SentFriendRequests");
                 });

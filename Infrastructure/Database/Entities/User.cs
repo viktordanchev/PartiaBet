@@ -10,6 +10,7 @@ namespace Infrastructure.Database.Entities
             SentFriendRequests = new List<Friendship>();
             ReceivedFriendRequests = new List<Friendship>();
             Roles = new List<UserRole>();
+            MatchHistory = new List<UserMatch>();
         }
 
         [Key]
@@ -38,5 +39,6 @@ namespace Infrastructure.Database.Entities
         public ICollection<Friendship> SentFriendRequests { get; set; }
         public ICollection<Friendship> ReceivedFriendRequests { get; set; }
         public ICollection<UserRole> Roles { get; set; }
+        public ICollection<UserMatch> MatchHistory { get; set; }
     }
 }
