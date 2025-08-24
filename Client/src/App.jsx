@@ -1,12 +1,12 @@
 import React from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import FriendsPage from './pages/FriendsPage';
 import NotFoundPage from './pages/NotFoundPage';
-import ChessGamePage from './pages/ChessGamePage';
+import GamePage from './pages/GamePage';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -29,7 +29,10 @@ function App() {
 
                         <Route path="/" element={<HomePage />} />
                         <Route path="/friends" element={<FriendsPage />} />
-                        <Route path="/games/chess" element={<ChessGamePage />} />
+                        <Route path="/games/chess" element={<GamePage game={'Chess'} />} />
+                        <Route path="/games/backgammon" element={<GamePage game={'Backgammon'} />} />
+                        <Route path="/games/belote" element={<GamePage game={'Belote'} />} />
+                        <Route path="/games/sixty-six" element={<GamePage game={'Sixty-Six'} />} />
 
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
