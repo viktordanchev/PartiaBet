@@ -28,7 +28,7 @@ function LoginPage() {
     };
 
     return (
-        <section className="w-90 mx-auto my-auto p-8 border border-gray-500 bg-gray-900 rounded-xl shadow-xl shadow-gray-900 space-y-6">
+        <section className="w-90 m-auto p-8 border border-gray-500 bg-gray-900 rounded-xl shadow-xl shadow-gray-900 space-y-6">
             <p className="text-3xl text-center text-gray-300">Welocme back</p>
             <Formik
                 initialValues={{ username: '', password: '', rememberMe: false }}

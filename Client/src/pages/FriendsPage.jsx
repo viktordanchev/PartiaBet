@@ -4,7 +4,7 @@ import SearchBar from '../components/FriendsPage/SearchBar';
 
 function FriendsPage() {
     return (
-        <section className="flex-grow flex flex-col justify-start items-center gap-6">
+        <section className="flex-1 p-6 flex flex-col justify-start items-center gap-6">
             <SearchBar />
             <article className="w-full flex flex-wrap justify-center gap-3">
                 <FriendCard

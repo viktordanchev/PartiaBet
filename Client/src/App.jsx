@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import FriendsPage from './pages/FriendsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import GamePage from './pages/GamePage';
+import MatchPage from './pages/MatchPage';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -23,21 +24,21 @@ function App() {
             <Header />
             <main className="flex-grow flex">
                 {!hideNav && <NavigationBar />}
-                <div className="flex-1 flex justify-center p-6">
-                    <Routes>
-                        <Route path="*" element={<NotFoundPage />} />
+                <Routes>
+                    <Route path="*" element={<NotFoundPage />} />
 
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/friends" element={<FriendsPage />} />
-                        <Route path="/games/chess" element={<GamePage game={'Chess'} />} />
-                        <Route path="/games/backgammon" element={<GamePage game={'Backgammon'} />} />
-                        <Route path="/games/belote" element={<GamePage game={'Belote'} />} />
-                        <Route path="/games/sixty-six" element={<GamePage game={'Sixty-Six'} />} />
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/friends" element={<FriendsPage />} />
+                    <Route path="/games/chess" element={<GamePage game={'Chess'} />} />
+                    <Route path="/games/backgammon" element={<GamePage game={'Backgammon'} />} />
+                    <Route path="/games/belote" element={<GamePage game={'Belote'} />} />
+                    <Route path="/games/sixty-six" element={<GamePage game={'Sixty-Six'} />} />
 
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/register" element={<RegisterPage />} />
-                    </Routes>
-                </div>
+                    <Route path="/games/chess/match" element={<MatchPage />} />
+
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                </Routes>
             </main>
             <Footer />
         </LoadingProvider>

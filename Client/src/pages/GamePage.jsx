@@ -17,7 +17,7 @@ function GamePage({ game }) {
     };
     
     return (
-        <section className="flex-grow grid grid-cols-2 gap-6">
+        <section className="flex-1 p-6 grid grid-cols-2 gap-6">
             <GameInfo
                 gameName={game}
                 gameImg={gameImages[game]}

@@ -7,7 +7,7 @@ import SixtySixImg from '../assets/images/sixty-six.png';
 
 function HomePage() {
     return (
-        <section className="w-full flex flex-wrap justify-center items-center gap-6">
+        <section className="flex-1 p-6 flex flex-wrap justify-center items-center gap-6">
             <GameCard
                 gameImg={ChessImg}
                 gameName={'Chess'}

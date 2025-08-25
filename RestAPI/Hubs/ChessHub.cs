@@ -7,6 +7,12 @@ namespace RestAPI.Hubs
     {
         private static readonly ConcurrentDictionary<string, string> _connections = new ConcurrentDictionary<string, string>();
 
-
+        public async Task JoinGame(string playerId)
+        {
+            //if (_connections.TryGetValue(request.ReceiverId, out var connectionId))
+            //{
+            //    await Clients.Client(connectionId).SendAsync("ReceiveMessage", request.SenderId, request.Message, request.DateAndTime, request.ImageUrls);
+            //}
+        }
     }
 }

@@ -6,7 +6,7 @@ function Loading({ size }) {
 
     switch (size) {
         case 'small':
-            width = 'w-15';
+            width = 'w-20';
             break;
         case 'big':
             width = 'w-30';
@@ -14,9 +14,7 @@ function Loading({ size }) {
     }
 
     return (
-        <div className="fixed z-50 flex inset-0 items-center justify-center bg-black/40">
-            <img src={Dice} className={`animate-[spin_2s_linear_infinite] ${width}`} />
-        </div>
+        <img src={Dice} className={`animate-[spin_2s_linear_infinite] ${width}`} />
     );
 }
 

@@ -8,7 +8,11 @@ export const LoadingProvider = ({ children }) => {
 
     return (
         <LoadingContext.Provider value={{ setIsLoading }}>
-            {isLoading && (<Loading size="big" />)}
+            {isLoading && (
+                <div className="fixed z-50 flex inset-0 items-center justify-center bg-black/40">
+                    <Loading size="big" />
+                </div>
+            )}
             {children}
         </LoadingContext.Provider>
     );
