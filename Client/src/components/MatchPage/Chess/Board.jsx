@@ -1,4 +1,5 @@
 import React from 'react';
+import Piece from './Piece';
 
 const Board = () => {
     const rows = 8;
@@ -8,13 +9,14 @@ const Board = () => {
         <div className="flex justify-center items-center">
             <div className="grid grid-cols-8 border border-gray-500">
                 {Array.from({ length: rows * cols }).map((_, index) => {
-                    const row = Math.floor(index / cols);
-                    const col = index % cols;
-                    const isBlack = (row + col) % 2 === 1;
-
                     return (
-                        <div className={`w-20 h-20 bg-[url('/images/chess/black-king.svg')] bg-contain bg-no-repeat bg-center flex items-center justify-center hover:cursor-pointer hover:bg-yellow-100/90 ${isBlack ? 'bg-gray-600' : 'bg-gray-300'}`}
+                        <Piece
                             key={index}
+                            piece={'bk'}
+                            pieceRow={4}
+                            pieceCol={2}
+                            row={Math.floor(index / cols)}
+                            col={index % cols}
                         />
                     );
                 })}

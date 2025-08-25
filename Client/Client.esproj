@@ -9,7 +9,7 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\assets\svg\chess\" />
+    <Folder Include="public\images\" />
     <Folder Include="src\servives\" />
   </ItemGroup>
 </Project>
