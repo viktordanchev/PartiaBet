@@ -5,6 +5,5 @@ namespace Core.Games.Chess
 {
     public class ChessService : IChessService
     {
-        private static readonly ConcurrentDictionary
     }
 }
