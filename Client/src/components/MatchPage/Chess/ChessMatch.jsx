@@ -18,7 +18,6 @@ const ChessMatch = () => {
                         <p className="text-gray-800">10:33</p>
                     </article>
                 </div>
-                <p className="text-2xl font-semibold">Total 40$</p>
                 <div className="space-y-3">
                     <div className="p-2 flex items-center gap-3 bg-gray-900 rounded border border-gray-500 shadow-xl shadow-gray-900">
                         <img src="" className="rounded-lg border border-gray-500 h-12 w-12" />

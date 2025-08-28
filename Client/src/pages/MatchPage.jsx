@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import Loading from '../components/Loading';
 import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye } from '@fortawesome/free-regular-svg-icons';
+import Spectators from '../components/MatchPage/Spectators';
 
 const MatchPage = () => {
     const { game } = useParams();
     const [isLoading, setIsLoading] = useState(false);
-    
+
     const renderGame = () => {
         switch (game) {
             case "chess":
@@ -23,15 +22,15 @@ const MatchPage = () => {
     };
 
     return (
-        <section className="flex-1 p-6 flex justify-center items-center">
+        <section className="flex-1 p-6 flex justify-center gap-3">
             {isLoading ? <Loading size={'small'} /> :
-                <div className="flex gap-3">
-                    <article className="h-fit py-2 px-3 bg-red-600 rounded-xl text-white font-medium border border-white space-x-1">
-                        <span className="">12</span>
-                        <FontAwesomeIcon icon={faEye} />
-                    </article>
+                <>
+                    <div className="flex flex-col items-end gap-3">
+                        <Spectators peopleCount={125} />
+                        <p className="text-2xl font-semibold text-gray-300">Total 40$</p>
+                    </div>
                     {renderGame()}
-                </div>}
+                </>}
         </section>
     );
 };
