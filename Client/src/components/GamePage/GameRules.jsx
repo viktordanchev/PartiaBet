@@ -2,7 +2,7 @@ import React from 'react';
 import ChessRules from './AllGameRules/ChessRules';
 
 const rulesComponents = {
-    Chess: ChessRules,
+    chess: ChessRules,
     Backgammon: ChessRules,
     Belote: ChessRules,
     'Sixty-Six': ChessRules

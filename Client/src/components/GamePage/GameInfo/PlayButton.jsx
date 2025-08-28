@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useClickOutside } from '../../../hooks/useClickOutside';
 
 function PlayButton() {
+    const navigate = useNavigate();
+    const dropdownRef = useRef(null);
     const [showStakeOptions, setShowStakeOptions] = useState(false);
     const [selectedStake, setSelectedStake] = useState(null);
     const [customAmount, setCustomAmount] = useState('');
-    const dropdownRef = useRef(null);
 
     const stakeAmounts = [5, 10, 20, 50, 100];
 
@@ -49,7 +51,8 @@ function PlayButton() {
                             }}
                         />
 
-                        <button className="py-2 rounded-xl bg-green-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105">
+                        <button className="py-2 rounded-xl bg-green-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
+                            onClick={() => navigate(`/games/chess/match`)}>
                             Play
                         </button>
                     </div>

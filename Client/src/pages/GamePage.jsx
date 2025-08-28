@@ -1,27 +1,18 @@
 ﻿import React from 'react';
-import ChessImg from '../assets/images/chess.jpg';
-import BackgammonImg from '../assets/images/backgammon.png';
-import BeloteImg from '../assets/images/belote.png';
-import SixtySixImg from '../assets/images/sixty-six.png';
+import { useParams } from "react-router-dom";
 import TopPlayers from '../components/GamePage/TopPlayers';
 import GameInfo from '../components/GamePage/GameInfo';
 import Matches from '../components/GamePage/Matches';
 import GameRules from '../components/GamePage/GameRules';
+import { gamesData } from '../constants/gamesData';
 
-function GamePage({ game }) {
-    const gameImages = {
-        Chess: ChessImg,
-        Backgammon: BackgammonImg,
-        Belote: BeloteImg,
-        'Sixty-Six': SixtySixImg,
-    };
+function GamePage() {
+    const { game } = useParams();
+    const gameData = gamesData[game];
     
     return (
         <section className="flex-1 p-6 grid grid-cols-2 gap-6">
-            <GameInfo
-                gameName={game}
-                gameImg={gameImages[game]}
-            />
+            <GameInfo gameData={gameData}/>
             <TopPlayers />
             <Matches />
             <GameRules game={game} />
