@@ -17,7 +17,7 @@ import { LoadingProvider } from './contexts/LoadingContext';
 
 function App() {
     const location = useLocation();
-    const hideNav = ['/login', '/register'].includes(location.pathname);
+    const hideNav = ['/login', '/register', ''].includes(location.pathname);
 
     return (
         <LoadingProvider>

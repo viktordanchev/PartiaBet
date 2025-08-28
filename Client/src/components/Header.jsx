@@ -8,10 +8,10 @@ const Header = () => {
                 <img src={Logo} className="w-80" />
             </a>
             <div className="space-x-4">
-                <a href="/login" className="bg-maincolor text-gray-800 font-medium py-3 px-6 rounded hover:bg-[#81e4dc]">
+                <a href="/login" className="bg-maincolor text-gray-900 font-medium py-3 px-6 rounded hover:bg-[#81e4dc]">
                     Login
                 </a>
-                <a href="/register" className="bg-maincolor text-gray-800 font-medium py-3 px-6 rounded hover:bg-[#81e4dc]">
+                <a href="/register" className="bg-maincolor text-gray-900 font-medium py-3 px-6 rounded hover:bg-[#81e4dc]">
                     Register
                 </a>
             </div>
