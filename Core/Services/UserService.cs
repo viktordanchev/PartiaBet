@@ -1,11 +1,11 @@
 ﻿using Common.Constants;
 using Common.Exceptions;
 using Core.DTOs.Requests.Account;
-using Core.DTOs.Shared;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
+using Core.DTOs;
 
 namespace Core.Services
 {

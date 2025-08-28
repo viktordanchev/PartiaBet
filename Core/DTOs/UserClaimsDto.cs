@@ -1,4 +1,4 @@
-﻿namespace Core.DTOs.Shared
+﻿namespace Core.DTOs
 {
     public class UserClaimsDto
     {

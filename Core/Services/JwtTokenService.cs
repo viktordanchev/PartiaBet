@@ -1,4 +1,4 @@
-﻿using Core.DTOs.Shared;
+﻿using Core.DTOs;
 using Core.Interfaces.Services;
 using Core.Services.Configs;
 using Microsoft.AspNetCore.Http;

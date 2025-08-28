@@ -1,4 +1,4 @@
-﻿using Core.DTOs.Shared;
+﻿using Core.DTOs;
 
 namespace Core.Interfaces.Services
 {

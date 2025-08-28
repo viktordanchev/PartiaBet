@@ -1,5 +1,5 @@
-﻿using Core.DTOs.Requests.Account;
-using Core.DTOs.Shared;
+﻿using Core.DTOs;
+using Core.DTOs.Requests.Account;
 
 namespace Core.Interfaces.Services
 {

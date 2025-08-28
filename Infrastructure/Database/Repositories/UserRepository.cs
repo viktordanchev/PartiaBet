@@ -1,7 +1,7 @@
 ﻿using Common.Constants;
 using Common.Exceptions;
+using Core.DTOs;
 using Core.DTOs.Requests.Account;
-using Core.DTOs.Shared;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
 using Microsoft.AspNetCore.Http;

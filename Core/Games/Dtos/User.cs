@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Games.Chess.Dtos
+﻿namespace Core.Games.Dtos
 {
-    internal class User
+    public class User
     {
+        public Guid Id { get; set; }
+
+        public bool IsPlayer { get; set; }
+
+        public bool IsActivePlayer { get; set; }
     }
 }

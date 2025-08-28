@@ -1,4 +1,5 @@
 ﻿using Core.Games.Chess;
+using Core.Games.Services;
 using Core.Interfaces.ExternalServices;
 using Core.Interfaces.Games;
 using Core.Interfaces.Repositories;
@@ -66,6 +67,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
 
             services.AddSingleton<IChessService, ChessService>();
+            services.AddSingleton<IGameManagerService, GameManagerService>();
         }
 
         public static void AddCorsExtension(this IServiceCollection services, IConfiguration config)

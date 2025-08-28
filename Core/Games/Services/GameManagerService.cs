@@ -1,20 +1,16 @@
 ﻿using Core.Games.Dtos;
+using Core.Interfaces.Games;
 using System.Collections.Concurrent;
 
 namespace Core.Games.Services
 {
-    public class GameManagerService
+    public class GameManagerService : IGameManagerService
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, List<User>>> games;
 
         public GameManagerService()
         {
             games = new ConcurrentDictionary<string, ConcurrentDictionary<string, List<User>>>();
-        }
-
-        public void RegisterGame(string game, string gameId)
-        {
-            
         }
 
         public void AddMatchToGame(string game, string matchId)
@@ -27,12 +23,14 @@ namespace Core.Games.Services
             games[game].TryAdd(matchId, new List<User>());
         }
 
-        public void AddUserToGame(string gameId, User player)
+        public void AddUserToMatch(string game, string matchId, User user)
         {
-            if (games.ContainsKey(gameId))
+            if (!games[game].ContainsKey(matchId))
             {
-                games[gameId].Add(player);
+                games[game].TryAdd(matchId, new List<User>());
             }
+
+            games[game][matchId].Add(user);
         }
     }
 }
