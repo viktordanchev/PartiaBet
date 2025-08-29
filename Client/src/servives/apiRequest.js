@@ -1,6 +1,6 @@
 import { fetchError } from '../constants/errorMessages';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = 'https://localhost:7182/api';
 const headers = { 'Content-Type': 'application/json' };
 
 async function apiRequest(controller, action, values, jwtToken, method, credentials) {

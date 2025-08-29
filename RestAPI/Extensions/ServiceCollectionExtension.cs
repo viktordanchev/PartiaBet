@@ -57,6 +57,8 @@ namespace RestAPI.Extensions
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IMatchRepository, MatchRepository>();
+            services.AddScoped<IGamesRepository, GamesRepository>();
         }
 
         public static void AddServices(this IServiceCollection services)
@@ -65,6 +67,8 @@ namespace RestAPI.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountTokenService, AccountTokenService>();
             services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
+            services.AddScoped<IMatchService, MatchService>();
+            services.AddScoped<IGamesService, GamesService>();
 
             services.AddSingleton<IChessService, ChessService>();
             services.AddSingleton<IGameManagerService, GameManagerService>();

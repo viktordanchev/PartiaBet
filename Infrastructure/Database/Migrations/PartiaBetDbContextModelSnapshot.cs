@@ -79,6 +79,13 @@ namespace Infrastructure.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ImgUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MaxPlayers")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -86,6 +93,36 @@ namespace Infrastructure.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg",
+                            MaxPlayers = 2,
+                            Name = "Chess"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png",
+                            MaxPlayers = 2,
+                            Name = "Backgammon"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png",
+                            MaxPlayers = 4,
+                            Name = "Belote"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png",
+                            MaxPlayers = 2,
+                            Name = "Sixty-Six"
+                        });
                 });
 
             modelBuilder.Entity("Infrastructure.Database.Entities.Match", b =>

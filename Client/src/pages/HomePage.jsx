@@ -1,33 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import GameCard from '../components/HomePage/GameCard';
-import ChessImg from '../assets/images/chess.jpg';
-import BackgammonImg from '../assets/images/backgammon.png';
-import BeloteImg from '../assets/images/belote.png';
-import SixtySixImg from '../assets/images/sixty-six.png';
+import Loading from '../components/Loading';
+import apiRequest from '../servives/apiRequest';
 
 function HomePage() {
+    const [games, setGames] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const receiveData = async () => {
+            const games = await apiRequest('games', 'getAll', undefined, undefined, 'GET', false);
+            setGames(games);
+        };
+
+        receiveData();
+        setIsLoading(false);
+    }, []);
+
     return (
         <section className="flex-1 p-6 flex flex-wrap justify-center items-center gap-6">
-            <GameCard
-                gameImg={ChessImg}
-                gameName={'Chess'}
-                playersCount={12}
-            />
-            <GameCard
-                gameImg={BackgammonImg}
-                gameName={'Backgammon'}
-                playersCount={57}
-            />
-            <GameCard
-                gameImg={BeloteImg}
-                gameName={'Belote'}
-                playersCount={144}
-            />
-            <GameCard
-                gameImg={SixtySixImg}
-                gameName={'Sixty-Six'}
-                playersCount={6}
-            />
+            {isLoading ? <Loading size={'small'} /> :
+                <>
+                    {games.map((game) => (
+                        <GameCard
+                            key={game.id}
+                            data={game}
+                        />
+                    ))}
+                </>}
         </section>
     );
 }

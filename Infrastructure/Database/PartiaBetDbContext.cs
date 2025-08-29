@@ -26,6 +26,7 @@ namespace Infrastructure.Database
             builder.ApplyConfiguration(new FriendshipConfig());
             builder.ApplyConfiguration(new UserConfig());
             builder.ApplyConfiguration(new UserMatchConfig());
+            builder.ApplyConfiguration(new GameConfig());
 
             base.OnModelCreating(builder);
         }

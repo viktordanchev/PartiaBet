@@ -5,7 +5,6 @@ using Core.DTOs.Requests.Account;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 

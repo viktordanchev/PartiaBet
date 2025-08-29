@@ -6,31 +6,26 @@ namespace Core.Games.Services
 {
     public class GameManagerService : IGameManagerService
     {
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, List<User>>> games;
+        private readonly ConcurrentDictionary<int, List<MatchDto>> games;
 
         public GameManagerService()
         {
-            games = new ConcurrentDictionary<string, ConcurrentDictionary<string, List<User>>>();
+            games = new ConcurrentDictionary<int, List<MatchDto>>();
         }
 
-        public void AddMatchToGame(string game, string matchId)
+        public void CreateMatch(MatchDto match)
         {
-            if (!games.ContainsKey(game))
+            if (!games.ContainsKey(match.GameId))
             {
-                games.TryAdd(game, new ConcurrentDictionary<string, List<User>>());
+                games.TryAdd(match.GameId, new List<MatchDto>());
             }
 
-            games[game].TryAdd(matchId, new List<User>());
-        }
-
-        public void AddUserToMatch(string game, string matchId, User user)
-        {
-            if (!games[game].ContainsKey(matchId))
+            for (int i = 0; i < match.MaxPlayers; i++)
             {
-                games[game].TryAdd(matchId, new List<User>());
+                match.Players.Append(new PlayerDto());
             }
 
-            games[game][matchId].Add(user);
+            games[match.GameId].Add(match);
         }
     }
 }

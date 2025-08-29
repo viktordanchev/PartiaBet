@@ -1,19 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Infrastructure.Database.Entities
+﻿namespace Core.DTOs.Responses.Games
 {
-    public class Game
+    public class GameResponse
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
         public int MaxPlayers { get; set; }
 
-        [Required]
         public string ImgUrl { get; set; } = string.Empty;
     }
 }

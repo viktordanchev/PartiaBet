@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Infrastructure.Database.Migrations
 {
     /// <inheritdoc />
@@ -18,7 +20,9 @@ namespace Infrastructure.Database.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    MaxPlayers = table.Column<int>(type: "integer", nullable: false),
+                    ImgUrl = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -208,6 +212,17 @@ namespace Infrastructure.Database.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Games",
+                columns: new[] { "Id", "ImgUrl", "MaxPlayers", "Name" },
+                values: new object[,]
+                {
+                    { 1, "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg", 2, "Chess" },
+                    { 2, "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png", 2, "Backgammon" },
+                    { 3, "https://partiabetstorage.blob.core.windows.net/game-images/belote.png", 4, "Belote" },
+                    { 4, "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png", 2, "Sixty-Six" }
                 });
 
             migrationBuilder.CreateIndex(

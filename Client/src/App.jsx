@@ -13,14 +13,12 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import NavigationBar from './components/NavigationBar';
 
-import { LoadingProvider } from './contexts/LoadingContext';
-
 function App() {
     const location = useLocation();
     const hideNav = ['/login', '/register', ''].includes(location.pathname);
 
     return (
-        <LoadingProvider>
+        <>
             <Header />
             <main className="flex-grow flex">
                 {!hideNav && <NavigationBar />}
@@ -37,7 +35,7 @@ function App() {
                 </Routes>
             </main>
             <Footer />
-        </LoadingProvider>
+        </>
     );
 }
 
