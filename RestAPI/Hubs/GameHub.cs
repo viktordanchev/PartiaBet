@@ -27,8 +27,10 @@ namespace RestAPI.Hubs
             await Clients.All.SendAsync("MatchCreated", match);
         }
 
-        public async Task JoinMatch(string gameName, MatchDto match)
+        public async Task JoinMatch(string gameName, MatchDto match, PlayerDto player)
         {
+            _gameManagerService.JoinMatch(match.GameId, match.Id, player);
+
             await Clients.All.SendAsync("UpdatePlayerCount", gameName, 12);
         }
     }

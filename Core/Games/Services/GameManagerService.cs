@@ -20,12 +20,19 @@ namespace Core.Games.Services
                 games.TryAdd(match.GameId, new List<MatchDto>());
             }
 
-            for (int i = 0; i < match.MaxPlayers; i++)
+            games[match.GameId].Add(match);
+        }
+
+        public void JoinMatch(int gameId, Guid matchId, PlayerDto player)
+        {
+            var match = games[gameId].FirstOrDefault(m => m.Id == matchId);
+
+            if (games.ContainsKey(gameId) && !match.Players.Any())
             {
-                match.Players.Append(new PlayerDto());
+                match.Players = new List<PlayerDto>();
             }
 
-            games[match.GameId].Add(match);
+            match.Players.Add(player);
         }
     }
 }

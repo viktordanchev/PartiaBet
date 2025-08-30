@@ -19,6 +19,6 @@
 
         public int SpectatorsCount { get; set; }
 
-        public IEnumerable<PlayerDto> Players { get; set; }
+        public List<PlayerDto> Players { get; set; }
     }
 }

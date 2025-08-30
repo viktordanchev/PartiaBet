@@ -6,10 +6,11 @@ const HubContext = createContext();
 export const HubProvider = ({ children }) => {
     const [connection, setConnection] = useState(null);
     const [playersCount, setPlayersCount] = useState({});
-
+    
     useEffect(() => {
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl("https://localhost:7182/game")
+            .configureLogging(signalR.LogLevel.None)
             .withAutomaticReconnect()
             .build();
         
