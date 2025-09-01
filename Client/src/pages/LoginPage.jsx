@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiRequest from '../servives/apiRequest';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import apiRequest from '../servives/apiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useLoading } from '../contexts/LoadingContext';
+import { loginSchema } from '../constants/validationSchemes';
 
 function LoginPage() {
     const navigate = useNavigate();
@@ -32,17 +33,18 @@ function LoginPage() {
             <p className="text-3xl text-center text-gray-300">Welocme back</p>
             <Formik
                 initialValues={{ username: '', password: '', rememberMe: false }}
+                validationSchema={loginSchema}
                 onSubmit={handleLogin}
             >
                 <Form className="flex flex-col text-maincolor">
-                    <div>
+                    <div className="mb-6">
                         <Field
-                            className="w-full py-1 px-2 border-b border-maincolor mb-6 focus:text-gray-300 focus:border-gray-300 focus:outline-none"
+                            className="w-full py-1 px-2 border-b border-maincolor focus:text-gray-300 focus:border-gray-300 focus:outline-none"
                             placeholder="Username"
                             type="text"
                             name="username"
                         />
-                        <ErrorMessage name="email" component="div" className="text-red-500" />
+                        <ErrorMessage name="username" component="div" className="text-red-500" />
                     </div>
                     <div>
                         <div className="relative">

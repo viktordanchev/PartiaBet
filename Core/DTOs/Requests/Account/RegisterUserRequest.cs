@@ -1,4 +1,5 @@
 ﻿using Common.Constants;
+using Core.CustomAttributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace Core.DTOs.Requests.Account
@@ -10,7 +11,7 @@ namespace Core.DTOs.Requests.Account
         [StringLength(Validations.User.EmailMaxLength)]
         public string Email { get; set; } = string.Empty;
 
-        [Required]
+        [RequiredInProduction]
         public string VerificationCode { get; set; } = string.Empty;
 
         [Required]
