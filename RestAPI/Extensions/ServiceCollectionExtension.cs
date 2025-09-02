@@ -69,6 +69,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
             services.AddScoped<IMatchService, MatchService>();
             services.AddScoped<IGamesService, GamesService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             services.AddSingleton<IChessService, ChessService>();
             services.AddSingleton<IGameManagerService, GameManagerService>();

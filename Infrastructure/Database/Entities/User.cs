@@ -28,7 +28,7 @@ namespace Infrastructure.Database.Entities
         public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
-        public DateTime RegisteredAt { get; set; }
+        public DateTimeOffset RegisteredAt { get; set; } = DateTimeOffset.Now;
 
         public string? ImageUrl { get; set; }
 

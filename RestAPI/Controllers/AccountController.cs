@@ -13,14 +13,17 @@ namespace RestAPI.Controllers
         private readonly IUserService _userService;
         private readonly IAccountTokenService _accountTokenService;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IHostEnvironment _environment;
 
         public AccountController(IUserService userService,
             IAccountTokenService accountTokenService,
-            IJwtTokenService jwtTokenService)
+            IJwtTokenService jwtTokenService,
+            IHostEnvironment environment)
         {
             _userService = userService;
             _accountTokenService = accountTokenService;
             _jwtTokenService = jwtTokenService;
+            _environment = environment;
         }
 
         [HttpPost("login")]
@@ -44,7 +47,7 @@ namespace RestAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserRequest data)
         {
-            if(_accountTokenService.IsTokenValid(data.Email, data.VerificationCode))
+            if(_environment.IsProduction() && !_accountTokenService.IsTokenValid(data.Email, data.VrfCode))
                 return BadRequest(new { Error = InvalidVrfCode });
 
             await _userService.RegisterUserAsync(data);

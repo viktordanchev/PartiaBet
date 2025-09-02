@@ -12,7 +12,7 @@ namespace Core.DTOs.Requests.Account
         public string Email { get; set; } = string.Empty;
 
         [RequiredInProduction]
-        public string VerificationCode { get; set; } = string.Empty;
+        public string VrfCode { get; set; } = string.Empty;
 
         [Required]
         [StringLength(Validations.User.UsernameMaxLength)]
@@ -24,8 +24,5 @@ namespace Core.DTOs.Requests.Account
         [Required]
         [Compare("Password")]
         public string ConfirmPassword { get; set; } = string.Empty;
-
-        [Required]
-        public DateTime RegisteredAt { get; set; }
     }
 }

@@ -5,27 +5,27 @@ import apiRequest from '../servives/apiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useLoading } from '../contexts/LoadingContext';
+import { useMessage } from '../contexts/MessageContext';
 import { loginSchema } from '../constants/validationSchemes';
 
 function LoginPage() {
     const navigate = useNavigate();
     const { setIsLoading } = useLoading();
+    const { showMessage } = useMessage();
     const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async (values) => {
-        try {
-            setIsLoading(true);
+        setIsLoading(true);
 
-            const response = await apiRequest('account', 'login', values, undefined, 'POST', true);
+        const response = await apiRequest('account', 'login', values, undefined, 'POST', true);
 
-            if (response.token) {
-                navigate('/home');
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
+        if (response.error) {
+            showMessage(response.error, 'error');
+        } else {
+            navigate('/');
         }
+
+        setIsLoading(false);
     };
 
     return (

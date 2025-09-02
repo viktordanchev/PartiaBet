@@ -11,6 +11,7 @@ builder.Services.AddControllersExtension();
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddMemoryCache();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();

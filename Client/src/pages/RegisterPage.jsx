@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
@@ -7,20 +8,18 @@ import { useLoading } from '../contexts/LoadingContext';
 import { registerSchema } from '../constants/validationSchemes';
 
 function RegisterPage() {
+    const navigate = useNavigate();
     const { setIsLoading } = useLoading();
     const [showPassword, setShowPassword] = useState(false);
 
     const handleRegister = async (values) => {
-        try {
-            console.log(values);
-            setIsLoading(true);
+        setIsLoading(true);
 
-            await apiRequest('account', 'register', values, undefined, 'POST', false);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
+        await apiRequest('account', 'register', values, undefined, 'POST', false);
+
+        setIsLoading(false);
+
+        navigate('/');
     };
 
     return (

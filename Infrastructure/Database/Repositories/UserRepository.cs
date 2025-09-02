@@ -28,8 +28,7 @@ namespace Infrastructure.Database.Repositories
                 {
                     Email = data.Email,
                     Username = data.Email,
-                    PasswordHash = data.Password,
-                    RegisteredAt = data.RegisteredAt
+                    PasswordHash = data.Password
                 });
                 await _database.SaveChangesAsync();
             }
