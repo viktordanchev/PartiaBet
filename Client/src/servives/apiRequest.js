@@ -1,16 +1,17 @@
 import { fetchError } from '../constants/errorMessages';
+import { refreshAccessToken } from '../hooks/useRefreshToken';
 
 const apiUrl = 'https://localhost:7182/api';
 const headers = { 'Content-Type': 'application/json' };
 
-async function apiRequest(controller, action, values, jwtToken, method, credentials) {
+async function apiRequest(controller, action, values, isAuthenticated, method, credentials) {
     const requestOptions = {
         method: `${method}`,
         headers: headers
     };
 
-    if (jwtToken) {
-        headers['Authorization'] = `Bearer ${jwtToken}`;
+    if (isAuthenticated) {
+        headers['Authorization'] = `Bearer ${sessionStorage.getItem('accessToken')}`;
     }
 
     if (credentials) {
@@ -22,9 +23,20 @@ async function apiRequest(controller, action, values, jwtToken, method, credenti
     }
 
     try {
-        const response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
+        let response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
 
-        if (response.status >= 500) {
+        if (response.status === 401) {
+            const newToken = await refreshAccessToken();
+
+            if (newToken) {
+                requestHeaders["Authorization"] = `Bearer ${newToken}`;
+                requestOptions.headers = requestHeaders;
+
+                response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
+            } else {
+                clearToken();
+            }
+        } else if (response.status >= 500) {
             throw new Error(fetchError);
         }
 

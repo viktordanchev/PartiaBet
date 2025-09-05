@@ -5,13 +5,13 @@ import apiRequest from '../servives/apiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useLoading } from '../contexts/LoadingContext';
-import { useMessage } from '../contexts/MessageContext';
+import { useNotifications } from '../contexts/NotificationsContext';
 import { loginSchema } from '../constants/validationSchemes';
 
 function LoginPage() {
     const navigate = useNavigate();
     const { setIsLoading } = useLoading();
-    const { showMessage } = useMessage();
+    const { showMessage } = useNotifications();
     const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async (values) => {

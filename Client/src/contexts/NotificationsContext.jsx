@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const MessageContext = createContext();
+const NotificationsContext = createContext();
 
-export function MessageProvider({ children }) {
+export function NotificationsProvider({ children }) {
     const [message, setMessage] = useState('');
     const [type, setType] = useState('');
 
@@ -25,14 +25,14 @@ export function MessageProvider({ children }) {
     };
 
     return (
-        <MessageContext.Provider value={{ showMessage }}>
+        <NotificationsContext.Provider value={{ showMessage }}>
             {message &&
                 <div className="fixed z-40 top-6 left-1/2 transform -translate-x-1/2 text-xl bg-gray-200 border-2 border-green-600 rounded-xl p-3 text-gray-800 ranimate-bounce-left-right">
                     {message}
                 </div>}
             {children}
-        </MessageContext.Provider>
+        </NotificationsContext.Provider>
     );
 }
 
-export const useMessage = () => useContext(MessageContext);
+export const useNotifications = () => useContext(NotificationsContext);

@@ -12,6 +12,7 @@ import MatchPage from './pages/MatchPage';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import NavigationBar from './components/NavigationBar';
+import SessionEndNotification from './components/SessionEndNotification';
 
 function App() {
     const location = useLocation();
@@ -35,6 +36,7 @@ function App() {
                 </Routes>
             </main>
             <Footer />
+            <SessionEndNotification />
         </>
     );
 }
