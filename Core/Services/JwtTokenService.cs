@@ -98,5 +98,12 @@ namespace Core.Services
                         Expires = DateTime.Now.AddMonths(_cookiesConfig.RefreshJWTTokenMonths)
                     });
         }
+
+        public string ReadRefreshToken(string token)
+        {
+            var jsonToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            return jsonToken.Claims.First(c => c.Type == ClaimTypes.Email)!.Value;
+        }
     }
 }

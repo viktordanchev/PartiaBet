@@ -97,5 +97,22 @@ namespace RestAPI.Controllers
 
             return Ok();
         }
+
+        [HttpGet("refreshToken")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            var newAccessToken = string.Empty;
+
+            if (refreshToken != null)
+            {
+                var userEmail = _jwtTokenService.ReadRefreshToken(refreshToken);
+                var userClaims = await _userService.GetClaimsAsync(userEmail);
+
+                newAccessToken = _jwtTokenService.GenerateAccessToken(userClaims);
+            }
+
+            return Ok(new { Token = newAccessToken });
+        }
     }
 }
