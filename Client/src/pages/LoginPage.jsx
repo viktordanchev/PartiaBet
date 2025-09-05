@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import apiRequest from '../servives/apiRequest';
+import useApiRequest from '../hooks/useApiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useLoading } from '../contexts/LoadingContext';
@@ -10,6 +10,7 @@ import { loginSchema } from '../constants/validationSchemes';
 
 function LoginPage() {
     const navigate = useNavigate();
+    const apiRequest = useApiRequest();
     const { setIsLoading } = useLoading();
     const { showMessage } = useNotifications();
     const [showPassword, setShowPassword] = useState(false);

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import GameCard from '../components/HomePage/GameCard';
 import Loading from '../components/Loading';
-import apiRequest from '../servives/apiRequest';
+import useApiRequest from '../hooks/useApiRequest';
 
 function HomePage() {
+    const apiRequest = useApiRequest();
     const [games, setGames] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const receiveData = async () => {
-            const games = await apiRequest('games', 'getAll', undefined, undefined, 'GET', false);
+            const games = await apiRequest('games', 'getAll', undefined, false, 'GET', false);
             setGames(games);
         };
 
