@@ -1,5 +1,5 @@
 import { fetchError } from '../constants/errorMessages';
-import { refreshAccessToken } from '../hooks/useRefreshToken';
+import refreshAccessToken from './refreshAccessToken';
 
 const apiUrl = 'https://localhost:7182/api';
 const headers = { 'Content-Type': 'application/json' };
@@ -29,8 +29,7 @@ async function apiRequest(controller, action, values, isAuthenticated, method, c
             const newToken = await refreshAccessToken();
 
             if (newToken) {
-                requestHeaders["Authorization"] = `Bearer ${newToken}`;
-                requestOptions.headers = requestHeaders;
+                headers["Authorization"] = `Bearer ${newToken}`;
 
                 response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
             } else {
