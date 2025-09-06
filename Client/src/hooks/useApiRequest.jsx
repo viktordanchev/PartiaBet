@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchError } from '../constants/errorMessages';
 
 function useApiRequest() {
+    const navigate = useNavigate();
     const { updateAccessToken } = useAuth();
 
     const apiUrl = 'https://localhost:7182/api';
@@ -37,7 +39,8 @@ function useApiRequest() {
 
                     response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
                 } else {
-                    return null;
+                    navigate('/login');
+                    return;
                 }
             } else if (response.status >= 500) {
                 throw new Error(fetchError);

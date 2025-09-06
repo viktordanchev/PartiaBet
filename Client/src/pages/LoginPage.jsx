@@ -19,8 +19,8 @@ function LoginPage() {
         setIsLoading(true);
 
         const response = await apiRequest('account', 'login', values, undefined, 'POST', true);
-
-        if (response.error) {
+        
+        if (response?.error) {
             showMessage(response.error, 'error');
         } else {
             navigate('/');
