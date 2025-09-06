@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     const removeToken = () => {
         localStorage.removeItem('accessToken');
         setIsAuthenticated(false);
-        navigate('/');
+        console.log('Token removed, user logged out');
     };
 
     return (

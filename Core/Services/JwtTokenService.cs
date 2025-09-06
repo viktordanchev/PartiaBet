@@ -92,7 +92,7 @@ namespace Core.Services
                         Secure = true,
                         IsEssential = true,
                         SameSite = SameSiteMode.None,
-                        Expires = DateTime.Now.AddMonths(_cookiesConfig.RefreshJWTTokenMonths)
+                        Expires = DateTime.Now.AddMinutes(5)
                     });
         }
 

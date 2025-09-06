@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RestAPI.Controllers
@@ -14,6 +15,7 @@ namespace RestAPI.Controllers
             _gamesService = gamesService;
         }
 
+        [Authorize]
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllGames()
         {
