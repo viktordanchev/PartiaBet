@@ -8,8 +8,8 @@ function SessionEndNotification() {
 
     return (
         <>
-            {!localStorage.getItem('accessToken') && (
-                <div className="fixed left-6 bottom-6 flex flex-col items-center justify-between p-3 text-gray-700 shadow-2xl shadow-gray-400 animate-bounce-left-right z-50 rounded-xl h-36 w-72 bg-gray-200 bg-opacity-95 border border-zinc-500 sm:w-auto sm:left-3 sm:bottom-3 sm:right-3">
+            {localStorage.getItem('accessToken') === undefined && (
+                <div className="fixed z-40 left-6 bottom-6 flex flex-col items-center justify-between p-3 text-gray-800 animate-bounce-left-right rounded h-36 w-72 bg-gray-200 bg-opacity-95 border-2 border-maincolor">
                     <div className="h-full w-full flex items-center justify-evenly space-x-3">
                         <FontAwesomeIcon icon={faClock} className="text-3xl" />
                         <div>
@@ -19,11 +19,11 @@ function SessionEndNotification() {
                     </div>
                     <div className="w-full flex flex-row justify-evenly">
                         <a href="/login"
-                            className="bg-blue-500 border-2 border-blue-500 hover:bg-white hover:text-blue-500 text-white font-medium py-1 px-2 rounded"
+                            className="bg-maincolor text-gray-900 font-medium py-2 px-4 rounded hover:bg-[#81e4dc]"
                             onClick={() => removeAccessToken()}>
                             Login
                         </a>
-                        <button className="bg-blue-500 border-2 border-blue-500 hover:bg-white hover:text-blue-500 text-white font-medium py-1 px-2 rounded"
+                        <button className="bg-maincolor text-gray-900 font-medium py-2 px-4 rounded hover:bg-[#81e4dc] hover:cursor-pointer"
                             onClick={() => removeAccessToken()}>
                             Close
                         </button>

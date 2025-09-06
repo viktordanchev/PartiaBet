@@ -4,6 +4,16 @@
     --color-maincolor: #51dacf;
 }
 
+@keyframes bounceLeftRight {
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(3%);
+    }
+}
+
 @layer utilities {
     .scrollbar-main {
         scrollbar-width: auto;
@@ -34,6 +44,9 @@
         }
 }
 
+.animate-bounce-left-right {
+    animation: bounceLeftRight 0.2s ease-in-out 3;
+}
 html, body {
     height: 100%;
     overflow: auto;
