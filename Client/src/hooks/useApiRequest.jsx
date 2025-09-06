@@ -4,7 +4,7 @@ import { fetchError } from '../constants/errorMessages';
 
 function useApiRequest() {
     const navigate = useNavigate();
-    const { updateAccessToken } = useAuth();
+    const { updateToken } = useAuth();
 
     const apiUrl = 'https://localhost:7182/api';
     const headers = { 'Content-Type': 'application/json' };
@@ -32,7 +32,7 @@ function useApiRequest() {
 
             if (response.status === 401) {
                 const newToken = await refreshAccessToken();
-                updateAccessToken(newToken);
+                updateToken(newToken);
 
                 if (newToken) {
                     headers["Authorization"] = `Bearer ${newToken}`;

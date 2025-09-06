@@ -8,13 +8,13 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(() => localStorage.getItem('accessToken'));
     const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
-    const updateAccessToken = (token) => {
+    const updateToken = (token) => {
         localStorage.setItem('accessToken', token);
         setToken(token);
         setIsAuthenticated(true);
     };
 
-    const removeAccessToken = () => {
+    const removeToken = () => {
         localStorage.removeItem('accessToken');
         setIsAuthenticated(false);
         navigate('/');
@@ -23,8 +23,8 @@ export const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{
             isAuthenticated,
-            updateAccessToken,
-            removeAccessToken
+            updateToken,
+            removeToken
         }}>
             {children}
         </AuthContext.Provider>

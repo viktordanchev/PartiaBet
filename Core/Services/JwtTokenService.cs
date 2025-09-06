@@ -16,15 +16,12 @@ namespace Core.Services
     public class JwtTokenService : IJwtTokenService
     {
         private JwtTokenConfig _jwtTokenConfig;
-        private CookiesConfig _cookiesConfig;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public JwtTokenService(IOptions<JwtTokenConfig> jwtOptions,
-            IOptions<CookiesConfig> cookiesOptions,
             IHttpContextAccessor httpContextAccessor)
         {
             _jwtTokenConfig = jwtOptions.Value;
-            _cookiesConfig = cookiesOptions.Value;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -35,7 +32,7 @@ namespace Core.Services
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var expireTime = _cookiesConfig.RefreshJWTTokenMonths;
+            var expireTime = _jwtTokenConfig.RefreshTokenDays;
 
             var claims = new List<Claim>()
             {
@@ -46,7 +43,7 @@ namespace Core.Services
                 issuer: _jwtTokenConfig.Issuer,
                 audience: _jwtTokenConfig.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMonths(_cookiesConfig.RefreshJWTTokenMonths),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -59,7 +56,7 @@ namespace Core.Services
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var expireTime = _cookiesConfig.AccessJWTTokenMinutes;
+            var expireTime = _jwtTokenConfig.AccessTokenMinutes;
 
             var claims = new List<Claim>()
             {
@@ -77,7 +74,7 @@ namespace Core.Services
                 issuer: _jwtTokenConfig.Issuer,
                 audience: _jwtTokenConfig.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(_cookiesConfig.AccessJWTTokenMinutes),
+                expires: DateTime.Now.AddMinutes(1),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

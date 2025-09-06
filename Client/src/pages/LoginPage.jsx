@@ -5,12 +5,14 @@ import useApiRequest from '../hooks/useApiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useLoading } from '../contexts/LoadingContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useNotifications } from '../contexts/NotificationsContext';
 import { loginSchema } from '../constants/validationSchemes';
 
 function LoginPage() {
     const navigate = useNavigate();
     const apiRequest = useApiRequest();
+    const { updateToken } = useAuth();
     const { setIsLoading } = useLoading();
     const { showMessage } = useNotifications();
     const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +25,7 @@ function LoginPage() {
         if (response?.error) {
             showMessage(response.error, 'error');
         } else {
+            updateToken(response.token);
             navigate('/');
         }
 
