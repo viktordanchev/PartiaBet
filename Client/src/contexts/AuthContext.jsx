@@ -1,10 +1,8 @@
 ﻿﻿import React, { createContext, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const navigate = useNavigate();
     const [token, setToken] = useState(() => localStorage.getItem('accessToken'));
     const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
@@ -16,12 +14,13 @@ export const AuthProvider = ({ children }) => {
 
     const removeToken = () => {
         localStorage.removeItem('accessToken');
+        setToken(null);
         setIsAuthenticated(false);
-        console.log('Token removed, user logged out');
     };
 
     return (
         <AuthContext.Provider value={{
+            token,
             isAuthenticated,
             updateToken,
             removeToken

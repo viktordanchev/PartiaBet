@@ -28,6 +28,7 @@ function useApiRequest() {
         }
 
         try {
+            await new Promise(resolve => setTimeout(resolve, 3300));
             let response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
 
             if (response.status === 401) {
@@ -39,7 +40,7 @@ function useApiRequest() {
 
                     response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
                 } else {
-                    navigate('/login');
+                    navigate('/friends');
                     return;
                 }
             } else if (response.status >= 500) {

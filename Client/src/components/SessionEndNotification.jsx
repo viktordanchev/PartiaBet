@@ -4,11 +4,11 @@ import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../contexts//AuthContext';
 
 function SessionEndNotification() {
-    const { removeToken } = useAuth();
+    const { token, removeToken } = useAuth();
 
     return (
         <>
-            {localStorage.getItem('accessToken') === '' && (
+            {token === '' && (
                 <div className="fixed z-40 left-6 bottom-6 flex flex-col items-center justify-between p-3 text-gray-800 animate-bounce-left-right rounded h-36 w-72 bg-gray-200 bg-opacity-95 border-2 border-maincolor">
                     <div className="h-full w-full flex items-center justify-evenly space-x-3">
                         <FontAwesomeIcon icon={faClock} className="text-3xl" />
