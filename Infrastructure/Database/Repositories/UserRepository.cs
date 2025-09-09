@@ -86,6 +86,7 @@ namespace Infrastructure.Database.Repositories
                     Id = u.Id.ToString(),
                     Email = u.Email,
                     Username = u.Username,
+                    ImageUrl = u.ImageUrl,
                     Roles = u.Roles.Select(r => r.RoleType.Name).ToList()
                 })
                 .FirstAsync();

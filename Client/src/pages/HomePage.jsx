@@ -10,7 +10,7 @@ function HomePage() {
 
     useEffect(() => {
         const receiveData = async () => {
-            const games = await apiRequest('games', 'getAll', undefined, false, 'GET', false);
+            const games = await apiRequest('games', 'getAll', 'GET', false, false, undefined);
             setGames(games);
         };
 

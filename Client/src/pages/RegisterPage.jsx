@@ -16,7 +16,7 @@ function RegisterPage() {
     const handleRegister = async (values) => {
         setIsLoading(true);
 
-        await apiRequest('account', 'register', values, undefined, 'POST', false);
+        await apiRequest('account', 'register', 'POST', false, false, values);
 
         setIsLoading(false);
 

@@ -15,7 +15,6 @@ namespace RestAPI.Controllers
             _gamesService = gamesService;
         }
 
-        [Authorize]
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllGames()
         {

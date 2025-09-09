@@ -6,15 +6,6 @@ export function NotificationsProvider({ children }) {
     const [message, setMessage] = useState('');
     const [type, setType] = useState('');
 
-    switch (type) {
-        case 'message':
-            color = 'text-green-500';
-            break;
-        case 'error':
-            color = 'text-red-500';
-            break;
-    }
-
     const showMessage = (msg, msgType) => {
         setMessage(msg);
         setType(msgType);
@@ -27,7 +18,7 @@ export function NotificationsProvider({ children }) {
     return (
         <NotificationsContext.Provider value={{ showMessage }}>
             {message &&
-                <div className="fixed z-40 top-6 left-1/2 transform -translate-x-1/2 text-xl bg-gray-200 border-2 border-green-600 rounded p-3 text-gray-800 animate-bounce-left-right">
+                <div className={`fixed z-40 top-6 left-1/2 transform -translate-x-1/2 text-xl bg-gray-200 border-2 rounded p-3 text-gray-800 animate-bounce-left-right ${type === 'message' ? 'border-green-600' : 'border-red-600'}`}>
                     {message}
                 </div>}
             {children}

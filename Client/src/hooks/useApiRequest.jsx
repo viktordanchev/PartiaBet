@@ -4,19 +4,19 @@ import { fetchError } from '../constants/errorMessages';
 
 function useApiRequest() {
     const navigate = useNavigate();
-    const { updateToken } = useAuth();
+    const { updateToken, token } = useAuth();
 
     const apiUrl = 'https://localhost:7182/api';
     const headers = { 'Content-Type': 'application/json' };
 
-    const apiRequest = async (controller, action, values, isAuthenticated, method = 'GET', credentials = false) => {
+    const apiRequest = async (controller, action, method = 'GET', isAuthenticated, credentials = false, values) => {
         const requestOptions = {
             method: `${method}`,
             headers: headers
         };
 
         if (isAuthenticated) {
-            headers['Authorization'] = `Bearer ${sessionStorage.getItem('accessToken')}`;
+            headers['Authorization'] = `Bearer ${token}`;
         }
 
         if (credentials) {
@@ -28,7 +28,6 @@ function useApiRequest() {
         }
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 3300));
             let response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
 
             if (response.status === 401) {

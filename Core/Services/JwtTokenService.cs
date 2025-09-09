@@ -32,8 +32,7 @@ namespace Core.Services
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var expireTime = _jwtTokenConfig.RefreshTokenDays;
-
+            
             var claims = new List<Claim>()
             {
                 new Claim("JwtId", Guid.NewGuid().ToString()),
@@ -43,7 +42,7 @@ namespace Core.Services
                 issuer: _jwtTokenConfig.Issuer,
                 audience: _jwtTokenConfig.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddDays(_jwtTokenConfig.RefreshTokenDays),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -56,25 +55,25 @@ namespace Core.Services
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var expireTime = _jwtTokenConfig.AccessTokenMinutes;
 
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, userClaims.Id),
-                new Claim(ClaimTypes.Email, userClaims.Email),
-                new Claim(ClaimTypes.Name, userClaims.Username)
+                new Claim("Id", userClaims.Id),
+                new Claim("Email", userClaims.Email),
+                new Claim("Username", userClaims.Username),
+                new Claim("ProfileImageUrl", userClaims.Username),
             };
 
             foreach (var role in userClaims.Roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim("Role", role));
             }
 
             var token = new JwtSecurityToken(
                 issuer: _jwtTokenConfig.Issuer,
                 audience: _jwtTokenConfig.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(1),
+                expires: DateTime.Now.AddMinutes(_jwtTokenConfig.AccessTokenMinutes),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -92,7 +91,7 @@ namespace Core.Services
                         Secure = true,
                         IsEssential = true,
                         SameSite = SameSiteMode.None,
-                        Expires = DateTime.Now.AddMinutes(5)
+                        Expires = DateTime.Now.AddDays(_jwtTokenConfig.RefreshTokenDays)
                     });
         }
 

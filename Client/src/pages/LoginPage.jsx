@@ -19,8 +19,8 @@ function LoginPage() {
 
     const handleLogin = async (values) => {
         setIsLoading(true);
-
-        const response = await apiRequest('account', 'login', values, undefined, 'POST', true);
+        
+        const response = await apiRequest('account', 'login', 'POST', false, false, values);
         
         if (response?.error) {
             showMessage(response.error, 'error');
@@ -36,7 +36,7 @@ function LoginPage() {
         <section className="w-90 m-auto p-8 border border-gray-500 bg-gray-900 rounded-xl shadow-xl shadow-gray-900 space-y-6">
             <p className="text-3xl text-center text-gray-300">Welocme back</p>
             <Formik
-                initialValues={{ username: '', password: '', rememberMe: false }}
+                initialValues={{ email: '', password: '', rememberMe: false }}
                 validationSchema={loginSchema}
                 onSubmit={handleLogin}
             >
@@ -44,11 +44,11 @@ function LoginPage() {
                     <div className="mb-6">
                         <Field
                             className="w-full py-1 px-2 border-b border-maincolor focus:text-gray-300 focus:border-gray-300 focus:outline-none"
-                            placeholder="Username"
-                            type="text"
-                            name="username"
+                            placeholder="Email"
+                            type="email"
+                            name="email"
                         />
-                        <ErrorMessage name="username" component="div" className="text-red-500" />
+                        <ErrorMessage name="email" component="div" className="text-red-500" />
                     </div>
                     <div>
                         <div className="relative">

@@ -4,9 +4,9 @@ import { authErrors, requiredField } from "./errorMessages";
 const isProduction = import.meta.env.VITE_API_URL === 'production';
 
 export const loginSchema = Yup.object({
-    username: Yup.string()
-        .max(16, authErrors.UsernameMaxLength)
-        .required('Username' + requiredField),
+    email: Yup.string()
+        .email()
+        .required('Email' + requiredField),
     password: Yup.string()
         .required('Password' + requiredField)
 });
