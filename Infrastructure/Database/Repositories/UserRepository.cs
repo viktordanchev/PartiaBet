@@ -23,21 +23,19 @@ namespace Infrastructure.Database.Repositories
         {
             try
             {
-                await _database.Users.AddAsync(
-                new User
+                var user = new User
                 {
                     Email = data.Email,
-                    Username = data.Email,
+                    Username = data.Username,
                     PasswordHash = data.Password
-                });
+                };  
+
+                await _database.Users.AddAsync(user);
                 await _database.SaveChangesAsync();
             }
-            catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
+            catch (Exception ex)
             {
-                var message = pgEx.ConstraintName == "UX_User_Username"
-                    ? ErrorMessages.UsedUsername : ErrorMessages.UsedEmail;
-
-                throw new ApiException(message, StatusCodes.Status409Conflict);
+                var message = ex.Message;
             }
         }
 
