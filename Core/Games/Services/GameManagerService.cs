@@ -13,6 +13,16 @@ namespace Core.Games.Services
             games = new ConcurrentDictionary<int, List<MatchDto>>();
         }
 
+        public List<MatchDto> GetMatches(int gameId)
+        {
+            if (games.ContainsKey(gameId))
+            {
+                return games[gameId];
+            }
+
+            return null;
+        }
+
         public void CreateMatch(MatchDto match)
         {
             if (!games.ContainsKey(match.GameId))
@@ -23,7 +33,7 @@ namespace Core.Games.Services
             games[match.GameId].Add(match);
         }
 
-        public void JoinMatch(int gameId, Guid matchId, PlayerDto player)
+        public MatchDto JoinMatch(int gameId, Guid matchId, PlayerDto player)
         {
             var match = games[gameId].FirstOrDefault(m => m.Id == matchId);
 
@@ -33,6 +43,8 @@ namespace Core.Games.Services
             }
 
             match.Players.Add(player);
+
+            return match;
         }
     }
 }

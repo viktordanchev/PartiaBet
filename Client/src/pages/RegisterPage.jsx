@@ -16,6 +16,7 @@ function RegisterPage() {
     const handleRegister = async (values) => {
         setIsLoading(true);
 
+        values.dateAndTime = new Date().toLocaleString();
         await apiRequest('account', 'register', 'POST', false, false, values);
 
         setIsLoading(false);

@@ -21,22 +21,15 @@ namespace Infrastructure.Database.Repositories
 
         public async Task AddUserAsync(RegisterUserRequest data)
         {
-            try
+            var user = new User
             {
-                var user = new User
-                {
-                    Email = data.Email,
-                    Username = data.Username,
-                    PasswordHash = data.Password
-                };  
+                Email = data.Email,
+                Username = data.Username,
+                PasswordHash = data.Password
+            };
 
-                await _database.Users.AddAsync(user);
-                await _database.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-            }
+            await _database.Users.AddAsync(user);
+            await _database.SaveChangesAsync();
         }
 
         public async Task<(bool emailExists, bool usernameExists)> IsUserDataUniqueAsync(string email, string username)

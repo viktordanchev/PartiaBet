@@ -29,8 +29,12 @@ export const HubProvider = ({ children }) => {
         };
     }, []);
 
+    const joinMatch = (matchData) => {
+        connection.invoke("JoinMatch", matchData);
+    };
+
     return (
-        <HubContext.Provider value={{ connection, playersCount }}>
+        <HubContext.Provider value={{ connection, playersCount, joinMatch }}>
             {children}
         </HubContext.Provider>
     );

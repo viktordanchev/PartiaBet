@@ -1,6 +1,7 @@
 ﻿using Core.DTOs.Requests.Account;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using static Common.Constants.ErrorMessages;
 using static Common.Constants.Messages;
 
@@ -47,9 +48,9 @@ namespace RestAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserRequest data)
         {
-            if(_environment.IsProduction() && !_accountTokenService.IsTokenValid(data.Email, data.VrfCode))
+            if (_environment.IsProduction() && !_accountTokenService.IsTokenValid(data.Email, data.VrfCode))
                 return BadRequest(new { Error = InvalidVrfCode });
-
+            
             await _userService.RegisterUserAsync(data);
 
             return Ok(new { Message = "Ok!" });
@@ -88,11 +89,11 @@ namespace RestAPI.Controllers
             {
                 return BadRequest(new { Error = NotRegistered });
             }
-            else if(_accountTokenService.IsTokenValid(data.Email, data.Token))
+            else if (_accountTokenService.IsTokenValid(data.Email, data.Token))
             {
                 return BadRequest(new { Error = InvalidToken });
             }
-            
+
             await _userService.UpdatePasswordAsync(data.Email, data.Password);
 
             return Ok();
