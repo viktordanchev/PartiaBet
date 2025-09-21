@@ -1,12 +1,9 @@
-﻿using Common.Constants;
-using Common.Exceptions;
-using Core.DTOs;
+﻿using Core.DTOs;
 using Core.DTOs.Requests.Account;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using System.Globalization;
 
 namespace Infrastructure.Database.Repositories
 {
@@ -25,6 +22,7 @@ namespace Infrastructure.Database.Repositories
             {
                 Email = data.Email,
                 Username = data.Username,
+                RegisteredAt = DateTime.Parse(data.DateAndTime, new CultureInfo("bg-BG")),
                 PasswordHash = data.Password
             };
 
