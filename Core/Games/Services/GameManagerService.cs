@@ -20,7 +20,7 @@ namespace Core.Games.Services
                 return games[gameId];
             }
 
-            return null;
+            return new List<MatchDto>();
         }
 
         public void CreateMatch(MatchDto match)

@@ -6,5 +6,6 @@ namespace Core.Interfaces.Games
     {
         void CreateMatch(MatchDto match);
         MatchDto JoinMatch(int gameId, Guid matchId, PlayerDto player);
+        List<MatchDto> GetMatches(int gameId);
     }
 }

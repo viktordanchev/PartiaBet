@@ -13,12 +13,13 @@ function HomePage() {
 
         const receiveData = async () => {
             const games = await apiRequest('games', 'getAll', 'GET', false, false, undefined);
+
+            setIsLoading(false);
             setGames(games);
         };
 
         receiveData();
-        setIsLoading(false);
-    }, []);
+    });
 
     return (
         <section className="flex-1 p-6 flex flex-wrap justify-center items-center gap-6">
