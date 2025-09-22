@@ -5,7 +5,7 @@ import Profile from './Profile';
 
 const Header = () => {
     const { isAuthenticated, token } = useAuth();
-
+   
     return (
         <header className="bg-gray-900 h-24 p-6 flex justify-between items-center">
             <a href="/" className="text-center">

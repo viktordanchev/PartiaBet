@@ -5,6 +5,7 @@ using Core.Interfaces.Games;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
+using Core.Services.Configs;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
 using Infrastructure.Services;
@@ -107,6 +108,7 @@ namespace RestAPI.Extensions
         public static void AddConfigs(this IServiceCollection services, IConfiguration config)
         {
             services.Configure<EmailSenderConfig>(config.GetSection("EmailSettings"));
+            services.Configure<JwtTokenConfig>(config.GetSection("JwtToken"));
         }
     }
 }

@@ -30,7 +30,9 @@ function useApiRequest() {
         try {
             let response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
 
-            if (response.status === 401) {
+            if (response.status === 204) {
+                return true;
+            } else if (response.status === 401) {
                 const newToken = await refreshAccessToken();
                 updateToken(newToken);
 
@@ -46,7 +48,7 @@ function useApiRequest() {
                 throw new Error(fetchError);
             }
 
-            const data = await response.json();
+            const data = await response?.json();
 
             if (data.serverError) {
                 throw new Error(data.serverError);

@@ -1,8 +1,13 @@
-﻿import React from 'react';
+﻿import React, { useEffect } from 'react';
 import FriendCard from '../components/FriendsPage/FriendCard';
 import SearchBar from '../components/FriendsPage/SearchBar';
 
 function FriendsPage() {
+
+    useEffect(() => {
+        document.title = 'Friends';
+    });
+
     return (
         <section className="flex-1 p-6 flex flex-col justify-start items-center gap-6">
             <SearchBar />

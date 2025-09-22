@@ -1,27 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import useApiRequest from '../hooks/useApiRequest';
 import { useLoading } from '../contexts/LoadingContext';
+import { useNotifications } from '../contexts/NotificationsContext';
 import { registerSchema } from '../constants/validationSchemes';
 
 function RegisterPage() {
     const navigate = useNavigate();
     const apiRequest = useApiRequest();
     const { setIsLoading } = useLoading();
+    const { showMessage } = useNotifications();
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        document.title = 'Register';
+    });
 
     const handleRegister = async (values) => {
         setIsLoading(true);
 
         values.dateAndTime = new Date().toLocaleString("bg-BG");
-        await apiRequest('account', 'register', 'POST', false, false, values);
+        var response = await apiRequest('account', 'register', 'POST', false, false, values);
 
         setIsLoading(false);
 
-        navigate('/');
+        if (response.error) {
+            showMessage(response.error, 'error');
+        } else {
+            navigate('/');
+        }
     };
 
     return (

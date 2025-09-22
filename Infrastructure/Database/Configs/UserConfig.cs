@@ -17,6 +17,10 @@ namespace Infrastructure.Database.Configs
                 .HasIndex(u => u.Username)
                 .IsUnique()
                 .HasDatabaseName("UX_User_Username");
+
+            builder
+                .Property(u => u.RegisteredAt)
+                .HasColumnType("timestamp without time zone");
         }
     }
 }

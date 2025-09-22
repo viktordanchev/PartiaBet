@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import useApiRequest from '../hooks/useApiRequest';
@@ -16,6 +16,10 @@ function LoginPage() {
     const { setIsLoading } = useLoading();
     const { showMessage } = useNotifications();
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        document.title = 'Login';
+    });
 
     const handleLogin = async (values) => {
         setIsLoading(true);

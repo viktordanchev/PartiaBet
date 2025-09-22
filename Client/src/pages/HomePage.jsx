@@ -9,6 +9,8 @@ function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        document.title = 'Home';
+
         const receiveData = async () => {
             const games = await apiRequest('games', 'getAll', 'GET', false, false, undefined);
             setGames(games);

@@ -61,7 +61,7 @@ namespace Core.Services
                 new Claim("Id", userClaims.Id),
                 new Claim("Email", userClaims.Email),
                 new Claim("Username", userClaims.Username),
-                new Claim("ProfileImageUrl", userClaims.Username),
+                new Claim("ProfileImageUrl", userClaims.ImageUrl),
             };
 
             foreach (var role in userClaims.Roles)

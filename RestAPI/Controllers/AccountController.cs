@@ -53,7 +53,7 @@ namespace RestAPI.Controllers
             
             await _userService.RegisterUserAsync(data);
 
-            return Ok(new { Message = "Ok!" });
+            return NoContent();
         }
 
         [HttpPost("sendVrfCode")]
