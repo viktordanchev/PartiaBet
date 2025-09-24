@@ -17,7 +17,7 @@ function GamePage() {
         <section className="flex-1 p-6 grid grid-cols-2 gap-6">
             <GameInfo gameData={gameData}/>
             <TopPlayers />
-            <Matches game={gameData.id} />
+            <Matches gameId={gameData.id} />
             <GameRules game={gameData.name} />
         </section>
     );

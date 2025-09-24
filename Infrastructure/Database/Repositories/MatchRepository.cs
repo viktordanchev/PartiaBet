@@ -1,6 +1,7 @@
 ﻿using Core.Games.Dtos;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
+using System.Globalization;
 
 namespace Infrastructure.Database.Repositories
 {
@@ -18,7 +19,7 @@ namespace Infrastructure.Database.Repositories
             var newMatch = new Match()
             {
                 BetAmount = match.BetAmount,
-                DateAndTime = match.DateAndTime,
+                DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
                 GameId = match.GameId,
             };
 

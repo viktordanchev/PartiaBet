@@ -1,17 +1,39 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClickOutside } from '../../../hooks/useClickOutside';
+import { useHub } from '../../../contexts/HubContext';
+import { useAuth } from '../../../contexts/AuthContext';
+import { jwtDecode } from 'jwt-decode';
 
-function PlayButton() {
+function PlayButton({ gameData }) {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
+    const { connection } = useHub();
+    const { token } = useAuth();
     const [showStakeOptions, setShowStakeOptions] = useState(false);
-    const [selectedStake, setSelectedStake] = useState(null);
-    const [customAmount, setCustomAmount] = useState('');
-
+    const [betAmount, setBetAmount] = useState(0);
     const stakeAmounts = [5, 10, 20, 50, 100];
-
+    
     useClickOutside(dropdownRef, () => setShowStakeOptions(false));
+
+    const playMatch = async () => {
+        var matchData = {
+            betAmount: betAmount,
+            gameId: gameData.id,
+            dateAndTime: new Date().toLocaleString("bg-BG"),
+            maxPlayers: gameData.maxPlayers
+        };
+        
+        var player = {
+            id: jwtDecode(token)['Id'],
+            username: jwtDecode(token)['Username'],
+            profileImgUrl: jwtDecode(token)['ProfileImageUrl'],
+        };
+
+        await connection.invoke("CreateMatch", matchData, player);
+
+        navigate(`/games/chess/match`);
+    };
 
     return (
         <div className={`relative px-4 py-2 rounded-xl bg-green-600 text-white text-lg font-medium transform transition-all duration-300 ease-in-out hover:cursor-pointer ${showStakeOptions ? "scale-105" : "hover:scale-105"
@@ -30,10 +52,9 @@ function PlayButton() {
                             {stakeAmounts.map((amount) => (
                                 <button
                                     key={amount}
-                                    className={`flex-1 py-1 rounded-xl text-gray-300 font-medium border border-gray-500 transition-all duration-200 hover:scale-105 hover:cursor-pointer ${selectedStake === amount ? "bg-maincolor text-gray-800" : "bg-gray-800 hover:bg-maincolor hover:text-gray-800"}`}
+                                    className={`flex-1 py-1 rounded-xl text-gray-300 font-medium border border-gray-500 transition-all duration-200 hover:scale-105 hover:cursor-pointer ${betAmount === amount ? "bg-maincolor text-gray-800" : "bg-gray-800 hover:bg-maincolor hover:text-gray-800"}`}
                                     onClick={() => {
-                                        setSelectedStake(amount);
-                                        setCustomAmount("");
+                                        setBetAmount(amount);
                                     }}
                                 >
                                     ${amount}
@@ -44,15 +65,13 @@ function PlayButton() {
                         <input className="w-full px-3 py-2 rounded-xl bg-gray-800 border border-gray-500 text-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-maincolor"
                             type="number"
                             placeholder="Enter amount"
-                            value={customAmount}
                             onChange={(e) => {
-                                setCustomAmount(e.target.value);
-                                setSelectedStake(null);
+                                setBetAmount(Number(e.target.value));
                             }}
                         />
 
                         <button className="py-2 rounded-xl bg-green-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
-                            onClick={() => navigate(`/games/chess/match`)}>
+                            onClick={playMatch}>
                             Play
                         </button>
                     </div>

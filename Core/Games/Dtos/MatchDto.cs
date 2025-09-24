@@ -7,11 +7,11 @@
             Players = new List<PlayerDto>();
         }
 
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public decimal BetAmount { get; set; }
 
-        public DateTime DateAndTime { get; set; }
+        public string DateAndTime { get; set; }
 
         public int GameId { get; set; }
 

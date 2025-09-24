@@ -19,12 +19,13 @@ namespace RestAPI.Hubs
             connections = new ConcurrentDictionary<string, string>();
         }
 
-        public async Task CreateMatch(MatchDto match)
+        public async Task CreateMatch(MatchDto match, PlayerDto hostPlayer)
         {
-            await _matchService.AddMatchAsync(match);
+            //await _matchService.AddMatchAsync(match);
+            match.Players.Add(hostPlayer);
             _gameManagerService.CreateMatch(match);
 
-            await Clients.All.SendAsync("MatchCreated", match);
+            await Clients.All.SendAsync("ReceiveMatch", match);
         }
 
         public async Task JoinMatch(int gameId, Guid matchId, PlayerDto player)

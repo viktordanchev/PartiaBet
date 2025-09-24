@@ -15,7 +15,7 @@ const GameInfo = ({ gameData }) => {
             </div>
 
             <div className="flex justify-center gap-4">
-                <PlayButton />
+                <PlayButton gameData={gameData} />
                 <FriendChallengeButton />
             </div>
         </article>

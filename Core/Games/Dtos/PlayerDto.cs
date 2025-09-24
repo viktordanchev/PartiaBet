@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
 
-        public string ImgUrl { get; set; } = string.Empty;
+        public string ProfileImgUrl { get; set; } = string.Empty;
 
         public string Username { get; set; } = string.Empty;
 
