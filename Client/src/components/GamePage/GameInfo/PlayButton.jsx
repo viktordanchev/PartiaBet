@@ -57,7 +57,7 @@ function PlayButton({ gameData }) {
                                         setBetAmount(amount);
                                     }}
                                 >
-                                    ${amount}
+                                    {amount}$
                                 </button>
                             ))}
                         </div>

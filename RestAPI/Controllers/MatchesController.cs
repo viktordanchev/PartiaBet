@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Games;
+﻿using Core.Enums;
+using Core.Interfaces.Games;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RestAPI.Controllers
@@ -7,17 +8,17 @@ namespace RestAPI.Controllers
     [Route("api/matches")]
     public class MatchesController : Controller
     {
-        private readonly IGameManagerService _gameManagerService;
+        private readonly IMatchManagerService _gameManagerService;
 
-        public MatchesController(IGameManagerService gameManagerService)
+        public MatchesController(IMatchManagerService gameManagerService)
         {
             _gameManagerService = gameManagerService;
         }
 
         [HttpPost("getActiveMatches")]
-        public IActionResult GetActiveMatches([FromBody] int gameId)
+        public IActionResult GetActiveMatches([FromBody] GameType gameType)
         {
-            var activeMatches = _gameManagerService.GetMatches(gameId);
+            var activeMatches = _gameManagerService.GetMatches(gameType);
 
             return Ok(activeMatches);
         }

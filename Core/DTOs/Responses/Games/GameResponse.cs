@@ -6,8 +6,6 @@
 
         public string Name { get; set; } = string.Empty;
 
-        public int MaxPlayers { get; set; }
-
         public string ImgUrl { get; set; } = string.Empty;
     }
 }

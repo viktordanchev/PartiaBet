@@ -1,4 +1,4 @@
-﻿namespace Core.DTOs.Enums
+﻿namespace Core.Enums
 {
     public enum PlayerRole
     {

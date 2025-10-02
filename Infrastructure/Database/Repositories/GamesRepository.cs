@@ -21,7 +21,6 @@ namespace Infrastructure.Database.Repositories
                 {
                     Id = g.Id,
                     Name = g.Name,
-                    MaxPlayers = g.MaxPlayers,
                     ImgUrl = g.ImgUrl
                 })
                 .ToListAsync();

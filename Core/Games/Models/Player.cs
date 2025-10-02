@@ -1,6 +1,6 @@
-﻿namespace Core.Games.Dtos
+﻿namespace Core.Games.Models
 {
-    public class PlayerDto
+    public class Player
     {
         public Guid Id { get; set; }
 

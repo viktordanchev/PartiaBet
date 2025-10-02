@@ -73,7 +73,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             services.AddSingleton<IChessService, ChessService>();
-            services.AddSingleton<IGameManagerService, GameManagerService>();
+            services.AddSingleton<IMatchManagerService, MatchManagerService>();
         }
 
         public static void AddCorsExtension(this IServiceCollection services, IConfiguration config)

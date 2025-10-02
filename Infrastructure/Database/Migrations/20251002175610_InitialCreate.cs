@@ -21,8 +21,8 @@ namespace Infrastructure.Database.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    MaxPlayers = table.Column<int>(type: "integer", nullable: false),
-                    ImgUrl = table.Column<string>(type: "text", nullable: false)
+                    ImgUrl = table.Column<string>(type: "text", nullable: false),
+                    GameType = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,7 +50,7 @@ namespace Infrastructure.Database.Migrations
                     Email = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
                     Username = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    RegisteredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    RegisteredAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ImageUrl = table.Column<string>(type: "text", nullable: true),
                     Penalty = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Balance = table.Column<decimal>(type: "numeric", nullable: false)
@@ -216,13 +216,13 @@ namespace Infrastructure.Database.Migrations
 
             migrationBuilder.InsertData(
                 table: "Games",
-                columns: new[] { "Id", "ImgUrl", "MaxPlayers", "Name" },
+                columns: new[] { "Id", "GameType", "ImgUrl", "Name" },
                 values: new object[,]
                 {
-                    { 1, "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg", 2, "Chess" },
-                    { 2, "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png", 2, "Backgammon" },
-                    { 3, "https://partiabetstorage.blob.core.windows.net/game-images/belote.png", 4, "Belote" },
-                    { 4, "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png", 2, "Sixty-Six" }
+                    { 1, 0, "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg", "Chess" },
+                    { 2, 1, "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png", "Backgammon" },
+                    { 3, 2, "https://partiabetstorage.blob.core.windows.net/game-images/belote.png", "Belote" },
+                    { 4, 3, "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png", "Sixty-Six" }
                 });
 
             migrationBuilder.CreateIndex(

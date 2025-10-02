@@ -1,38 +1,32 @@
-﻿using Core.Games.Dtos;
+﻿using Core.Enums;
+using Core.Games.Dtos;
 using Core.Interfaces.Games;
-using Core.Interfaces.Services;
 using Microsoft.AspNetCore.SignalR;
-using System.Collections.Concurrent;
 
 namespace RestAPI.Hubs
 {
     public class GameHub : Hub  
     {
-        private readonly IGameManagerService _gameManagerService;
-        private readonly IMatchService _matchService;
-        private readonly ConcurrentDictionary<string, string> connections;
+        private readonly IMatchManagerService _gameManagerService;
 
-        public GameHub(IGameManagerService gameManagerService, IMatchService matchService)
+        public GameHub(IMatchManagerService gameManagerService)
         {
             _gameManagerService = gameManagerService;
-            _matchService = matchService;
-            connections = new ConcurrentDictionary<string, string>();
         }
 
         public async Task CreateMatch(MatchDto match, PlayerDto hostPlayer)
         {
-            //await _matchService.AddMatchAsync(match);
-            match.Players.Add(hostPlayer);
-            _gameManagerService.CreateMatch(match);
+            var matchId = _gameManagerService.AddMatch(match);
+            var createdMatch = _gameManagerService.AddPersonToMatch(match.GameType, matchId, hostPlayer);
 
-            await Clients.All.SendAsync("ReceiveMatch", match);
+            await Clients.All.SendAsync("ReceiveMatch", createdMatch);
         }
 
-        public async Task JoinMatch(int gameId, Guid matchId, PlayerDto player)
+        public async Task JoinMatch(GameType gameType, Guid matchId, PlayerDto player)
         {
-            var match = _gameManagerService.JoinMatch(gameId, matchId, player);
+            var match = _gameManagerService.AddPersonToMatch(gameType, matchId, player);
 
-            await Clients.All.SendAsync("UpdatePlayerCount", gameId);
+            await Clients.All.SendAsync("UpdatePlayerCount", gameType);
             await Clients.All.SendAsync("UpdatePlayers", match);
         }
     }

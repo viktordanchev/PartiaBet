@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(PartiaBetDbContext))]
-    [Migration("20250829164920_InitialCreate")]
+    [Migration("20251002175610_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -82,12 +82,12 @@ namespace Infrastructure.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("GameType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ImgUrl")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("MaxPlayers")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -101,29 +101,29 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
+                            GameType = 0,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg",
-                            MaxPlayers = 2,
                             Name = "Chess"
                         },
                         new
                         {
                             Id = 2,
+                            GameType = 1,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png",
-                            MaxPlayers = 2,
                             Name = "Backgammon"
                         },
                         new
                         {
                             Id = 3,
+                            GameType = 2,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png",
-                            MaxPlayers = 4,
                             Name = "Belote"
                         },
                         new
                         {
                             Id = 4,
+                            GameType = 3,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png",
-                            MaxPlayers = 2,
                             Name = "Sixty-Six"
                         });
                 });
@@ -211,7 +211,7 @@ namespace Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("RegisteredAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Username")
                         .IsRequired()

@@ -1,4 +1,6 @@
-﻿namespace Core.Games.Dtos
+﻿using Core.Enums;
+
+namespace Core.Games.Dtos
 {
     public class MatchDto
     {
@@ -7,11 +9,13 @@
             Players = new List<PlayerDto>();
         }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; }
+
+        public GameType GameType { get; set; }
 
         public decimal BetAmount { get; set; }
 
-        public string DateAndTime { get; set; }
+        public string DateAndTime { get; set; } = string.Empty;
 
         public int GameId { get; set; }
 

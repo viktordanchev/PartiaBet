@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Database.Entities
 {
@@ -11,9 +12,9 @@ namespace Infrastructure.Database.Entities
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        public int MaxPlayers { get; set; }
+        public string ImgUrl { get; set; } = string.Empty;
 
         [Required]
-        public string ImgUrl { get; set; } = string.Empty;
+        public GameType GameType { get; set; }
     }
 }
