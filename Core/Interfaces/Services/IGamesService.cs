@@ -5,5 +5,6 @@ namespace Core.Interfaces.Services
     public interface IGamesService
     {
         Task<IEnumerable<GameResponse>> GetAllAsync();
+        Task<GameDetailsResponse> GetDetailsAsync(int gameId);
     }
 }

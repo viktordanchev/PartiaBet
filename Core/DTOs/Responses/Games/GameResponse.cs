@@ -6,6 +6,6 @@
 
         public string Name { get; set; } = string.Empty;
 
-        public string ImgUrl { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
     }
 }

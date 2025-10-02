@@ -21,9 +21,23 @@ namespace Infrastructure.Database.Repositories
                 {
                     Id = g.Id,
                     Name = g.Name,
-                    ImgUrl = g.ImgUrl
+                    ImageUrl = g.ImgUrl
                 })
                 .ToListAsync();
+        }
+
+        public async Task<GameDetailsResponse> GetDetailsAsync(int gameId)
+        {
+            return await _context.Games
+                .AsNoTracking()
+                .Where(g => g.Id == gameId) 
+                .Select(g => new GameDetailsResponse()
+                {
+                    Name = g.Name,
+                    ImageUrl = g.ImgUrl,
+                    GameType = g.GameType
+                })
+                .FirstAsync();
         }
     }
 }
