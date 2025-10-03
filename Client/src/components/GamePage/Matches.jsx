@@ -20,7 +20,7 @@ const Matches = ({ gameType }) => {
             setMatches(matches);
         };
 
-        receiveData();
+        //receiveData();
     }, []);
 
     useEffect(() => {

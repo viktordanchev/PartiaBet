@@ -9,8 +9,6 @@ function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        document.title = 'Home';
-
         const receiveData = async () => {
             const games = await apiRequest('games', 'getAll', 'GET', false, false, undefined);
 
@@ -20,6 +18,10 @@ function HomePage() {
 
         receiveData();
     });
+
+    useEffect(() => {
+        document.title = 'Home';
+    }, []);
 
     return (
         <section className="flex-1 p-6 flex flex-wrap justify-center items-center gap-6">

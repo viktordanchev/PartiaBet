@@ -23,11 +23,16 @@ namespace RestAPI.Controllers
         }
 
         [HttpPost("getGameDetails")]
-        public async Task<IActionResult> GetGameDetails([FromBody] int gameId)
+        public async Task<IActionResult> GetGameDetails([FromBody] string game)
         {
-            var game = await _gamesService.GetDetailsAsync(gameId);
+            var gameData = await _gamesService.GetDetailsAsync(game);
 
-            return Ok(game);
+            if(gameData == null)
+            {
+                return NotFound("Game not found");
+            }
+
+            return Ok(gameData);
         }
     }
 }

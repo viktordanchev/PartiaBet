@@ -5,6 +5,6 @@ namespace Core.Interfaces.Repositories
     public interface IGamesRepository
     {
         Task<IEnumerable<GameResponse>> GetAllAsync();
-        Task<GameDetailsResponse> GetDetailsAsync(int gameId);
+        Task<GameDetailsResponse?> GetDetailsAsync(string game);
     }
 }
