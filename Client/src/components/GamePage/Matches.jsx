@@ -11,7 +11,7 @@ const Matches = ({ gameType }) => {
     const [isLoading, setIsLoading] = useState(true);
     const casualMatches = matches.filter(m => m.betAmount === 0);
     const betMatches = matches.filter(m => m.betAmount > 0);
-
+    
     useEffect(() => {
         const receiveData = async () => {
             const matches = await apiRequest('matches', 'getActiveMatches', 'POST', false, false, gameType);
@@ -20,7 +20,7 @@ const Matches = ({ gameType }) => {
             setMatches(matches);
         };
 
-        //receiveData();
+        receiveData();
     }, []);
 
     useEffect(() => {

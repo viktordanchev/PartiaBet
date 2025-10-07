@@ -20,7 +20,6 @@ namespace Infrastructure.Database.Repositories
             {
                 BetAmount = match.BetAmount,
                 DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
-                GameId = match.GameId,
             };
 
             await _context.MatchHistory.AddAsync(newMatch);

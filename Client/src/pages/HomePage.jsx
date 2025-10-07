@@ -17,7 +17,7 @@ function HomePage() {
         };
 
         receiveData();
-    });
+    }, []);
 
     useEffect(() => {
         document.title = 'Home';

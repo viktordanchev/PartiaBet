@@ -1,4 +1,5 @@
 ﻿using Core.Enums;
+using Core.Games.Models;
 
 namespace Core.Games.Dtos
 {
@@ -6,23 +7,25 @@ namespace Core.Games.Dtos
     {
         public MatchDto()
         {
-            Players = new List<PlayerDto>();
+            Teams = new List<TeamDto>();
         }
 
         public Guid Id { get; set; }
 
         public GameType GameType { get; set; }
 
-        public decimal BetAmount { get; set; }
-
         public string DateAndTime { get; set; } = string.Empty;
 
-        public int GameId { get; set; }
+        public decimal BetAmount { get; set; }
 
-        public int MaxPlayers { get; set; }
+        public int TeamsCount { get; set; }
+
+        public int TeamSize { get; set; }
 
         public int SpectatorsCount { get; set; }
 
-        public List<PlayerDto> Players { get; set; }
+        public GameBoard Board { get; set; } = null!;
+
+        public List<TeamDto> Teams { get; set; }
     }
 }

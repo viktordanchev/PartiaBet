@@ -2,33 +2,44 @@ import React from 'react';
 import PlayerCard from './PlayerCard';
 
 const MatchCard = ({ data }) => {
-    const isMatchFull = data.players.length === data.maxPlayers;
-    console.log(data);
+    const isMatchFull = false;
 
-    const teams = data.players.reduce((acc, player) => {
-        if (!acc[player.team]) acc[player.team] = [];
-        acc[player.team].push(player);
-        return acc;
-    }, {});
+    const teams = [
+        ...data.teams,
+        ...Array.from({ length: data.teamsCount - data.teams.length }, () => ({
+            id: null,
+            players: [],
+        })),
+    ].map((team, teamIndex) => {
+        const playerCount = team.players.length ?? 0;
 
+        const players = [
+            ...team.players,
+            ...Array.from({ length: data.teamSize - playerCount }, () => ({})),
+        ];
+
+        return {
+            ...team,
+            players,
+            id: team.id ?? `empty-team-${teamIndex}`,
+        };
+    });
+    
     return (
         <li className="w-full p-2 flex flex-col items-center gap-3 rounded-xl border border-gray-700 bg-gray-900">
             <div className="w-full flex items-center text-xs text-center">
-                {Object.entries(teams).map(([teamNumber, players]) => (
-                    <div key={teamNumber} className="flex-1 flex justify-center items-center gap-2">
-                        {players.map((player) => (
-                            <div key={player.id} className="flex flex-col items-center">
-                                <img
-                                    src={player.profileImgUrl || ProfilePhoto}
-                                    className="rounded-lg border border-gray-500 h-12 w-12"
-                                />
-                                <p className="font-semibold truncate w-24">{player.username}</p>
-                                <p>Rating: {player.rating}</p>
-                            </div>
-                        ))}
-                        <p className="flex-none text-2xl font-semibold mx-2">VS</p>
-                    </div>
-                ))}
+                {teams.map((team, teamIndex) =>
+                    <>
+                        <div key={team.id} className="flex-1 flex justify-center items-center gap-2">
+                            {team.players.map((player) => (
+                                <PlayerCard data={player} />
+                            ))}
+                        </div>
+                        {teamIndex < teams.length - 1 && (
+                            <p className="flex-none text-2xl font-semibold mx-2">VS</p>
+                        )}
+                    </>
+                )}
             </div>
             <button className={`py-1 px-3 rounded-xl text-white font-medium transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105 ${isMatchFull ? 'bg-red-600' : 'bg-green-600'}`}>
                 {isMatchFull ? (

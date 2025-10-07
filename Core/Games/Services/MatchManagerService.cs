@@ -4,6 +4,7 @@ using Core.Games.Models;
 using Core.Interfaces.Games;
 using System.Collections.Concurrent;
 using System.Globalization;
+using static Core.Games.GameConfigs;
 
 namespace Core.Games.Services
 {
@@ -21,18 +22,25 @@ namespace Core.Games.Services
             if (games.ContainsKey(gameType))
             {
                 return games[gameType]
-                    .Select(g => new MatchDto()
+                    .Select(m => new MatchDto()
                     {
-                        Id = g.Id,
-                        BetAmount = g.BetAmount,
-                        //Players = g.Players.Select(p => new PlayerDto()
-                        //{
-                        //    Id = p.Id,
-                        //    Username = p.Username,
-                        //    ProfileImageUrl = p.ProfileImageUrl,
-                        //    Rating = p.Rating
-                        //})
-                        //.ToList()
+                        Id = m.Id,
+                        GameType = gameType,
+                        BetAmount = m.BetAmount,
+                        Teams = m.Teams
+                            .Select(t => new TeamDto()
+                            {
+                                Id = t.Id,
+                                Players = t.Players
+                                    .Select(p => new PlayerDto()
+                                    {
+                                        Id = p.Id,
+                                        Username = p.Username,
+                                        ProfileImageUrl = p.ProfileImageUrl,
+                                        Rating = p.Rating
+                                    }).ToList()
+                            })
+                            .ToList(),
                     })
                     .ToList();
             }
@@ -51,7 +59,6 @@ namespace Core.Games.Services
             {
                 BetAmount = match.BetAmount,
                 DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
-                Board = GameBoardFactory.Create(match.GameType),
             };
 
             games[match.GameType].Add(newMatch);
@@ -62,37 +69,47 @@ namespace Core.Games.Services
         public MatchDto AddPersonToMatch(GameType gameType, Guid matchId, PlayerDto player)
         {
             var match = games[gameType].FirstOrDefault(m => m.Id == matchId);
-            
-           //if (match.Players.Count == match.TeamsCount)
-           //{
-           //
-           //}
-           //
-           //player.Team = match.Players.Count / playersInTeam + 1;
-           //
-           //match.Players.Add(new Player() 
-           //{ 
-           //    Id = player.Id, 
-           //    Username = player.Username, 
-           //    ProfileImageUrl = player.ProfileImageUrl, 
-           //    Rating = player.Rating,
-           //    Team = player.Team
-           //});
+            Team team = null;
 
-            return new MatchDto() 
+            if (match!.Teams.Sum(t => t.Players.Count) == ChessConfigs.TeamsCount * ChessConfigs.TeamSize)
+            {
+
+            }
+            else if (match!.Teams.All(t => t.Players.Count == ChessConfigs.TeamSize))
+            {
+                team = new Team();
+                match.Teams.Add(team);
+            }
+
+            team!.Players.Add(new Player()
+            {
+                Id = player.Id,
+                Username = player.Username,
+                ProfileImageUrl = player.ProfileImageUrl,
+                Rating = player.Rating,
+            });
+
+            return new MatchDto()
             {
                 Id = match.Id,
+                GameType = gameType,
                 BetAmount = match.BetAmount,
-               //layers = match.Players
-               //   .Select(p => new PlayerDto()
-               //   {
-               //       Id = p.Id,
-               //       Username = p.Username,
-               //       ProfileImageUrl = p.ProfileImageUrl,
-               //       Rating = p.Rating,
-               //       Team = p.Team
-               //   })
-               //   .ToList()
+                TeamsCount = ChessConfigs.TeamsCount,
+                TeamSize = ChessConfigs.TeamSize,
+                Teams = match.Teams
+                    .Select(t => new TeamDto()
+                    {
+                        Id = t.Id,
+                        Players = t.Players
+                            .Select(p => new PlayerDto()
+                            {
+                                Id = p.Id,
+                                Username = p.Username,
+                                ProfileImageUrl = p.ProfileImageUrl,
+                                Rating = p.Rating
+                            }).ToList()
+                    })
+                    .ToList(),
             };
 
         }

@@ -10,8 +10,6 @@
 
         public int Rating { get; set; }
 
-        public int Team { get; set; }
-
         public bool IsActivePlayer { get; set; }
     }
 }

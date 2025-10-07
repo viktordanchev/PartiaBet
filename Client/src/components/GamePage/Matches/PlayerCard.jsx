@@ -6,11 +6,11 @@ const PlayerCard = ({ data }) => {
     return (
         <div className="flex flex-col items-center">
             <img
-                src={player.profileImgUrl || ProfilePhoto}
+                src={data.id ? (data.profileImgUrl || ProfilePhoto) : QuestionMark}
                 className="rounded-lg border border-gray-500 h-12 w-12"
             />
-            <p className="font-semibold truncate w-24">{player.username}</p>
-            <p>Rating: {player.rating}</p>
+            <p className="font-semibold truncate w-24">{data.username || 'Anonymous'}</p>
+            <p>Rating: {data.rating || 0}</p>
         </div>
     );
 };

@@ -12,11 +12,11 @@ function GamePage() {
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState({});
-
+    
     useEffect(() => {
         const receiveData = async () => {
             const gameData = await apiRequest('games', 'getGameDetails', 'POST', false, false, game);
-
+            
             setIsLoading(false);
             setGameData(gameData);
         };

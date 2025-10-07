@@ -26,10 +26,10 @@ function useApiRequest() {
         if (values) {
             requestOptions.body = JSON.stringify(values);
         }
-
+        
         try {
             let response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
-
+            
             if (response.status === 204) {
                 return true;
             } else if (response.status === 401) {
@@ -41,7 +41,7 @@ function useApiRequest() {
 
                     response = await fetch(`${apiUrl}/${controller}/${action}`, requestOptions);
                 } else {
-                    navigate('/friends');
+                    navigate('/');
                     return;
                 }
             } else if (response.status >= 500) {
