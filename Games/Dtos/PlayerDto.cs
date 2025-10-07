@@ -1,4 +1,4 @@
-﻿namespace Core.Games.Dtos
+﻿namespace Games.Dtos
 {
     public class PlayerDto
     {

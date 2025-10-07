@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 using System.Globalization;
 using static Core.Games.GameConfigs;
 
-namespace Core.Games.Services
+namespace Games.Services
 {
     public class MatchManagerService : IMatchManagerService
     {

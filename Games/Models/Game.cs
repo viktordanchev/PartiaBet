@@ -1,4 +1,4 @@
-﻿namespace Core.Games.Models
+﻿namespace Games.Models
 {
     public class Game
     {

@@ -1,9 +1,9 @@
 ﻿using Core.Enums;
 using Core.Games.Models;
 
-namespace Core.Games.Services
+namespace Games.Services
 {
-    public class GameBoardFactory
+    public class GameBoardService
     {
         public static GameBoard Create(GameType type)
         {

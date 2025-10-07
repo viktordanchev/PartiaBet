@@ -1,7 +1,7 @@
 ﻿using Core.Enums;
-using Core.Games.Models;
+using Games.Models;
 
-namespace Core.Games.Dtos
+namespace Games.Dtos
 {
     public class MatchDto
     {
