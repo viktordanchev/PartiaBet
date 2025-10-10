@@ -1,10 +1,10 @@
 ﻿using Core.Enums;
-using Core.Games.Dtos;
-using Core.Games.Models;
-using Core.Interfaces.Games;
+using Games.Dtos;
+using Games.Models;
+using Interfaces.Games;
 using System.Collections.Concurrent;
 using System.Globalization;
-using static Core.Games.GameConfigs;
+using static Games.Chess.ChessConfigs;
 
 namespace Games.Services
 {
@@ -94,8 +94,8 @@ namespace Games.Services
                 Id = match.Id,
                 GameType = gameType,
                 BetAmount = match.BetAmount,
-                TeamsCount = ChessConfigs.TeamsCount,
-                TeamSize = ChessConfigs.TeamSize,
+                TeamsCount = TeamsCount,
+                TeamSize = TeamSize,
                 Teams = match.Teams
                     .Select(t => new TeamDto()
                     {

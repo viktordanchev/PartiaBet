@@ -2,8 +2,7 @@
 {
     public enum GameType
     {
-        None,
-        Chess,
+        Chess = 1,
         Backgammon,
         Belote,
         SixtySix

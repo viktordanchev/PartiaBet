@@ -1,7 +1,7 @@
 ﻿using Core.Enums;
-using Core.Games.Dtos;
+using Games.Dtos;
 
-namespace Core.Interfaces.Games
+namespace Interfaces.Games
 {
     public interface IMatchManagerService
     {
