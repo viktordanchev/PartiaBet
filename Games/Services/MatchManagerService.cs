@@ -1,10 +1,10 @@
 ﻿using Core.Enums;
+using Games.Chess;
 using Games.Dtos;
 using Games.Models;
 using Interfaces.Games;
 using System.Collections.Concurrent;
 using System.Globalization;
-using static Games.Chess.ChessConfigs;
 
 namespace Games.Services
 {
@@ -70,8 +70,9 @@ namespace Games.Services
         {
             var match = games[gameType].FirstOrDefault(m => m.Id == matchId);
             Team team = null;
+            var gameService = GameFactory.GetGameService(gameType);
 
-            if (match!.Teams.Sum(t => t.Players.Count) == ChessConfigs.TeamsCount * ChessConfigs.TeamSize)
+            if (IsMatchFull(match!, gameType))
             {
 
             }
@@ -112,6 +113,13 @@ namespace Games.Services
                     .ToList(),
             };
 
+        }
+
+        private bool IsMatchFull(Match match, GameType gameType)
+        {
+            var gameConfigs = GameFactory.GetGameConfigs(gameType);
+
+            return match.Teams.Sum(t => t.Players.Count) == gameConfigs.TeamsCount * gameConfigs.TeamSize;
         }
     }
 }

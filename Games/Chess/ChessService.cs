@@ -1,9 +1,8 @@
-﻿using Core.Interfaces.Services;
+﻿using Games.Interfaces;
 
 namespace Games.Chess
 {
-    public class ChessService : IGamesService
+    public class ChessService : IGameService
     {
-        public ChessConfigs Configs { get; set; } = null!;
     }
 }

@@ -1,8 +1,10 @@
-﻿namespace Games.Chess
+﻿using Games.Interfaces;
+
+namespace Games.Chess
 {
-    public class ChessConfigs
+    public class ChessConfigs : IGameConfigs
     {
-        public const int TeamSize = 1;
-        public const int TeamsCount = 2;
+        public int TeamSize { get; set; } = 1;
+        public int TeamsCount { get; set; } = 2;
     }
 }
