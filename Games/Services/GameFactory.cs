@@ -1,5 +1,7 @@
-﻿using Core.Enums;
+﻿using Common.Exceptions;
+using Core.Enums;
 using Games.Interfaces;
+using static Common.Constants.ErrorMessages;
 
 namespace Games.Services
 {
@@ -19,7 +21,7 @@ namespace Games.Services
             return game switch
             {
                 GameType.Chess => new Chess.ChessConfigs(),
-                _ => throw new NotSupportedException($"Game type '{game}' is not supported.")
+                _ => throw new ApiException(InvalidRequest)
             };
         }
     }
