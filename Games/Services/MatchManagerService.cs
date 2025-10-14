@@ -1,10 +1,11 @@
-﻿using Core.Enums;
-using Games.Chess;
+﻿using Common.Exceptions;
+using Core.Enums;
 using Games.Dtos;
 using Games.Models;
 using Interfaces.Games;
 using System.Collections.Concurrent;
 using System.Globalization;
+using static Common.Constants.ErrorMessages;
 
 namespace Games.Services
 {
@@ -50,7 +51,7 @@ namespace Games.Services
 
         public Guid AddMatch(MatchDto match)
         {
-            if (!games.ContainsKey(match.GameType))
+            if (!games.ContainsKey(match.GameType) && Enum.IsDefined(typeof(GameType), match.GameType))
             {
                 games.TryAdd(match.GameType, new List<Match>());
             }
@@ -69,14 +70,13 @@ namespace Games.Services
         public MatchDto AddPersonToMatch(GameType gameType, Guid matchId, PlayerDto player)
         {
             var match = games[gameType].FirstOrDefault(m => m.Id == matchId);
+
+            IsMatchFull(match!, gameType);
+
+            var gameConfigs = GameFactory.GetGameConfigs(gameType);
             Team team = null;
-            var gameService = GameFactory.GetGameService(gameType);
-
-            if (IsMatchFull(match!, gameType))
-            {
-
-            }
-            else if (match!.Teams.All(t => t.Players.Count == ChessConfigs.TeamSize))
+            
+            if (match!.Teams.All(t => t.Players.Count == gameConfigs.TeamSize))
             {
                 team = new Team();
                 match.Teams.Add(team);
@@ -115,11 +115,22 @@ namespace Games.Services
 
         }
 
-        private bool IsMatchFull(Match match, GameType gameType)
+        public void IsGameAndMatchExist(GameType gameType, Guid matchId)
+        {
+            if (!games.ContainsKey(gameType) || !games[gameType].Any(m => m.Id == matchId))
+            {
+                throw new ApiException(InvalidRequest);
+            }
+        }
+
+        private void IsMatchFull(Match match, GameType gameType)
         {
             var gameConfigs = GameFactory.GetGameConfigs(gameType);
 
-            return match.Teams.Sum(t => t.Players.Count) == gameConfigs.TeamsCount * gameConfigs.TeamSize;
+            if(match.Teams.Sum(t => t.Players.Count) == gameConfigs.TeamsCount * gameConfigs.TeamSize)
+            {
+                throw new ApiException(InvalidRequest);
+            }
         }
     }
 }

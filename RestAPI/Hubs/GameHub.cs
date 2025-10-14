@@ -1,6 +1,6 @@
 ﻿using Core.Enums;
-using Core.Games.Dtos;
-using Core.Interfaces.Games;
+using Games.Dtos;
+using Interfaces.Games;
 using Microsoft.AspNetCore.SignalR;
 
 namespace RestAPI.Hubs

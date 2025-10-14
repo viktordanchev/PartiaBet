@@ -1,7 +1,6 @@
 ﻿using Core.DTOs.Requests.Account;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 using static Common.Constants.ErrorMessages;
 using static Common.Constants.Messages;
 

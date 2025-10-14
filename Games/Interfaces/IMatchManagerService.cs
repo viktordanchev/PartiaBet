@@ -8,5 +8,6 @@ namespace Interfaces.Games
         Guid AddMatch(MatchDto match);
         MatchDto AddPersonToMatch(GameType gameType, Guid matchId, PlayerDto player);
         List<MatchDto> GetMatches(GameType gameType);
+        void IsGameAndMatchExist(GameType gameType, Guid matchId);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Core.Enums;
-using Core.Interfaces.Games;
+using Interfaces.Games;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RestAPI.Controllers
