@@ -26,16 +26,16 @@ namespace Infrastructure.Database.Repositories
                 .ToListAsync();
         }
 
-        public async Task<GameDetailsResponse?> GetDetailsAsync(string game)
+        public async Task<GameResponse?> GetGameAsync(string game)
         {
             return await _context.Games
                 .AsNoTracking()
-                .Where(g => g.Name.ToLower() == game.ToLower()) 
-                .Select(g => new GameDetailsResponse()
+                .Where(g => g.Name.ToLower() == game.ToLower())
+                .Select(g => new GameResponse()
                 {
+                    Id = g.Id,
                     Name = g.Name,
-                    ImageUrl = g.ImgUrl,
-                    GameType = g.GameType
+                    ImageUrl = g.ImgUrl
                 })
                 .FirstOrDefaultAsync();
         }

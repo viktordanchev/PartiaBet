@@ -1,6 +1,6 @@
-﻿namespace Games.Dtos
+﻿namespace Games.Models
 {
-    public class PlayerDto
+    public class PlayerModel
     {
         public Guid Id { get; set; }
 
@@ -9,6 +9,8 @@
         public string Username { get; set; } = string.Empty;
 
         public int Rating { get; set; }
+
+        public int Team { get; set; }
 
         public bool IsActivePlayer { get; set; }
     }

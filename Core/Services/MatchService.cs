@@ -1,4 +1,4 @@
-﻿using Core.Games.Dtos;
+﻿using Core.DTOs.Requests.Matches;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 
@@ -13,9 +13,9 @@ namespace Core.Services
             _matchRepository = matchRepository;
         }
 
-        public async Task AddMatchAsync(MatchDto match)
+        public async Task<Guid> AddMatchAsync(AddMatchRequest match)
         {
-            match.Id = await _matchRepository.AddMatch(match);
+            return await _matchRepository.AddMatch(match);
         }
     }
 }

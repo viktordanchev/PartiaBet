@@ -18,9 +18,9 @@ namespace Core.Services
             return await _gamesRepository.GetAllAsync();
         }
 
-        public async Task<GameDetailsResponse?> GetDetailsAsync(string game)
+        public async Task<GameResponse?> GetGameAsync(string game)
         {
-            return await _gamesRepository.GetDetailsAsync(game);
+            return await _gamesRepository.GetGameAsync(game);
         }
     }
 }

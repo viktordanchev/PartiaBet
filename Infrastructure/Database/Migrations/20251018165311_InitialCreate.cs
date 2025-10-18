@@ -18,11 +18,9 @@ namespace Infrastructure.Database.Migrations
                 name: "Games",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    ImgUrl = table.Column<string>(type: "text", nullable: false),
-                    GameType = table.Column<int>(type: "integer", nullable: false)
+                    ImgUrl = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -216,13 +214,13 @@ namespace Infrastructure.Database.Migrations
 
             migrationBuilder.InsertData(
                 table: "Games",
-                columns: new[] { "Id", "GameType", "ImgUrl", "Name" },
+                columns: new[] { "Id", "ImgUrl", "Name" },
                 values: new object[,]
                 {
-                    { 1, 1, "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg", "Chess" },
-                    { 2, 2, "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png", "Backgammon" },
-                    { 3, 3, "https://partiabetstorage.blob.core.windows.net/game-images/belote.png", "Belote" },
-                    { 4, 4, "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png", "Sixty-Six" }
+                    { 1, "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg", "Chess" },
+                    { 2, "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png", "Backgammon" },
+                    { 3, "https://partiabetstorage.blob.core.windows.net/game-images/belote.png", "Belote" },
+                    { 4, "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png", "Sixty-Six" }
                 });
 
             migrationBuilder.CreateIndex(

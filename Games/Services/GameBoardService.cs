@@ -1,5 +1,5 @@
 ﻿using Core.Enums;
-using Core.Games.Models;
+using Games.Models;
 
 namespace Games.Services
 {

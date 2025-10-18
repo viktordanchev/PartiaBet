@@ -1,13 +1,13 @@
 ﻿namespace Games.Models
 {
-    public class Match
+    public class MatchModel
     {
-        public Match()
+        public MatchModel()
         {
-            Teams = new List<Team>();
+            Players = new List<PlayerModel>();
         }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; } = Guid.NewGuid();
 
         public decimal BetAmount { get; set; }
 
@@ -17,6 +17,6 @@
 
         public GameBoard Board { get; set; } = null!;
 
-        public List<Team> Teams { get; set; }
+        public List<PlayerModel> Players { get; set; }
     }
 }

@@ -74,12 +74,6 @@ namespace Infrastructure.Database.Migrations
             modelBuilder.Entity("Infrastructure.Database.Entities.Game", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GameType")
                         .HasColumnType("integer");
 
                     b.Property<string>("ImgUrl")
@@ -98,28 +92,24 @@ namespace Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            GameType = 1,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg",
                             Name = "Chess"
                         },
                         new
                         {
                             Id = 2,
-                            GameType = 2,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png",
                             Name = "Backgammon"
                         },
                         new
                         {
                             Id = 3,
-                            GameType = 3,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png",
                             Name = "Belote"
                         },
                         new
                         {
                             Id = 4,
-                            GameType = 4,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png",
                             Name = "Sixty-Six"
                         });

@@ -1,4 +1,4 @@
-﻿using Core.Games.Dtos;
+﻿using Core.DTOs.Requests.Matches;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
 using System.Globalization;
@@ -14,12 +14,13 @@ namespace Infrastructure.Database.Repositories
             _context = context;
         }
 
-        public async Task<Guid> AddMatch(MatchDto match)
+        public async Task<Guid> AddMatch(AddMatchRequest match)
         {
             var newMatch = new Match()
             {
                 BetAmount = match.BetAmount,
                 DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
+                GameId = match.GameId,
             };
 
             await _context.MatchHistory.AddAsync(newMatch);

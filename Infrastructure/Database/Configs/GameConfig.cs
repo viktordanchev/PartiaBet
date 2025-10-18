@@ -18,31 +18,27 @@ namespace Infrastructure.Database.Configs
             {
                 new Game
                 {
-                    Id = 1,
+                    Id = GameType.Chess,
                     Name = "Chess",
-                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg",
-                    GameType = GameType.Chess
+                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg"
                 },
                 new Game
                 {
-                    Id = 2,
+                    Id = GameType.Backgammon,
                     Name = "Backgammon",
-                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png",
-                    GameType = GameType.Backgammon
+                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png"
                 },
                 new Game
                 {
-                    Id = 3,
+                    Id = GameType.Belote,
                     Name = "Belote",
-                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png",
-                    GameType = GameType.Belote
+                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png"
                 },
                 new Game
                 {
-                    Id = 4,
+                    Id = GameType.SixtySix,
                     Name = "Sixty-Six",
-                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png",
-                    GameType = GameType.SixtySix
+                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png"
                 }
             };
         }

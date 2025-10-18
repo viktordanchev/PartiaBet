@@ -1,13 +1,14 @@
 ﻿using Core.Enums;
-using Games.Dtos;
+using Games.Dtos.Request;
+using Games.Dtos.Response;
 
 namespace Interfaces.Games
 {
     public interface IMatchManagerService
     {
-        Guid AddMatch(MatchDto match);
-        MatchDto AddPersonToMatch(GameType gameType, Guid matchId, PlayerDto player);
-        List<MatchDto> GetMatches(GameType gameType);
-        void IsGameAndMatchExist(GameType gameType, Guid matchId);
+        MatchResponse AddMatch(CreateMatchRequest match);
+        PlayerResponse AddPersonToMatch(GameType gameId, Guid matchId, AddPlayerRequest player);
+        List<MatchResponse> GetMatches(GameType gameType);
+        void IsGameAndMatchExist(GameType gameId, Guid matchId);
     }
 }

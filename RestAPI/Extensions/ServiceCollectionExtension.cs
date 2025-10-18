@@ -1,15 +1,14 @@
-﻿using Core.Games.Chess;
-using Core.Games.Services;
-using Core.Interfaces.ExternalServices;
-using Core.Interfaces.Games;
+﻿using Core.Interfaces.ExternalServices;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
 using Core.Services.Configs;
+using Games.Services;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
 using Infrastructure.Services;
 using Infrastructure.Services.Configs;
+using Interfaces.Games;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -72,7 +71,6 @@ namespace RestAPI.Extensions
             services.AddScoped<IGamesService, GamesService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
 
-            services.AddSingleton<IChessService, ChessService>();
             services.AddSingleton<IMatchManagerService, MatchManagerService>();
         }
 

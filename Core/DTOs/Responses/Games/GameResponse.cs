@@ -1,8 +1,10 @@
-﻿namespace Core.DTOs.Responses.Games
+﻿using Core.Enums;
+
+namespace Core.DTOs.Responses.Games
 {
     public class GameResponse
     {
-        public int Id { get; set; }
+        public GameType Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
 

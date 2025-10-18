@@ -1,9 +1,9 @@
-﻿using Core.Games.Dtos;
+﻿using Core.DTOs.Requests.Matches;
 
 namespace Core.Interfaces.Services
 {
     public interface IMatchService
     {
-        Task AddMatchAsync(MatchDto match);
+        Task<Guid> AddMatchAsync(AddMatchRequest match);
     }
 }

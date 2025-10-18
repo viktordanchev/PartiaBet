@@ -22,10 +22,10 @@ namespace RestAPI.Controllers
             return Ok(games);
         }
 
-        [HttpPost("getGameDetails")]
-        public async Task<IActionResult> GetGameDetails([FromBody] string game)
+        [HttpPost("getGameData")]
+        public async Task<IActionResult> GetGameData([FromBody] string game)
         {
-            var gameData = await _gamesService.GetDetailsAsync(game);
+            var gameData = await _gamesService.GetGameAsync(game);
 
             if(gameData == null)
             {

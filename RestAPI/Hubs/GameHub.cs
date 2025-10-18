@@ -1,5 +1,6 @@
 ﻿using Core.Enums;
 using Games.Dtos;
+using Games.Dtos.Request;
 using Interfaces.Games;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,27 +8,29 @@ namespace RestAPI.Hubs
 {
     public class GameHub : Hub  
     {
-        private readonly IMatchManagerService _gameManagerService;
+        private readonly IMatchManagerService _matchManagerService;
 
         public GameHub(IMatchManagerService gameManagerService)
         {
-            _gameManagerService = gameManagerService;
+            _matchManagerService = gameManagerService;
         }
 
-        public async Task CreateMatch(MatchDto match, PlayerDto hostPlayer)
+        public async Task CreateMatch(CreateMatchRequest matchData, AddPlayerRequest playerData)
         {
-            var matchId = _gameManagerService.AddMatch(match);
-            var createdMatch = _gameManagerService.AddPersonToMatch(match.GameType, matchId, hostPlayer);
+            var newMatch = _matchManagerService.AddMatch(matchData);
+            var personData = _matchManagerService.AddPersonToMatch(matchData.GameId, newMatch.Id, playerData);
 
-            await Clients.All.SendAsync("ReceiveMatch", createdMatch);
+            newMatch.Players.Add(personData);
+
+            await Clients.All.SendAsync("ReceiveMatch", newMatch);
         }
 
-        public async Task JoinMatch(GameType gameType, Guid matchId, PlayerDto player)
-        {
-            var match = _gameManagerService.AddPersonToMatch(gameType, matchId, player);
-
-            await Clients.All.SendAsync("UpdatePlayerCount", gameType);
-            await Clients.All.SendAsync("UpdatePlayers", match);
-        }
+        //public async Task JoinMatch(GameType gameType, Guid matchId, PlayerDto player)
+        //{
+        //    var match = _matchManagerService.AddPersonToMatch(gameType, matchId, player);
+        //
+        //    await Clients.All.SendAsync("UpdatePlayerCount", gameType);
+        //    await Clients.All.SendAsync("UpdatePlayers", match);
+        //}
     }
 }

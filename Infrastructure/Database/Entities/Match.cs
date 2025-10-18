@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Database.Entities
@@ -11,7 +12,7 @@ namespace Infrastructure.Database.Entities
         }
 
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; }
 
         public decimal BetAmount { get; set; }
 
@@ -20,7 +21,7 @@ namespace Infrastructure.Database.Entities
         public TimeSpan Duration { get; set; }
 
         [Required]
-        public int GameId { get; set; }
+        public GameType GameId { get; set; }
 
         [ForeignKey(nameof(GameId))]
         public Game Game { get; set; } = null!;

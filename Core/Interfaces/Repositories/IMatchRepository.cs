@@ -1,9 +1,9 @@
-﻿using Core.Games.Dtos;
+﻿using Core.DTOs.Requests.Matches;
 
 namespace Core.Interfaces.Repositories
 {
     public interface IMatchRepository
     {
-        Task<Guid> AddMatch(MatchDto match);
+        Task<Guid> AddMatch(AddMatchRequest match);
     }
 }

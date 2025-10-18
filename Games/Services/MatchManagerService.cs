@@ -1,6 +1,7 @@
 ﻿using Common.Exceptions;
 using Core.Enums;
-using Games.Dtos;
+using Games.Dtos.Request;
+using Games.Dtos.Response;
 using Games.Models;
 using Interfaces.Games;
 using System.Collections.Concurrent;
@@ -11,98 +12,27 @@ namespace Games.Services
 {
     public class MatchManagerService : IMatchManagerService
     {
-        private readonly ConcurrentDictionary<GameType, List<Match>> games;
+        private readonly ConcurrentDictionary<GameType, List<MatchModel>> games;
 
         public MatchManagerService()
         {
-            games = new ConcurrentDictionary<GameType, List<Match>>();
+            games = new ConcurrentDictionary<GameType, List<MatchModel>>();
         }
 
-        public List<MatchDto> GetMatches(GameType gameType)
+        public List<MatchResponse> GetMatches(GameType gameId)
         {
-            if (games.ContainsKey(gameType))
+            if (!games.ContainsKey(gameId))
             {
-                return games[gameType]
-                    .Select(m => new MatchDto()
+                new List<MatchResponse>();
+            }
+
+            return games[gameId]
+                    .Select(m => new MatchResponse()
                     {
                         Id = m.Id,
-                        GameType = gameType,
                         BetAmount = m.BetAmount,
-                        Teams = m.Teams
-                            .Select(t => new TeamDto()
-                            {
-                                Id = t.Id,
-                                Players = t.Players
-                                    .Select(p => new PlayerDto()
-                                    {
-                                        Id = p.Id,
-                                        Username = p.Username,
-                                        ProfileImageUrl = p.ProfileImageUrl,
-                                        Rating = p.Rating
-                                    }).ToList()
-                            })
-                            .ToList(),
-                    })
-                    .ToList();
-            }
-
-            return new List<MatchDto>();
-        }
-
-        public Guid AddMatch(MatchDto match)
-        {
-            if (!games.ContainsKey(match.GameType) && Enum.IsDefined(typeof(GameType), match.GameType))
-            {
-                games.TryAdd(match.GameType, new List<Match>());
-            }
-
-            var newMatch = new Match()
-            {
-                BetAmount = match.BetAmount,
-                DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
-            };
-
-            games[match.GameType].Add(newMatch);
-
-            return newMatch.Id;
-        }
-
-        public MatchDto AddPersonToMatch(GameType gameType, Guid matchId, PlayerDto player)
-        {
-            var match = games[gameType].FirstOrDefault(m => m.Id == matchId);
-
-            IsMatchFull(match!, gameType);
-
-            var gameConfigs = GameFactory.GetGameConfigs(gameType);
-            Team team = null;
-            
-            if (match!.Teams.All(t => t.Players.Count == gameConfigs.TeamSize))
-            {
-                team = new Team();
-                match.Teams.Add(team);
-            }
-
-            team!.Players.Add(new Player()
-            {
-                Id = player.Id,
-                Username = player.Username,
-                ProfileImageUrl = player.ProfileImageUrl,
-                Rating = player.Rating,
-            });
-
-            return new MatchDto()
-            {
-                Id = match.Id,
-                GameType = gameType,
-                BetAmount = match.BetAmount,
-                TeamsCount = TeamsCount,
-                TeamSize = TeamSize,
-                Teams = match.Teams
-                    .Select(t => new TeamDto()
-                    {
-                        Id = t.Id,
-                        Players = t.Players
-                            .Select(p => new PlayerDto()
+                        Players = m.Players
+                            .Select(p => new PlayerResponse()
                             {
                                 Id = p.Id,
                                 Username = p.Username,
@@ -110,24 +40,64 @@ namespace Games.Services
                                 Rating = p.Rating
                             }).ToList()
                     })
-                    .ToList(),
+                    .ToList();
+        }
+
+        public MatchResponse AddMatch(CreateMatchRequest match)
+        {
+            if (!games.ContainsKey(match.GameId) && Enum.IsDefined(typeof(GameType), match.GameId))
+            {
+                games.TryAdd(match.GameId, new List<MatchModel>());
+            }
+
+            var newMatch = new MatchModel()
+            {
+                BetAmount = match.BetAmount,
+                DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
+            };
+
+            games[match.GameId].Add(newMatch);
+
+            return new MatchResponse()
+            {
+                Id = newMatch.Id,
+                GameId = match.GameId,
+                BetAmount = newMatch.BetAmount,
+            };
+        }
+
+        public PlayerResponse AddPersonToMatch(GameType gameId, Guid matchId, AddPlayerRequest player)
+        {
+            var match = games[gameId].FirstOrDefault(m => m.Id == matchId);
+            var gameConfigs = GameFactory.GetGameConfigs(gameId);
+
+            if (match!.Players.Count == gameConfigs.TeamsCount * gameConfigs.TeamSize)
+            {
+                
+            }
+
+            match.Players.Add(new PlayerModel()
+            {
+                Id = player.Id,
+                Username = player.Username,
+                ProfileImageUrl = player.ProfileImageUrl,
+                Rating = 1000,
+                Team = match.Players.Count / gameConfigs.TeamSize + 1,
+            });
+
+            return new PlayerResponse()
+            {
+                Id = player.Id,
+                Username = player.Username,
+                ProfileImageUrl = player.ProfileImageUrl,
+                Rating = 1000
             };
 
         }
 
-        public void IsGameAndMatchExist(GameType gameType, Guid matchId)
+        public void IsGameAndMatchExist(GameType gameId, Guid matchId)
         {
-            if (!games.ContainsKey(gameType) || !games[gameType].Any(m => m.Id == matchId))
-            {
-                throw new ApiException(InvalidRequest);
-            }
-        }
-
-        private void IsMatchFull(Match match, GameType gameType)
-        {
-            var gameConfigs = GameFactory.GetGameConfigs(gameType);
-
-            if(match.Teams.Sum(t => t.Players.Count) == gameConfigs.TeamsCount * gameConfigs.TeamSize)
+            if (!games.ContainsKey(gameId) || !games[gameId].Any(m => m.Id == matchId))
             {
                 throw new ApiException(InvalidRequest);
             }
