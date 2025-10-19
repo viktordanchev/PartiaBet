@@ -23,7 +23,7 @@ namespace Games.Services
         {
             if (!games.ContainsKey(gameId))
             {
-                new List<MatchResponse>();
+                return new List<MatchResponse>();
             }
 
             return games[gameId]
@@ -31,6 +31,7 @@ namespace Games.Services
                     {
                         Id = m.Id,
                         BetAmount = m.BetAmount,
+                        MaxPlayersCount = m.MaxPlayersCount,
                         Players = m.Players
                             .Select(p => new PlayerResponse()
                             {
@@ -50,10 +51,12 @@ namespace Games.Services
                 games.TryAdd(match.GameId, new List<MatchModel>());
             }
 
+            var gameConfigs = GameFactory.GetGameConfigs(match.GameId);
             var newMatch = new MatchModel()
             {
                 BetAmount = match.BetAmount,
                 DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
+                MaxPlayersCount = gameConfigs.TeamSize * gameConfigs.TeamsCount
             };
 
             games[match.GameId].Add(newMatch);
@@ -63,6 +66,7 @@ namespace Games.Services
                 Id = newMatch.Id,
                 GameId = match.GameId,
                 BetAmount = newMatch.BetAmount,
+                MaxPlayersCount = newMatch.MaxPlayersCount,
             };
         }
 

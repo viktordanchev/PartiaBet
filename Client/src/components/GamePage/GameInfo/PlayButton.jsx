@@ -18,19 +18,18 @@ function PlayButton({ gameData }) {
 
     const playMatch = async () => {
         var matchData = {
-            betAmount: betAmount,
             gameId: gameData.id,
-            dateAndTime: new Date().toLocaleString("bg-BG"),
-            maxPlayers: gameData.maxPlayers
+            betAmount: betAmount,
+            dateAndTime: new Date().toLocaleString("bg-BG")
         };
         
-        var player = {
+        var playerData = {
             id: jwtDecode(token)['Id'],
             username: jwtDecode(token)['Username'],
-            profileImgUrl: jwtDecode(token)['ProfileImageUrl'],
+            profileImageUrl: jwtDecode(token)['ProfileImageUrl'],
         };
 
-        await connection.invoke("CreateMatch", matchData, player);
+        await connection.invoke("CreateMatch", matchData, playerData);
 
         navigate(`/games/chess/match`);
     };

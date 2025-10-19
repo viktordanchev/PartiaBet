@@ -15,7 +15,7 @@ function GamePage() {
     
     useEffect(() => {
         const receiveData = async () => {
-            const gameData = await apiRequest('games', 'getGameDetails', 'POST', false, false, game);
+            const gameData = await apiRequest('games', 'getGameData', 'POST', false, false, game);
             
             setIsLoading(false);
             setGameData(gameData);
@@ -36,7 +36,7 @@ function GamePage() {
                         <GameInfo gameData={gameData} />
                         <TopPlayers />
                     </div>
-                    <Matches gameType={gameData.gameType} />
+                    <Matches gameType={gameData.id} />
                     <GameRules game={gameData.name} />
                 </>}
         </section>

@@ -8,17 +8,17 @@ namespace RestAPI.Controllers
     [Route("api/matches")]
     public class MatchesController : Controller
     {
-        private readonly IMatchManagerService _gameManagerService;
+        private readonly IMatchManagerService _matchManagerService;
 
         public MatchesController(IMatchManagerService gameManagerService)
         {
-            _gameManagerService = gameManagerService;
+            _matchManagerService = gameManagerService;
         }
 
         [HttpPost("getActiveMatches")]
-        public IActionResult GetActiveMatches([FromBody] GameType gameType)
+        public IActionResult GetActiveMatches([FromBody] GameType gameId)
         {
-            var activeMatches = _gameManagerService.GetMatches(gameType);
+            var activeMatches = _matchManagerService.GetMatches(gameId);
 
             return Ok(activeMatches);
         }

@@ -1,6 +1,4 @@
-﻿using Core.Enums;
-using Games.Dtos;
-using Games.Dtos.Request;
+﻿using Games.Dtos.Request;
 using Interfaces.Games;
 using Microsoft.AspNetCore.SignalR;
 

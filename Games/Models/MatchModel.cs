@@ -13,6 +13,8 @@
 
         public DateTime DateAndTime { get; set; }
 
+        public int MaxPlayersCount { get; set; }
+
         public int SpectatorsCount { get; set; }
 
         public GameBoard Board { get; set; } = null!;
