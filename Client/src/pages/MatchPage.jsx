@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import Loading from '../components/Loading';
 import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
 import Spectators from '../components/MatchPage/Spectators';
+import useApiRequest from '../hooks/useApiRequest';
 
 const MatchPage = () => {
-    const { game } = useParams();
-    const [isLoading, setIsLoading] = useState(false);
+    const { game, matchId } = useParams();
+    const apiRequest = useApiRequest();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const receiveData = async () => {
+            const values = {
+                game: game,
+                matchId: matchId 
+            };
+
+            const matchData = await apiRequest('matches', 'getMatchData', 'POST', false, false, values);
+            console.log(matchData);
+        };
+
+        receiveData();
+    }, []);
 
     const renderGame = () => {
         switch (game) {

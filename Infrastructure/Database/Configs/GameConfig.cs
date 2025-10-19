@@ -5,38 +5,38 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Database.Configs
 {
-    public class GameConfig : IEntityTypeConfiguration<Game>
+    public class GameConfig : IEntityTypeConfiguration<Entities.Game>
     {
-        public void Configure(EntityTypeBuilder<Game> builder)
+        public void Configure(EntityTypeBuilder<Entities.Game> builder)
         {
             builder.HasData(SeedGames());
         }
 
-        private Game[] SeedGames()
+        private Entities.Game[] SeedGames()
         {
-            return new Game[]
+            return new Entities.Game[]
             {
-                new Game
+                new Entities.Game
                 {
-                    Id = GameType.Chess,
+                    Id = Core.Enums.GameType.Chess,
                     Name = "Chess",
                     ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg"
                 },
-                new Game
+                new Entities.Game
                 {
-                    Id = GameType.Backgammon,
+                    Id = Core.Enums.GameType.Backgammon,
                     Name = "Backgammon",
                     ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png"
                 },
-                new Game
+                new Entities.Game
                 {
-                    Id = GameType.Belote,
+                    Id = Core.Enums.GameType.Belote,
                     Name = "Belote",
                     ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png"
                 },
-                new Game
+                new Entities.Game
                 {
-                    Id = GameType.SixtySix,
+                    Id = Core.Enums.GameType.SixtySix,
                     Name = "Sixty-Six",
                     ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png"
                 }

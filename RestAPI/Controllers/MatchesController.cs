@@ -1,4 +1,5 @@
 ﻿using Core.Enums;
+using Games.Dtos.Request.Matches;
 using Interfaces.Games;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +17,22 @@ namespace RestAPI.Controllers
         }
 
         [HttpPost("getActiveMatches")]
-        public IActionResult GetActiveMatches([FromBody] GameType gameId)
+        public IActionResult GetActiveMatches([FromBody] GameType game)
         {
-            var activeMatches = _matchManagerService.GetMatches(gameId);
+            var activeMatches = _matchManagerService.GetMatches(game);
+
+            return Ok(activeMatches);
+        }
+
+        [HttpPost("getMatchData")]
+        public IActionResult GetMatchData(GetMatchDataRequestDto data)
+        {
+            if (!Enum.TryParse<GameType>(data.Game, true, out var game))
+            {
+                return BadRequest($"Invalid game type: {game}");
+            }
+
+            var activeMatches = _matchManagerService.GetMatch(game, data.MatchId);
 
             return Ok(activeMatches);
         }

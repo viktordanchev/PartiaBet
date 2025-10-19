@@ -1,9 +1,7 @@
-﻿using Core.DTOs.Requests.Matches;
-
-namespace Core.Interfaces.Repositories
+﻿namespace Core.Interfaces.Repositories
 {
     public interface IMatchRepository
     {
-        Task<Guid> AddMatch(AddMatchRequest match);
+        //Task<Guid> AddMatch(AddMatchRequest match);
     }
 }

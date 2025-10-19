@@ -13,7 +13,7 @@ namespace RestAPI.Hubs
             _matchManagerService = gameManagerService;
         }
 
-        public async Task CreateMatch(CreateMatchRequest matchData, AddPlayerRequest playerData)
+        public async Task<Guid> CreateMatch(CreateMatchRequest matchData, AddPlayerRequest playerData)
         {
             var newMatch = _matchManagerService.AddMatch(matchData);
             var personData = _matchManagerService.AddPersonToMatch(matchData.GameId, newMatch.Id, playerData);
@@ -21,6 +21,8 @@ namespace RestAPI.Hubs
             newMatch.Players.Add(personData);
 
             await Clients.All.SendAsync("ReceiveMatch", newMatch);
+
+            return newMatch.Id;
         }
 
         //public async Task JoinMatch(GameType gameType, Guid matchId, PlayerDto player)

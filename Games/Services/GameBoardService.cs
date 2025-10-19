@@ -5,11 +5,11 @@ namespace Games.Services
 {
     public class GameBoardService
     {
-        public static GameBoard Create(GameType type)
+        public static GameBoard Create(Core.Enums.GameType type)
         {
             return type switch
             {
-                GameType.Chess => new GameBoard(),
+                Core.Enums.GameType.Chess => new GameBoard(),
                 //GameType.Backgammon => new BackgammonBoard(),
                 //GameType.Belote => new BeloteBoard(),
                 //GameType.SixtySix => new SixtySixBoard()

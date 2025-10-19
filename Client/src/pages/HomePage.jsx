@@ -11,7 +11,7 @@ function HomePage() {
     useEffect(() => {
         const receiveData = async () => {
             const games = await apiRequest('games', 'getAll', 'GET', false, false, undefined);
-
+            
             setIsLoading(false);
             setGames(games);
         };

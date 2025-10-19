@@ -1,38 +1,36 @@
-﻿using Common.Exceptions;
-using Core.Enums;
+﻿using Core.Enums;
 using Games.Dtos.Request;
 using Games.Dtos.Response;
 using Games.Models;
 using Interfaces.Games;
 using System.Collections.Concurrent;
 using System.Globalization;
-using static Common.Constants.ErrorMessages;
 
 namespace Games.Services
 {
     public class MatchManagerService : IMatchManagerService
     {
-        private readonly ConcurrentDictionary<GameType, List<MatchModel>> games;
+        private readonly ConcurrentDictionary<GameType, ConcurrentDictionary<Guid, MatchModel>> games;
 
         public MatchManagerService()
         {
-            games = new ConcurrentDictionary<GameType, List<MatchModel>>();
+            games = new ConcurrentDictionary<GameType, ConcurrentDictionary<Guid, MatchModel>>();
         }
 
-        public List<MatchResponse> GetMatches(GameType gameId)
+        public List<MatchResponse> GetMatches(GameType game)
         {
-            if (!games.ContainsKey(gameId))
+            if (!games.ContainsKey(game))
             {
                 return new List<MatchResponse>();
             }
 
-            return games[gameId]
+            return games[game]
                     .Select(m => new MatchResponse()
                     {
-                        Id = m.Id,
-                        BetAmount = m.BetAmount,
-                        MaxPlayersCount = m.MaxPlayersCount,
-                        Players = m.Players
+                        Id = m.Key,
+                        BetAmount = m.Value.BetAmount,
+                        MaxPlayersCount = m.Value.MaxPlayersCount,
+                        Players = m.Value.Players
                             .Select(p => new PlayerResponse()
                             {
                                 Id = p.Id,
@@ -48,7 +46,7 @@ namespace Games.Services
         {
             if (!games.ContainsKey(match.GameId) && Enum.IsDefined(typeof(GameType), match.GameId))
             {
-                games.TryAdd(match.GameId, new List<MatchModel>());
+                games.TryAdd(match.GameId, new ConcurrentDictionary<Guid, MatchModel>());
             }
 
             var gameConfigs = GameFactory.GetGameConfigs(match.GameId);
@@ -59,21 +57,22 @@ namespace Games.Services
                 MaxPlayersCount = gameConfigs.TeamSize * gameConfigs.TeamsCount
             };
 
-            games[match.GameId].Add(newMatch);
+            var newMatchId = Guid.NewGuid();
+            games[match.GameId].TryAdd(newMatchId, newMatch);
 
             return new MatchResponse()
             {
-                Id = newMatch.Id,
+                Id = newMatchId,
                 GameId = match.GameId,
                 BetAmount = newMatch.BetAmount,
                 MaxPlayersCount = newMatch.MaxPlayersCount,
             };
         }
 
-        public PlayerResponse AddPersonToMatch(GameType gameId, Guid matchId, AddPlayerRequest player)
+        public PlayerResponse AddPersonToMatch(GameType game, Guid matchId, AddPlayerRequest player)
         {
-            var match = games[gameId].FirstOrDefault(m => m.Id == matchId);
-            var gameConfigs = GameFactory.GetGameConfigs(gameId);
+            var match = games[game][matchId];
+            var gameConfigs = GameFactory.GetGameConfigs(game);
 
             if (match!.Players.Count == gameConfigs.TeamsCount * gameConfigs.TeamSize)
             {
@@ -99,12 +98,9 @@ namespace Games.Services
 
         }
 
-        public void IsGameAndMatchExist(GameType gameId, Guid matchId)
+        public decimal GetMatch(GameType game, Guid matchId)
         {
-            if (!games.ContainsKey(gameId) || !games[gameId].Any(m => m.Id == matchId))
-            {
-                throw new ApiException(InvalidRequest);
-            }
+            return games[game][matchId].BetAmount;
         }
     }
 }

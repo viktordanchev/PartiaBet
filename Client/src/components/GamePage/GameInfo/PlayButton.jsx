@@ -29,9 +29,9 @@ function PlayButton({ gameData }) {
             profileImageUrl: jwtDecode(token)['ProfileImageUrl'],
         };
 
-        await connection.invoke("CreateMatch", matchData, playerData);
+        var matchId = await connection.invoke("CreateMatch", matchData, playerData);
 
-        navigate(`/games/chess/match`);
+        navigate(`/games/chess/match/${matchId}`);
     };
 
     return (

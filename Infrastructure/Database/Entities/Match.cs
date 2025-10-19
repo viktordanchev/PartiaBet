@@ -21,7 +21,7 @@ namespace Infrastructure.Database.Entities
         public TimeSpan Duration { get; set; }
 
         [Required]
-        public GameType GameId { get; set; }
+        public Core.Enums.GameType GameId { get; set; }
 
         [ForeignKey(nameof(GameId))]
         public Game Game { get; set; } = null!;
