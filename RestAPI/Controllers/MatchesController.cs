@@ -1,6 +1,7 @@
 ﻿using Core.Enums;
 using Games.Dtos.Request.Matches;
 using Interfaces.Games;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RestAPI.Controllers
@@ -25,6 +26,7 @@ namespace RestAPI.Controllers
         }
 
         [HttpPost("getMatchData")]
+        [Authorize]
         public IActionResult GetMatchData(GetMatchDataRequestDto data)
         {
             if (!Enum.TryParse<GameType>(data.Game, true, out var game))

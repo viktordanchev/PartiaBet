@@ -17,8 +17,7 @@ const MatchPage = () => {
                 matchId: matchId 
             };
 
-            const matchData = await apiRequest('matches', 'getMatchData', 'POST', false, false, values);
-            console.log(matchData);
+            const matchData = await apiRequest('matches', 'getMatchData', 'POST', true, false, values);
         };
 
         receiveData();

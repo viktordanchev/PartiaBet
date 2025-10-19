@@ -9,7 +9,12 @@ export const AuthProvider = ({ children }) => {
     const updateToken = (token) => {
         localStorage.setItem('accessToken', token);
         setToken(token);
-        setIsAuthenticated(true);
+
+        if (token) {
+            setIsAuthenticated(true);
+        } else {
+            setIsAuthenticated(false);
+        }
     };
 
     const removeToken = () => {
