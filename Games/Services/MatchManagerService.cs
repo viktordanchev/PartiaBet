@@ -5,6 +5,7 @@ using Games.Models;
 using Interfaces.Games;
 using System.Collections.Concurrent;
 using System.Globalization;
+using System.Linq.Expressions;
 
 namespace Games.Services
 {
@@ -98,9 +99,23 @@ namespace Games.Services
 
         }
 
-        public decimal GetMatch(GameType game, Guid matchId)
+        public MatchRoomResponse GetMatch(GameType game, Guid matchId)
         {
-            return games[game][matchId].BetAmount;
+            var match = games[game][matchId];
+
+            return new MatchRoomResponse()
+            {
+                BetAmount = match.BetAmount,
+                SpectatorsCount = match.SpectatorsCount,
+                Players = match.Players
+                    .Select(p => new PlayerResponse()
+                    {
+                        Id = p.Id,
+                        Username = p.Username,
+                        ProfileImageUrl = p.ProfileImageUrl,
+                        Rating = p.Rating
+                    }).ToList()
+            };
         }
     }
 }

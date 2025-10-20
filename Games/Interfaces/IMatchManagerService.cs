@@ -9,6 +9,6 @@ namespace Interfaces.Games
         MatchResponse AddMatch(CreateMatchRequest match);
         PlayerResponse AddPersonToMatch(GameType gameId, Guid matchId, AddPlayerRequest player);
         List<MatchResponse> GetMatches(GameType gameId);
-        decimal GetMatch(GameType game, Guid matchId);
+        MatchRoomResponse GetMatch(GameType game, Guid matchId);
     }
 }
