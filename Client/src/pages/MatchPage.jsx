@@ -9,7 +9,8 @@ const MatchPage = () => {
     const { game, matchId } = useParams();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
-
+    const [matchData, setMatchData] = useState(null);
+    
     useEffect(() => {
         const receiveData = async () => {
             const values = {
@@ -18,20 +19,22 @@ const MatchPage = () => {
             };
 
             const matchData = await apiRequest('matches', 'getMatchData', 'POST', true, false, values);
-            console.log(matchData);
+
+            setIsLoading(false);
+            setMatchData(matchData);
         };
 
         receiveData();
     }, []);
 
-    const renderGame = () => {
+    const renderGame = (matchData) => {
         switch (game) {
             case "chess":
-                return <ChessMatch />;
+                return <ChessMatch data={matchData} />;
             case "dota":
-                return <DotaMatch />;
+                return <DotaMatch data={matchData} />;
             case "csgo":
-                return <CsgoMatch />;
+                return <CsgoMatch data={matchData} />;
             default:
                 return <p>Game not supported</p>;
         }
@@ -42,10 +45,10 @@ const MatchPage = () => {
             {isLoading ? <Loading size={'small'} /> :
                 <>
                     <div className="flex flex-col items-end gap-3">
-                        <Spectators peopleCount={125} />
-                        <p className="text-2xl font-semibold text-gray-300">Total 40$</p>
+                        <Spectators peopleCount={matchData.spectatorsCount} />
+                        <p className="text-2xl font-semibold text-gray-300">Bet: {matchData.betAmount}$</p>
                     </div>
-                    {renderGame()}
+                    {renderGame(matchData)}
                 </>}
         </section>
     );

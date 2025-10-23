@@ -8,7 +8,7 @@ const MatchCard = ({ data }) => {
         <li className="w-full p-2 flex flex-col items-center gap-3 rounded-xl border border-gray-700 bg-gray-900">
             <div className="w-full flex flex-col text-center gap-1">
                 <p>{data.players.length}/{data.maxPlayersCount}</p>
-                <div className="flex justify-evenly text-xs">
+                <div className="flex justify-center text-xs">
                     {data.players.map((player) =>
                         <PlayerCard
                             key={player.id}
