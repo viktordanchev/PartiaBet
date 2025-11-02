@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useMatch } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -16,13 +16,14 @@ import SessionEndNotification from './components/SessionEndNotification';
 
 function App() {
     const location = useLocation();
-    const hideNav = ['/login', '/register', ''].includes(location.pathname);
+    const matchGame = useMatch('/games/:game/match/:matchId');
+    const pagesNoNav = ['', '/login', '/register', matchGame?.pathname].includes(location.pathname);
 
     return (
         <>
             <Header />
             <main className="flex-grow flex">
-                {!hideNav && <NavigationBar />}
+                {!pagesNoNav && <NavigationBar />}
                 <Routes>
                     <Route path="*" element={<NotFoundPage />} />
 

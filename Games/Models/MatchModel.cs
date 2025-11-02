@@ -7,6 +7,8 @@
             Players = new List<PlayerModel>();
         }
 
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public decimal BetAmount { get; set; }
 
         public DateTime DateAndTime { get; set; }

@@ -7,14 +7,14 @@ const Board = () => {
     const cols = 8;
 
     return (
-        <article className="grid grid-cols-8 rounded border border-gray-500">
+        <article className="grid grid-cols-8 rounded border-5 border-gray-900">
             {Array.from({ length: rows * cols }).map((_, index) => {
                 return (
                     <Square
                         key={index}
-                        piece={'bk'}
-                        pieceRow={4}
-                        pieceCol={2}
+                        piece={'bking'}
+                        pieceRow={7}
+                        pieceCol={4}
                         row={Math.floor(index / cols)}
                         col={index % cols}
                         onSelect={() => setSelectedCell({ row, col })}

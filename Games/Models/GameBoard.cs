@@ -1,6 +1,7 @@
 ﻿namespace Games.Models
 {
-    public class GameBoard
+    public abstract class GameBoard
     {
+        public string GameName { get; set; } = string.Empty;
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Core.Enums;
+using Games.Chess;
 using Games.Dtos.Request;
 using Games.Dtos.Response;
 using Games.Models;
 using Interfaces.Games;
 using System.Collections.Concurrent;
 using System.Globalization;
-using System.Linq.Expressions;
 
 namespace Games.Services
 {
@@ -55,15 +55,15 @@ namespace Games.Services
             {
                 BetAmount = match.BetAmount,
                 DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
-                MaxPlayersCount = gameConfigs.TeamSize * gameConfigs.TeamsCount
+                MaxPlayersCount = gameConfigs.TeamSize * gameConfigs.TeamsCount,
+                Board = GameFactory.GetGameBoard(match.GameId)
             };
-
-            var newMatchId = Guid.NewGuid();
-            games[match.GameId].TryAdd(newMatchId, newMatch);
+            
+            games[match.GameId].TryAdd(newMatch.Id, newMatch);
 
             return new MatchResponse()
             {
-                Id = newMatchId,
+                Id = newMatch.Id,
                 GameId = match.GameId,
                 BetAmount = newMatch.BetAmount,
                 MaxPlayersCount = newMatch.MaxPlayersCount,

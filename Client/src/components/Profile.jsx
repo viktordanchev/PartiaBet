@@ -12,7 +12,13 @@ const Profile = ({ token }) => {
             <img src={imageUrl ? imageUrl : ProfileImg}
                 className="w-13 rounded-full"
             />
-            <p className="text-gray-300 text-xl font-semibold">{userName}</p>
+            <div className="flex flex-col text-gray-300">
+                <p className="text-xl font-semibold">{userName}</p>
+                <div className="text-xs flex gap-1">
+                    <p>Balance</p>
+                    <p className="font-bold">0</p>
+                </div>
+            </div>
         </div>
     );
 };
