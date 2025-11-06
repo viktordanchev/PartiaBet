@@ -19,7 +19,7 @@ const MatchPage = () => {
             };
 
             const matchData = await apiRequest('matches', 'getMatchData', 'POST', true, false, values);
-
+            
             setIsLoading(false);
             setMatchData(matchData);
         };

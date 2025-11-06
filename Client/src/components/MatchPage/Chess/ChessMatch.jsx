@@ -11,7 +11,7 @@ const ChessMatch = ({ data }) => {
 
     return (
         <section className="flex gap-3">
-            <Board />
+            <Board data={ data.board } />
             <article className="flex flex-col justify-between text-gray-300">
                 <div className="space-y-3">
                     <PlayerCard data={opponent} />

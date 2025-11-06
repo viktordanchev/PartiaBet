@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React from 'react';
 import BlackBishop from '../../../assets/images/chess/black-bishop.svg';
 import BlackKing from '../../../assets/images/chess/black-king.svg';
 import BlackKnight from '../../../assets/images/chess/black-knight.svg';
@@ -12,9 +12,7 @@ import WhitePawn from '../../../assets/images/chess/white-pawn.svg';
 import WhiteQueen from '../../../assets/images/chess/white-queen.svg';
 import WhiteRook from '../../../assets/images/chess/white-rook.svg';
 
-const Square = ({ piece, pieceRow, pieceCol, row, col }) => {
-    const [selected, setSelected] = useState(false);
-
+const Square = ({ piece, row, col, isHighlighted, selected, onSelect }) => {
     const pieces = {
         'bbishop': BlackBishop,
         'bking': BlackKing,
@@ -29,14 +27,18 @@ const Square = ({ piece, pieceRow, pieceCol, row, col }) => {
         'wqueen': WhiteQueen,
         'wrook': WhiteRook,
     };
-
+    
     return (
-        <div className={`w-20 h-20 flex items-center justify-center hover:cursor-pointer hover:bg-yellow-100/90 
+        <div className={`relative w-20 h-20 flex items-center justify-center
+        ${piece && 'hover:cursor-pointer hover:bg-yellow-100/90 '}
         ${(row + col) % 2 === 1 ? 'bg-gray-600' : 'bg-gray-300'}
         ${selected && 'bg-yellow-100/90'}`}
-            onClick={() => setSelected(!selected)}
+            onClick={() => onSelect()}
         >
-            {(pieceRow === row && pieceCol === col) && (<img src={pieces[piece]} className="h-full" />)}
+            <img src={pieces[piece]} className="h-full" />
+            {isHighlighted && !piece && (
+                <div className="absolute w-5 h-5 bg-yellow-100 rounded-full" />
+            )}
         </div>
     );
 };

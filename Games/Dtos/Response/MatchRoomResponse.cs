@@ -1,4 +1,6 @@
-﻿namespace Games.Dtos.Response
+﻿using Games.Models;
+
+namespace Games.Dtos.Response
 {
     public class MatchRoomResponse
     {
@@ -12,5 +14,7 @@
         public decimal BetAmount { get; set; }
 
         public List<PlayerResponse> Players { get; set; }
+
+        public GameBoard Board { get; set; } = null!;
     }
 }

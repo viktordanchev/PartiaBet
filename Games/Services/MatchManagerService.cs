@@ -59,11 +59,12 @@ namespace Games.Services
                 Board = GameFactory.GetGameBoard(match.GameId)
             };
             
-            games[match.GameId].TryAdd(newMatch.Id, newMatch);
+            var newMatchId = Guid.NewGuid();
+            games[match.GameId].TryAdd(newMatchId, newMatch);
 
             return new MatchResponse()
             {
-                Id = newMatch.Id,
+                Id = newMatchId,
                 GameId = match.GameId,
                 BetAmount = newMatch.BetAmount,
                 MaxPlayersCount = newMatch.MaxPlayersCount,
@@ -73,6 +74,10 @@ namespace Games.Services
         public PlayerResponse AddPersonToMatch(GameType game, Guid matchId, AddPlayerRequest player)
         {
             var match = games[game][matchId];
+
+            var gamei = match.Board as ChessBoard;
+            gamei.AddToBoard(player.Id);
+
             var gameConfigs = GameFactory.GetGameConfigs(game);
 
             if (match!.Players.Count == gameConfigs.TeamsCount * gameConfigs.TeamSize)
@@ -114,7 +119,8 @@ namespace Games.Services
                         Username = p.Username,
                         ProfileImageUrl = p.ProfileImageUrl,
                         Rating = p.Rating
-                    }).ToList()
+                    }).ToList(),
+                Board = match.Board
             };
         }
     }

@@ -1,7 +1,10 @@
-﻿namespace Games.Models
+﻿using Games.Chess;
+using System.Text.Json.Serialization;
+
+namespace Games.Models
 {
+    [JsonDerivedType(typeof(ChessBoard), typeDiscriminator: "chess")]
     public abstract class GameBoard
     {
-        public string GameName { get; set; } = string.Empty;
     }
 }

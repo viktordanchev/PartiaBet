@@ -1,4 +1,6 @@
-﻿using Games.Interfaces;
+﻿using Games.Chess.Models;
+using Games.Chess.Models.Enums;
+using Games.Interfaces;
 
 namespace Games.Chess
 {
