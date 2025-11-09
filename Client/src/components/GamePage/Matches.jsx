@@ -44,8 +44,8 @@ const Matches = ({ gameType }) => {
             </h2>
             {isLoading ? <Loading size={'small'} /> :
                 <section className="space-y-6">
-                    <MatchList isCasualGame={false} matches={betMatches} />
-                    <MatchList isCasualGame={true} matches={casualMatches} />
+                    <MatchList isCasualGame={false} data={{ matches: betMatches, game: gameType}} />
+                    <MatchList isCasualGame={true} data={{ matches: casualMatches, game: gameType }} />
                 </section>}
         </article>
     );

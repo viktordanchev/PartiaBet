@@ -1,4 +1,5 @@
-﻿using Games.Dtos.Request;
+﻿using Core.Enums;
+using Games.Dtos.Request;
 using Interfaces.Games;
 using Microsoft.AspNetCore.SignalR;
 
@@ -25,12 +26,11 @@ namespace RestAPI.Hubs
             return newMatch.Id;
         }
 
-        //public async Task JoinMatch(GameType gameType, Guid matchId, PlayerDto player)
-        //{
-        //    var match = _matchManagerService.AddPersonToMatch(gameType, matchId, player);
-        //
-        //    await Clients.All.SendAsync("UpdatePlayerCount", gameType);
-        //    await Clients.All.SendAsync("UpdatePlayers", match);
-        //}
+        public async Task JoinMatch(GameType game, Guid matchId, AddPlayerRequest playerData)
+        {
+            var playerResponse = _matchManagerService.AddPersonToMatch(game, matchId, playerData);
+        
+            await Clients.All.SendAsync("UpdatePlayers", playerResponse);
+        }
     }
 }

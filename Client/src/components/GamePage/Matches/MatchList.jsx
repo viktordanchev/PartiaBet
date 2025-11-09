@@ -1,18 +1,20 @@
 import React from 'react';
 import MatchCard from './MatchCard';
 
-const MatchList = ({ isCasualGame, matches }) => {
+const MatchList = ({ isCasualGame, data }) => {
+    
     return (
         <article className="space-y-1">
             <h3 className="text-xl text-center">{isCasualGame ? 'Casual Play' : 'Play with bets'}</h3>
             <ul className="grid grid-cols-3 gap-3 p-6 rounded [box-shadow:inset_0_0_30px_rgba(0,0,0,0.5)]">
-                {matches.length === 0 ?
+                {data.matches.length === 0 ?
                     <p className="col-span-3 text-center">No matches available</p> :
                     <>
-                        {matches.map((match) => (
+                        {data.matches.map((match) => (
                             <MatchCard
                                 key={match.id}
-                                data={match}
+                                match={match}
+                                game={data.game}
                             />
                         ))}
                     </>}
