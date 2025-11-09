@@ -9,13 +9,15 @@ const Board = ({ data }) => {
     const [pieces, setPieces] = useState(data.pieces);
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [highlightedSquares, setHighlightedSquares] = useState([]);
-
+    const [pieceHistory, setPieceHistory] = useState([]);
+    
     const getPieceAt = (row, col) => {
         return pieces.find(p => p.row === row && p.col === col) || null;
     };
 
     const handleClickSquare = (row, col) => {
-        if (selectedPiece) {
+        if (selectedPiece && highlightedSquares.some(s => s.newRow === row && s.newCol === col)) {
+            setPieceHistory(prev => [...prev, { row, col }]);
             setPieces(prev =>
                 prev.map(p =>
                     p.row === selectedPiece.row && p.col === selectedPiece.col
@@ -26,9 +28,11 @@ const Board = ({ data }) => {
             setSelectedPiece(null);
             setHighlightedSquares([]);
         } else {
+            setPieceHistory([]);
             var piece = getPieceAt(row, col);
-            var cords = getPieceMove(piece, pieces);
+            var cords = getPieceMove(piece, pieces, data.whitePlayerId === userId);
 
+            setPieceHistory(prev => [...prev, { row: piece.row, col: piece.col }]);
             setSelectedPiece(piece);
             setHighlightedSquares(cords || []);
         }
@@ -45,7 +49,8 @@ const Board = ({ data }) => {
                 const isSelected =
                     selectedPiece &&
                     selectedPiece.row === renderRow &&
-                    selectedPiece.col === renderCol;
+                    selectedPiece.col === renderCol ||
+                    pieceHistory.some(p => p.row === renderRow && p.col === renderCol);
 
                 const isHighlighted = highlightedSquares.some(
                     s => s.newRow === renderRow && s.newCol === renderCol
@@ -61,7 +66,7 @@ const Board = ({ data }) => {
                         col={renderCol}
                         isHighlighted={isHighlighted}
                         selected={isSelected}
-                        onSelect={() => handleClickSquare(renderRow, renderCol)}
+                        onSelect={() => (piece || isHighlighted) && handleClickSquare(renderRow, renderCol)}
                     />
                 );
             })}

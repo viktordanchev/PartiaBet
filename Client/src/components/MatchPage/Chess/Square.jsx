@@ -30,9 +30,10 @@ const Square = ({ piece, row, col, isHighlighted, selected, onSelect }) => {
     
     return (
         <div className={`relative w-20 h-20 flex items-center justify-center
-        ${piece && 'hover:cursor-pointer hover:bg-yellow-100/90 '}
+        ${piece && 'hover:bg-yellow-100'}
+        ${(piece || isHighlighted) && 'hover:cursor-pointer'}
         ${(row + col) % 2 === 1 ? 'bg-gray-600' : 'bg-gray-300'}
-        ${selected && 'bg-yellow-100/90'}`}
+        ${selected && 'bg-yellow-100'}`}
             onClick={() => onSelect()}
         >
             <img src={pieces[piece]} className="h-full" />
