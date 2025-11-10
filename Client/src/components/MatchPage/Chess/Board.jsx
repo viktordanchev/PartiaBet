@@ -15,6 +15,15 @@ const Board = ({ data }) => {
         return pieces.find(p => p.row === row && p.col === col) || null;
     };
 
+    const isMyPiece = (piece) => {
+        if (!piece) return false;
+        
+        const pieceType = piece.type.charAt(0);
+        
+        return pieceType === 'w' && userId === data.whitePlayerId ||
+            pieceType === 'b' && userId !== data.whitePlayerId;
+    };
+
     const handleClickSquare = (row, col) => {
         if (selectedPiece && highlightedSquares.some(s => s.newRow === row && s.newCol === col)) {
             setPieceHistory(prev => [...prev, { row, col }]);
@@ -52,21 +61,22 @@ const Board = ({ data }) => {
                     selectedPiece.col === renderCol ||
                     pieceHistory.some(p => p.row === renderRow && p.col === renderCol);
 
+                const piece = getPieceAt(renderRow, renderCol);
+
                 const isHighlighted = highlightedSquares.some(
                     s => s.newRow === renderRow && s.newCol === renderCol
                 );
-
-                const piece = getPieceAt(renderRow, renderCol);
-                
+                const isMy = isMyPiece(piece);
                 return (
                     <Square
                         key={index}
                         piece={piece ? piece.type : null}
+                        isMyPiece={isMy}
                         row={renderRow}
                         col={renderCol}
                         isHighlighted={isHighlighted}
                         selected={isSelected}
-                        onSelect={() => (piece || isHighlighted) && handleClickSquare(renderRow, renderCol)}
+                        onSelect={() => (isHighlighted || isMyPiece(piece)) && handleClickSquare(renderRow, renderCol)}
                     />
                 );
             })}

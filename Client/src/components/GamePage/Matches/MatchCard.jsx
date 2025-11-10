@@ -2,11 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useHub } from '../../../contexts/HubContext';
+import { useLoading } from '../../../contexts/LoadingContext';
 import PlayerCard from './PlayerCard';
 
 const MatchCard = ({ match, game }) => {
     const navigate = useNavigate();
     const { connection } = useHub();
+    const { setIsLoading } = useLoading();
     const isMatchFull = false;
     
     const joinMatch = async () => {
@@ -16,8 +18,10 @@ const MatchCard = ({ match, game }) => {
             username: jwtDecode(token)['Username'],
             profileImageUrl: jwtDecode(token)['ProfileImageUrl'],
         };
-        
+
+        setIsLoading(true);
         await connection.invoke("JoinMatch", game, match.id.toString(), playerData);
+        setIsLoading(false);
 
         navigate(`/games/chess/match/${match.id}`);
     };

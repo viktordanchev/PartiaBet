@@ -12,7 +12,7 @@ import WhitePawn from '../../../assets/images/chess/white-pawn.svg';
 import WhiteQueen from '../../../assets/images/chess/white-queen.svg';
 import WhiteRook from '../../../assets/images/chess/white-rook.svg';
 
-const Square = ({ piece, row, col, isHighlighted, selected, onSelect }) => {
+const Square = ({ piece, isMyPiece, row, col, isHighlighted, selected, onSelect }) => {
     const pieces = {
         'bbishop': BlackBishop,
         'bking': BlackKing,
@@ -30,8 +30,8 @@ const Square = ({ piece, row, col, isHighlighted, selected, onSelect }) => {
     
     return (
         <div className={`relative w-20 h-20 flex items-center justify-center
-        ${piece && 'hover:bg-yellow-100'}
-        ${(piece || isHighlighted) && 'hover:cursor-pointer'}
+        ${(isMyPiece && piece) && 'hover:bg-yellow-100'}
+        ${(isMyPiece && piece || isHighlighted) && 'hover:cursor-pointer'}
         ${(row + col) % 2 === 1 ? 'bg-gray-600' : 'bg-gray-300'}
         ${selected && 'bg-yellow-100'}`}
             onClick={() => onSelect()}

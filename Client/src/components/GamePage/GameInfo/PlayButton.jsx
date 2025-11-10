@@ -2,34 +2,37 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClickOutside } from '../../../hooks/useClickOutside';
 import { useHub } from '../../../contexts/HubContext';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useLoading } from '../../../contexts/LoadingContext';
 import { jwtDecode } from 'jwt-decode';
 
 function PlayButton({ gameData }) {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const { connection } = useHub();
-    const { token } = useAuth();
+    const { setIsLoading } = useLoading();
     const [showStakeOptions, setShowStakeOptions] = useState(false);
     const [betAmount, setBetAmount] = useState(0);
     const stakeAmounts = [5, 10, 20, 50, 100];
     
     useClickOutside(dropdownRef, () => setShowStakeOptions(false));
 
-    const playMatch = async () => {
+    const createMatch = async () => {
         var matchData = {
             gameId: gameData.id,
             betAmount: betAmount,
             dateAndTime: new Date().toLocaleString("bg-BG")
         };
-        
+
+        const token = localStorage.getItem('accessToken');
         var playerData = {
             id: jwtDecode(token)['Id'],
             username: jwtDecode(token)['Username'],
             profileImageUrl: jwtDecode(token)['ProfileImageUrl'],
         };
 
+        setIsLoading(true);
         var matchId = await connection.invoke("CreateMatch", matchData, playerData);
+        setIsLoading(false);
 
         navigate(`/games/chess/match/${matchId}`);
     };
@@ -70,12 +73,13 @@ function PlayButton({ gameData }) {
                         />
 
                         <button className="py-2 rounded-xl bg-green-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
-                            onClick={playMatch}>
+                            onClick={createMatch}>
                             Play
                         </button>
                     </div>
                     <hr className="border-t border-gray-500" />
-                    <button className="py-2 rounded-xl bg-blue-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105">
+                    <button className="py-2 rounded-xl bg-blue-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
+                        onClick={createMatch}>
                         Casual Game
                     </button>
                 </div>
