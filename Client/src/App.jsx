@@ -21,23 +21,25 @@ function App() {
 
     return (
         <>
-            <Header />
-            <main className="flex-grow flex">
-                {!pagesNoNav && <NavigationBar />}
-                <Routes>
-                    <Route path="*" element={<NotFoundPage />} />
+            {!pagesNoNav && <NavigationBar />}
+            <div className={`${!pagesNoNav && "ml-80 flex-grow flex flex-col"}`}>
+                <Header isLogoVis={pagesNoNav} />
+                <main className="flex-grow flex">
+                    <Routes>
+                        <Route path="*" element={<NotFoundPage />} />
 
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/friends" element={<FriendsPage />} />
-                    <Route path="/games/:game" element={<GamePage />} />
-                    <Route path="/games/:game/match/:matchId" element={<MatchPage />} />
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/friends" element={<FriendsPage />} />
+                        <Route path="/games/:game" element={<GamePage />} />
+                        <Route path="/games/:game/match/:matchId" element={<MatchPage />} />
 
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                </Routes>
-            </main>
-            <Footer />
-            <SessionEndNotification /> 
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                    </Routes>
+                </main>
+                <Footer />
+            </div>
+            <SessionEndNotification />
         </>
     );
 }
