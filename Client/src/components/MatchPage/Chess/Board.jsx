@@ -50,21 +50,19 @@ const Board = ({ data }) => {
     return (
         <article className="grid grid-cols-8 rounded border-5 border-gray-900">
             {Array.from({ length: 8 * 8 }).map((_, index) => {
-                const row = Math.floor(index / 8);
-                const col = index % 8;
-                const renderRow = userId === data.whitePlayerId ? 7 - row : row;
-                const renderCol = userId === data.whitePlayerId ? 7 - col : col;
-
+                const row = (userId === data.whitePlayerId ? 7 : 0) - Math.floor(index / 8);
+                const col = (userId === data.whitePlayerId ? 7 : 0) - index % 8;
+                console.log(row, col);
                 const isSelected =
                     selectedPiece &&
-                    selectedPiece.row === renderRow &&
-                    selectedPiece.col === renderCol ||
-                    pieceHistory.some(p => p.row === renderRow && p.col === renderCol);
+                    selectedPiece.row === row &&
+                    selectedPiece.col === col ||
+                    pieceHistory.some(p => p.row === row && p.col === col);
 
-                const piece = getPieceAt(renderRow, renderCol);
+                const piece = getPieceAt(row, col);
 
                 const isHighlighted = highlightedSquares.some(
-                    s => s.newRow === renderRow && s.newCol === renderCol
+                    s => s.newRow === row && s.newCol === col
                 );
                 const isMy = isMyPiece(piece);
                 return (
@@ -72,11 +70,11 @@ const Board = ({ data }) => {
                         key={index}
                         piece={piece ? piece.type : null}
                         isMyPiece={isMy}
-                        row={renderRow}
-                        col={renderCol}
+                        row={row}
+                        col={col}
                         isHighlighted={isHighlighted}
                         selected={isSelected}
-                        onSelect={() => (isHighlighted || isMyPiece(piece)) && handleClickSquare(renderRow, renderCol)}
+                        onSelect={() => (isHighlighted || isMyPiece(piece)) && handleClickSquare(row, col)}
                     />
                 );
             })}
