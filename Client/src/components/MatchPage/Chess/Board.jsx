@@ -1,15 +1,33 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Square from './Square';
 import getPieceMove from '../../../services/chess/move';
+import { useHub } from '../../../contexts/HubContext';
 
 const Board = ({ data }) => {
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const userId = decodedToken['Id'];
+    const { connection } = useHub();
     const [pieces, setPieces] = useState(data.pieces);
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [highlightedSquares, setHighlightedSquares] = useState([]);
     
+    useEffect(() => {
+        if (!connection) return;
+
+        const handleReceiveMove = (oldRow, oldCol, row, col) => {
+            setPieces(prev =>
+                prev.map(p => p.row === oldRow && p.col === oldCol ? { ...p, row, col } : p)
+            );
+        };
+
+        connection.on("ReceiveMove", handleReceiveMove);
+
+        return () => {
+            connection.off("ReceiveMove", handleReceiveMove);
+        };
+    }, [connection]);
+
     const getPieceAt = (row, col) => {
         return pieces.find(p => p.row === row && p.col === col) || null;
     };
@@ -23,7 +41,11 @@ const Board = ({ data }) => {
             pieceType === 'b' && userId !== data.whitePlayerId;
     };
 
-    const handleClickSquare = (row, col) => {
+    const makeMove = async (oldRow, oldCol, row, col) => {
+        await connection.invoke("MakeMove", oldRow, oldCol, row, col);
+    };
+
+    const handleClickSquare = async (row, col) => {
         if (selectedPiece && highlightedSquares.some(s => s.newRow === row && s.newCol === col)) {
             setPieces(prev =>
                 prev.map(p =>
@@ -34,6 +56,8 @@ const Board = ({ data }) => {
             );
             setSelectedPiece(null);
             setHighlightedSquares([]);
+            
+            await makeMove(selectedPiece.row, selectedPiece.col, row, col);
         } else {
             var piece = getPieceAt(row, col);
             var cords = getPieceMove(piece, pieces, data.whitePlayerId === userId);

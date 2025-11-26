@@ -24,6 +24,12 @@ function PlayButton({ gameData }) {
         };
 
         const token = localStorage.getItem('accessToken');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
         var playerData = {
             id: jwtDecode(token)['Id'],
             username: jwtDecode(token)['Username'],

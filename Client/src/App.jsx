@@ -22,7 +22,7 @@ function App() {
     return (
         <>
             {!pagesNoNav && <NavigationBar />}
-            <div className={`${!pagesNoNav && "ml-80 flex-grow flex flex-col"}`}>
+            <div className={`flex-grow flex flex-col ${!pagesNoNav && "ml-80"}`}>
                 <Header isLogoVis={pagesNoNav} />
                 <main className="flex-grow flex">
                     <Routes>
