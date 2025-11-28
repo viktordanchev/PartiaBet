@@ -32,10 +32,5 @@ namespace RestAPI.Hubs
         
             await Clients.All.SendAsync("UpdatePlayers", playerResponse);
         }
-
-        public async Task MakeMove(int oldRow, int oldCol, int row, int col)
-        {
-            await Clients.All.SendAsync("ReceiveMove", oldRow, oldCol, row, col);
-        }
     }
 }

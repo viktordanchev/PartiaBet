@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import Loading from '../components/Loading';
 import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
 import Spectators from '../components/MatchPage/Spectators';
 import useApiRequest from '../hooks/useApiRequest';
-import { useHub } from '../contexts/HubContext';
+import { useHub } from '../contexts//HubContext';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-    const { connection } = useHub();
+    const { changeConnection } = useHub();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [matchData, setMatchData] = useState(null);
@@ -30,21 +30,8 @@ const MatchPage = () => {
     }, []);
 
     useEffect(() => {
-        if (!connection) return;
-
-        const handleReceivePlayer = (player) => {
-            setMatchData(prev => ({
-                ...prev,
-                players: [...prev.players, player],
-            }));
-        };
-
-        connection.on("UpdatePlayers", handleReceivePlayer);
-
-        return () => {
-            connection.off("UpdatePlayers", handleReceivePlayer);
-        };
-    }, [connection]);
+        changeConnection(game);
+    }, [game]);
 
     const renderGame = (matchData) => {
         switch (game) {

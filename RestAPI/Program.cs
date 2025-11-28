@@ -38,5 +38,6 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 app.MapHub<GameHub>("/game");
+app.MapHub<ChessHub>("/chess");
 
 app.Run();

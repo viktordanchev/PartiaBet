@@ -5,36 +5,50 @@ const HubContext = createContext();
 
 export const HubProvider = ({ children }) => {
     const [connection, setConnection] = useState(null);
-    const [playersCount, setPlayersCount] = useState({});
+    var apiUrl = "https://localhost:7182";
     
     useEffect(() => {
-        const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7182/game")
-            .configureLogging(signalR.LogLevel.None)
-            .withAutomaticReconnect()
-            .build();
-        
-        newConnection.start()
-            .then(() => {
-                newConnection.on("UpdatePlayerCount", (gameName, playersCount) => {
-                    setPlayersCount(prev => ({ ...prev, [gameName]: playersCount }));
-                });
-            })
-            .catch();
+        let newConnection;
 
-        setConnection(newConnection);
+        const startConnection = async () => {
+            newConnection = new signalR.HubConnectionBuilder()
+                .withUrl(`${apiUrl}/game`)
+                .configureLogging(signalR.LogLevel.None)
+                .withAutomaticReconnect()
+                .build();
+
+            await newConnection.start();
+            setConnection(newConnection);
+        };
+
+        startConnection();
 
         return () => {
-            newConnection.stop();
+            if (newConnection) {
+                newConnection.stop();
+            }
         };
     }, []);
 
-    const joinMatch = (matchData) => {
-        connection.invoke("JoinMatch", matchData);
+    const changeConnection = async (gameType) => {
+        if (connection) {
+            connection.off();
+            await connection.stop();
+        }
+        
+        const newConnection = new signalR.HubConnectionBuilder()
+            .withUrl(`${apiUrl}/${gameType}`)
+            .configureLogging(signalR.LogLevel.None)
+            .withAutomaticReconnect()
+            .build();
+
+        await newConnection.start();
+
+        setConnection(newConnection);
     };
 
     return (
-        <HubContext.Provider value={{ connection, playersCount, joinMatch }}>
+        <HubContext.Provider value={{ connection, changeConnection }}>
             {children}
         </HubContext.Provider>
     );
