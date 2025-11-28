@@ -1,4 +1,6 @@
-﻿namespace Games.Models
+﻿using Core.Enums;
+
+namespace Games.Models
 {
     public class MatchModel
     {
@@ -6,6 +8,8 @@
         {
             Players = new List<PlayerModel>();
         }
+
+        public GameType Game { get; set; }
 
         public decimal BetAmount { get; set; }
 

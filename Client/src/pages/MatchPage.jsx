@@ -4,34 +4,24 @@ import Loading from '../components/Loading';
 import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
 import Spectators from '../components/MatchPage/Spectators';
 import useApiRequest from '../hooks/useApiRequest';
-import { useHub } from '../contexts//HubContext';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-    const { changeConnection } = useHub();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [matchData, setMatchData] = useState(null);
-    
+
     useEffect(() => {
         const receiveData = async () => {
-            const values = {
-                game: game,
-                matchId: matchId 
-            };
+            const matchData = await apiRequest('matches', 'getMatchData', 'POST', true, false, matchId);
+            sessionStorage.setItem('currentMatchId', matchId);
 
-            const matchData = await apiRequest('matches', 'getMatchData', 'POST', true, false, values);
-            
             setIsLoading(false);
             setMatchData(matchData);
         };
 
         receiveData();
     }, []);
-
-    useEffect(() => {
-        changeConnection(game);
-    }, [game]);
 
     const renderGame = (matchData) => {
         switch (game) {

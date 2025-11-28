@@ -11,48 +11,40 @@ namespace Games.Services
 {
     public class MatchManagerService : IMatchManagerService
     {
-        private readonly ConcurrentDictionary<GameType, ConcurrentDictionary<Guid, MatchModel>> games;
+        private readonly ConcurrentDictionary<Guid, MatchModel> matches;
 
         public MatchManagerService()
         {
-            games = new ConcurrentDictionary<GameType, ConcurrentDictionary<Guid, MatchModel>>();
+            matches = new ConcurrentDictionary<Guid, MatchModel>();
         }
 
         public List<MatchResponse> GetMatches(GameType game)
         {
-            if (!games.ContainsKey(game))
-            {
-                return new List<MatchResponse>();
-            }
-
-            return games[game]
-                    .Select(m => new MatchResponse()
-                    {
-                        Id = m.Key,
-                        BetAmount = m.Value.BetAmount,
-                        MaxPlayersCount = m.Value.MaxPlayersCount,
-                        Players = m.Value.Players
-                            .Select(p => new PlayerResponse()
-                            {
-                                Id = p.Id,
-                                Username = p.Username,
-                                ProfileImageUrl = p.ProfileImageUrl,
-                                Rating = p.Rating
-                            }).ToList()
-                    })
-                    .ToList();
+            return matches
+                .Where(m => m.Value.Game == game)
+                .Select(m => new MatchResponse()
+                {
+                    Id = m.Key,
+                    BetAmount = m.Value.BetAmount,
+                    MaxPlayersCount = m.Value.MaxPlayersCount,
+                    Players = m.Value.Players
+                        .Select(p => new PlayerResponse()
+                        {
+                            Id = p.Id,
+                            Username = p.Username,
+                            ProfileImageUrl = p.ProfileImageUrl,
+                            Rating = p.Rating
+                        }).ToList()
+                })
+                .ToList();
         }
 
         public MatchResponse AddMatch(CreateMatchRequest match)
         {
-            if (!games.ContainsKey(match.GameId) && Enum.IsDefined(typeof(GameType), match.GameId))
-            {
-                games.TryAdd(match.GameId, new ConcurrentDictionary<Guid, MatchModel>());
-            }
-
             var gameConfigs = GameFactory.GetGameConfigs(match.GameId);
             var newMatch = new MatchModel()
             {
+                Game = match.GameId,
                 BetAmount = match.BetAmount,
                 DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
                 MaxPlayersCount = gameConfigs.TeamSize * gameConfigs.TeamsCount,
@@ -60,7 +52,8 @@ namespace Games.Services
             };
             
             var newMatchId = Guid.NewGuid();
-            games[match.GameId].TryAdd(newMatchId, newMatch);
+
+            matches.TryAdd(newMatchId, newMatch);
 
             return new MatchResponse()
             {
@@ -71,14 +64,14 @@ namespace Games.Services
             };
         }
 
-        public PlayerResponse AddPersonToMatch(GameType game, Guid matchId, AddPlayerRequest player)
+        public PlayerResponse AddPersonToMatch(Guid matchId, AddPlayerRequest player)
         {
-            var match = games[game][matchId];
+            var match = matches[matchId];
 
             var gamei = match.Board as ChessBoard;
             gamei.AddToBoard(player.Id);
 
-            var gameConfigs = GameFactory.GetGameConfigs(game);
+            var gameConfigs = GameFactory.GetGameConfigs(match.Game);
 
             if (match!.Players.Count == gameConfigs.TeamsCount * gameConfigs.TeamSize)
             {
@@ -104,12 +97,13 @@ namespace Games.Services
 
         }
 
-        public MatchRoomResponse GetMatch(GameType game, Guid matchId)
+        public MatchRoomResponse GetMatch(Guid matchId)
         {
-            var match = games[game][matchId];
+            var match = matches[matchId];
 
             return new MatchRoomResponse()
             {
+                Game = match.Game,
                 BetAmount = match.BetAmount,
                 SpectatorsCount = match.SpectatorsCount,
                 Players = match.Players

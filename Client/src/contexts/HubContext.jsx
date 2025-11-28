@@ -30,25 +30,8 @@ export const HubProvider = ({ children }) => {
         };
     }, []);
 
-    const changeConnection = async (gameType) => {
-        if (connection) {
-            connection.off();
-            await connection.stop();
-        }
-        
-        const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl(`${apiUrl}/${gameType}`)
-            .configureLogging(signalR.LogLevel.None)
-            .withAutomaticReconnect()
-            .build();
-
-        await newConnection.start();
-
-        setConnection(newConnection);
-    };
-
     return (
-        <HubContext.Provider value={{ connection, changeConnection }}>
+        <HubContext.Provider value={{ connection }}>
             {children}
         </HubContext.Provider>
     );

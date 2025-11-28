@@ -7,8 +7,8 @@ namespace Interfaces.Games
     public interface IMatchManagerService
     {
         MatchResponse AddMatch(CreateMatchRequest match);
-        PlayerResponse AddPersonToMatch(GameType gameId, Guid matchId, AddPlayerRequest player);
+        PlayerResponse AddPersonToMatch(Guid matchId, AddPlayerRequest player);
         List<MatchResponse> GetMatches(GameType gameId);
-        MatchRoomResponse GetMatch(GameType game, Guid matchId);
+        MatchRoomResponse GetMatch(Guid matchId);
     }
 }

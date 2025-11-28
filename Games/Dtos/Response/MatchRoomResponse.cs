@@ -1,4 +1,5 @@
-﻿using Games.Models;
+﻿using Core.Enums;
+using Games.Models;
 
 namespace Games.Dtos.Response
 {
@@ -8,6 +9,8 @@ namespace Games.Dtos.Response
         {
             Players = new List<PlayerResponse>();
         }
+
+        public GameType Game {  get; set; }
 
         public int SpectatorsCount { get; set; }
 
