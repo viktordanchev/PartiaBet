@@ -1,8 +1,11 @@
 ﻿using Common.Exceptions;
 using Core.Enums;
 using Games.Chess;
+using Games.Chess.Models;
+using Games.Dtos;
 using Games.Interfaces;
 using Games.Models;
+using System.Text.Json;
 using static Common.Constants.ErrorMessages;
 
 namespace Games.Services
@@ -36,6 +39,15 @@ namespace Games.Services
             };
         }
 
-
+        public static BaseDto GetDto(GameType game, string jsonData)
+        {
+            return game switch
+            {
+                GameType.Chess => JsonSerializer.Deserialize<NewMoveDto>(
+                    jsonData,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
+                _ => throw new ApiException(InvalidRequest)
+            };
+        }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Games.Chess.Models
+﻿using Games.Dtos;
+
+namespace Games.Chess.Models
 {
-    public class NewMoveDto
+    public class NewMoveDto : BaseDto
     {
 
         public int OldRow { get; set; }

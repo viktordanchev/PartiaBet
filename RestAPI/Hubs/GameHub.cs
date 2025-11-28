@@ -1,5 +1,7 @@
 ﻿using Games.Chess.Models;
+using Games.Dtos;
 using Games.Dtos.Request;
+using Games.Services;
 using Interfaces.Games;
 using Microsoft.AspNetCore.SignalR;
 using System.Text.Json;
@@ -36,18 +38,19 @@ namespace RestAPI.Hubs
 
         public async Task MakeMove(Guid matchId, string playerId, string jsonData)
         {
+            var gameType = _matchManagerService.GetGame(matchId);
+            BaseDto move;
+
             try
             {
-                var move = JsonSerializer.Deserialize<NewMoveDto>(
-                    jsonData,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                await Clients.All.SendAsync("ReceiveMove", move);
+                move = GameFactory.GetDto(gameType, jsonData);
             }
             catch
             {
                 throw new HubException();
             }
+
+            await Clients.All.SendAsync("ReceiveMove", move);
         }
     }
 }

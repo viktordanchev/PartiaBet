@@ -18,6 +18,11 @@ namespace Games.Services
             matches = new ConcurrentDictionary<Guid, MatchModel>();
         }
 
+        public GameType GetGame(Guid matchId)
+        {
+            return matches[matchId].Game;
+        }
+
         public List<MatchResponse> GetMatches(GameType game)
         {
             return matches
