@@ -18,6 +18,6 @@ namespace Games.Dtos.Response
 
         public List<PlayerResponse> Players { get; set; }
 
-        public GameBoard Board { get; set; } = null!;
+        public GameBoardModel Board { get; set; } = null!;
     }
 }

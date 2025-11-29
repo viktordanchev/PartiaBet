@@ -2,6 +2,7 @@
 using Games.Chess;
 using Games.Dtos.Request;
 using Games.Dtos.Response;
+using Games.Interfaces;
 using Games.Models;
 using Interfaces.Games;
 using System.Collections.Concurrent;
@@ -44,16 +45,17 @@ namespace Games.Services
                 .ToList();
         }
 
-        public MatchResponse AddMatch(CreateMatchRequest match)
+        public MatchResponse AddMatch(CreateMatchRequestDto match)
         {
-            var gameConfigs = GameFactory.GetGameConfigs(match.GameId);
+            var gameService = GameFactory.GetGameService(match.GameId);
+
             var newMatch = new MatchModel()
             {
                 Game = match.GameId,
                 BetAmount = match.BetAmount,
                 DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
-                MaxPlayersCount = gameConfigs.TeamSize * gameConfigs.TeamsCount,
-                Board = GameFactory.GetGameBoard(match.GameId)
+                MaxPlayersCount = gameService.Configs.TeamSize * gameService.Configs.TeamsCount,
+                Board = gameService.CreateGameBoard()
             };
             
             var newMatchId = Guid.NewGuid();
@@ -69,16 +71,12 @@ namespace Games.Services
             };
         }
 
-        public PlayerResponse AddPersonToMatch(Guid matchId, AddPlayerRequest player)
+        public PlayerResponse AddPersonToMatch(Guid matchId, AddPlayerRequestDto player)
         {
             var match = matches[matchId];
+            var gameService = GameFactory.GetGameService(match.Game);
 
-            var gamei = match.Board as ChessBoard;
-            gamei.AddToBoard(player.Id);
-
-            var gameConfigs = GameFactory.GetGameConfigs(match.Game);
-
-            if (match!.Players.Count == gameConfigs.TeamsCount * gameConfigs.TeamSize)
+            if (match!.Players.Count == gameService.Configs.TeamsCount * gameService.Configs.TeamSize)
             {
                 
             }
@@ -89,8 +87,10 @@ namespace Games.Services
                 Username = player.Username,
                 ProfileImageUrl = player.ProfileImageUrl,
                 Rating = 1000,
-                Team = match.Players.Count / gameConfigs.TeamSize + 1,
+                Team = match.Players.Count / gameService.Configs.TeamSize + 1,
             });
+
+            gameService.AddToBoard(player.Id, match.Board);
 
             return new PlayerResponse()
             {

@@ -2,7 +2,7 @@
 
 namespace Games.Dtos.Request
 {
-    public class AddPlayerRequest
+    public class AddPlayerRequestDto
     {
         [Required]
         public Guid Id { get; set; }

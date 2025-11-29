@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Games.Dtos.Request
 {
-    public class CreateMatchRequest
+    public class CreateMatchRequestDto
     {
         [Required]
         public GameType GameId { get; set; }

@@ -1,8 +1,8 @@
 ﻿using Common.Exceptions;
 using Core.Enums;
 using Games.Chess;
-using Games.Chess.Models;
 using Games.Dtos;
+using Games.Dtos.Chess;
 using Games.Interfaces;
 using Games.Models;
 using System.Text.Json;
@@ -16,34 +16,16 @@ namespace Games.Services
         {
             return game switch
             {
-                GameType.Chess => new Chess.ChessService(),
+                GameType.Chess => new ChessService(),
                 _ => throw new NotSupportedException($"Game type '{game}' is not supported.")
             };
         }
 
-        public static IGameConfigs GetGameConfigs(GameType game)
+        public static BaseMakeMoveDto GetMakeMoveDto(GameType game, string jsonData)
         {
             return game switch
             {
-                GameType.Chess => new Chess.ChessConfigs(),
-                _ => throw new ApiException(InvalidRequest)
-            };
-        }
-
-        public static GameBoard GetGameBoard(GameType game)
-        {
-            return game switch
-            {
-                GameType.Chess => new ChessBoard(),
-                _ => throw new ApiException(InvalidRequest)
-            };
-        }
-
-        public static BaseDto GetDto(GameType game, string jsonData)
-        {
-            return game switch
-            {
-                GameType.Chess => JsonSerializer.Deserialize<NewMoveDto>(
+                GameType.Chess => JsonSerializer.Deserialize<ChessMakeMoveDto>(
                     jsonData,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
                 _ => throw new ApiException(InvalidRequest)

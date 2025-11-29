@@ -1,10 +1,8 @@
-﻿using Games.Chess.Models;
-using Games.Dtos;
+﻿using Games.Dtos;
 using Games.Dtos.Request;
 using Games.Services;
 using Interfaces.Games;
 using Microsoft.AspNetCore.SignalR;
-using System.Text.Json;
 
 namespace RestAPI.Hubs
 {
@@ -17,7 +15,7 @@ namespace RestAPI.Hubs
             _matchManagerService = gameManagerService;
         }
 
-        public async Task<Guid> CreateMatch(CreateMatchRequest matchData, AddPlayerRequest playerData)
+        public async Task<Guid> CreateMatch(CreateMatchRequestDto matchData, AddPlayerRequestDto playerData)
         {
             var newMatch = _matchManagerService.AddMatch(matchData);
             var personData = _matchManagerService.AddPersonToMatch(newMatch.Id, playerData);
@@ -29,28 +27,28 @@ namespace RestAPI.Hubs
             return newMatch.Id;
         }
 
-        public async Task JoinMatch(Guid matchId, AddPlayerRequest playerData)
+        public async Task JoinMatch(Guid matchId, AddPlayerRequestDto playerData)
         {
             var playerResponse = _matchManagerService.AddPersonToMatch(matchId, playerData);
 
-            await Clients.All.SendAsync("UpdatePlayers", playerResponse);
+            await Clients.All.SendAsync("ReceiveNewPlayer", playerResponse);
         }
 
         public async Task MakeMove(Guid matchId, string playerId, string jsonData)
         {
             var gameType = _matchManagerService.GetGame(matchId);
-            BaseDto move;
+            BaseMakeMoveDto moveData;
 
             try
             {
-                move = GameFactory.GetDto(gameType, jsonData);
+                moveData = GameFactory.GetMakeMoveDto(gameType, jsonData);
             }
             catch
             {
                 throw new HubException();
             }
 
-            await Clients.All.SendAsync("ReceiveMove", move);
+            await Clients.All.SendAsync("ReceiveMove", moveData);
         }
     }
 }

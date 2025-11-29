@@ -19,7 +19,7 @@ namespace Games.Models
 
         public int SpectatorsCount { get; set; }
 
-        public GameBoard Board { get; set; } = null!;
+        public GameBoardModel Board { get; set; } = null!;
 
         public List<PlayerModel> Players { get; set; }
     }

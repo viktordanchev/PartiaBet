@@ -4,12 +4,31 @@ import Loading from '../components/Loading';
 import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
 import Spectators from '../components/MatchPage/Spectators';
 import useApiRequest from '../hooks/useApiRequest';
+import { useHub } from '../contexts/HubContext';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
+    const { connection } = useHub();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [matchData, setMatchData] = useState(null);
+
+    useEffect(() => {
+        if (!connection) return;
+
+        const handleReceiveNewPlayer = (player) => {
+            setMatchData(prev => ({
+                ...prev,
+                players: [player, ...prev.players]
+            }));
+        };
+
+        connection.on("ReceiveNewPlayer", handleReceiveNewPlayer);
+
+        return () => {
+            connection.off("ReceiveNewPlayer", handleReceiveNewPlayer);
+        };
+    }, [connection]);
 
     useEffect(() => {
         const receiveData = async () => {
