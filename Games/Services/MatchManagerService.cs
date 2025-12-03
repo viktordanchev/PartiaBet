@@ -1,5 +1,6 @@
 ﻿using Core.Enums;
 using Games.Chess;
+using Games.Dtos;
 using Games.Dtos.Request;
 using Games.Dtos.Response;
 using Games.Interfaces;
@@ -57,7 +58,7 @@ namespace Games.Services
                 MaxPlayersCount = gameService.Configs.TeamSize * gameService.Configs.TeamsCount,
                 Board = gameService.CreateGameBoard()
             };
-            
+
             var newMatchId = Guid.NewGuid();
 
             matches.TryAdd(newMatchId, newMatch);
@@ -78,7 +79,7 @@ namespace Games.Services
 
             if (match!.Players.Count == gameService.Configs.TeamsCount * gameService.Configs.TeamSize)
             {
-                
+
             }
 
             match.Players.Add(new PlayerModel()
@@ -121,6 +122,13 @@ namespace Games.Services
                     }).ToList(),
                 Board = match.Board
             };
+        }
+
+        public void UpdateMatchBoard(Guid matchId, BaseMakeMoveDto move)
+        {
+            var match = matches[matchId];
+            var gameService = GameFactory.GetGameService(match.Game);
+            gameService.UpdateBoard(match.Board, move);
         }
     }
 }

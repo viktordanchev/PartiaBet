@@ -42,6 +42,7 @@ namespace RestAPI.Hubs
             try
             {
                 moveData = GameFactory.GetMakeMoveDto(gameType, jsonData);
+                _matchManagerService.UpdateMatchBoard(matchId, moveData);
             }
             catch
             {

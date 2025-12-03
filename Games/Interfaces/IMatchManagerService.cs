@@ -1,4 +1,5 @@
 ﻿using Core.Enums;
+using Games.Dtos;
 using Games.Dtos.Request;
 using Games.Dtos.Response;
 
@@ -11,5 +12,6 @@ namespace Interfaces.Games
         PlayerResponse AddPersonToMatch(Guid matchId, AddPlayerRequestDto player);
         List<MatchResponse> GetMatches(GameType gameId);
         MatchRoomResponse GetMatch(Guid matchId);
+        void UpdateMatchBoard(Guid matchId, BaseMakeMoveDto move);
     }
 }

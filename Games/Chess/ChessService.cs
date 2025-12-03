@@ -1,5 +1,7 @@
 ﻿using Games.Chess.Models;
 using Games.Chess.Models.Enums;
+using Games.Dtos;
+using Games.Dtos.Chess;
 using Games.Interfaces;
 using Games.Models;
 
@@ -42,6 +44,19 @@ namespace Games.Chess
 
             InitializePieces(chessBoard, !string.IsNullOrEmpty(chessBoard.WhitePlayerId));
             InitializePieces(chessBoard, string.IsNullOrEmpty(chessBoard.WhitePlayerId));
+        }
+
+        public void UpdateBoard(GameBoardModel board, BaseMakeMoveDto move)
+        {
+            var chessBoard = board as ChessBoardModel;
+            var chessMove = move as ChessMakeMoveDto;
+            var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
+
+            if (piece != null)
+            {
+                piece.Row = chessMove.NewRow;
+                piece.Col = chessMove.NewCol;
+            }
         }
 
         private void InitializePieces(ChessBoardModel board, bool isWhite)
