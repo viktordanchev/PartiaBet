@@ -1,0 +1,17 @@
+name: partiabet
+services:
+  postgresql:
+    image: postgres
+    container_name: database
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: w-G?uM-c#JsfSr!3
+      POSTGRES_DB: partiabet
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
