@@ -41,12 +41,13 @@ const Board = ({ data }) => {
             pieceType === 'b' && playerId !== data.whitePlayerId;
     };
 
-    const makeMove = async (oldRow, oldCol, row, col) => {
+    const makeMove = async (oldRow, oldCol, row, col, pieceType) => {
         var jsonData = {
             oldRow: oldRow,
             oldCol: oldCol,
             newRow: row,
-            newCol: col
+            newCol: col,
+            pieceType: pieceType
         };
 
         const matchId = sessionStorage.getItem('currentMatchId');
@@ -70,7 +71,7 @@ const Board = ({ data }) => {
             setSelectedPiece(null);
             setHighlightedSquares([]);
             
-            await makeMove(selectedPiece.row, selectedPiece.col, row, col);
+            await makeMove(selectedPiece.row, selectedPiece.col, row, col, selectedPiece.type);
         } else {
             var piece = getPieceAt(row, col);
             var cords = getPieceMove(piece, pieces, data.whitePlayerId === playerId);

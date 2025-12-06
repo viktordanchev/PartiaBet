@@ -1,4 +1,4 @@
-﻿namespace Games.Chess.Models.Enums
+﻿namespace Games.Chess.Constants
 {
     public static class PieceTypes
     {
