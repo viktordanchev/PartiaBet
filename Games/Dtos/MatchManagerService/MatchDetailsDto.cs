@@ -1,13 +1,13 @@
 ﻿using Core.Enums;
 using Games.Models;
 
-namespace Games.Dtos.Response
+namespace Games.Dtos.MatchManagerService
 {
-    public class MatchRoomResponse
+    public class MatchDetailsDto
     {
-        public MatchRoomResponse()
+        public MatchDetailsDto()
         {
-            Players = new List<PlayerResponse>();
+            Players = new List<PlayerDto>();
         }
 
         public GameType Game {  get; set; }
@@ -16,7 +16,7 @@ namespace Games.Dtos.Response
 
         public decimal BetAmount { get; set; }
 
-        public List<PlayerResponse> Players { get; set; }
+        public List<PlayerDto> Players { get; set; }
 
         public GameBoardModel Board { get; set; } = null!;
     }

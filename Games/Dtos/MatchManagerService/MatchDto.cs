@@ -1,12 +1,12 @@
 ﻿using Core.Enums;
 
-namespace Games.Dtos.Response
+namespace Games.Dtos.MatchManagerService
 {
-    public class MatchResponse
+    public class MatchDto
     {
-        public MatchResponse()
+        public MatchDto()
         {
-            Players = new List<PlayerResponse>();
+            Players = new List<PlayerDto>();
         }
 
         public Guid Id { get; set; }
@@ -17,6 +17,6 @@ namespace Games.Dtos.Response
 
         public int MaxPlayersCount { get; set; }
 
-        public List<PlayerResponse> Players { get; set; }
+        public List<PlayerDto> Players { get; set; }
     }
 }

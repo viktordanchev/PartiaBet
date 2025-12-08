@@ -1,6 +1,6 @@
-﻿namespace Games.Dtos.Response
+﻿namespace Games.Dtos.MatchManagerService
 {
-    public class PlayerResponse
+    public class PlayerDto
     {
         public Guid Id { get; set; }
 

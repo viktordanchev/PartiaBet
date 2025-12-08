@@ -1,4 +1,4 @@
-﻿using Games.Dtos;
+﻿using Games.Dtos.MatchManagerService;
 using Games.Models;
 
 namespace Games.Interfaces
@@ -8,6 +8,6 @@ namespace Games.Interfaces
         IGameConfigs Configs { get; }
         GameBoardModel CreateGameBoard();
         void AddToBoard(Guid playerId, GameBoardModel board);
-        void UpdateBoard(GameBoardModel board, BaseMakeMoveDto move);
+        void UpdateBoard(GameBoardModel board, BaseMoveDto move);
     }
 }

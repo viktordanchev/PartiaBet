@@ -1,9 +1,9 @@
 ﻿using Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Games.Dtos.Request
+namespace Games.Dtos.MatchManagerService
 {
-    public class CreateMatchRequestDto
+    public class CreateMatchDto
     {
         [Required]
         public GameType GameId { get; set; }

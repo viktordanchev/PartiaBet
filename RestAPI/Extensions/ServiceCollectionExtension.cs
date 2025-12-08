@@ -15,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestAPI.Filters;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace RestAPI.Extensions
 {
@@ -99,6 +101,10 @@ namespace RestAPI.Extensions
             .ConfigureApiBehaviorOptions(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             });
         }
 

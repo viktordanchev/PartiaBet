@@ -32,11 +32,20 @@ const MatchPage = () => {
 
     useEffect(() => {
         const receiveData = async () => {
-            const matchData = await apiRequest('matches', 'getMatchData', 'POST', true, false, matchId);
+            const [matchData, skins] = await Promise.all([
+                apiRequest('matches', 'getMatchData', 'POST', true, false, matchId),
+                apiRequest('matches', 'getSkins', 'GET', true, false)
+            ]);
             sessionStorage.setItem('currentMatchId', matchId);
 
             setIsLoading(false);
-            setMatchData(matchData);
+
+            const fullMatchData = {
+                ...matchData,
+                skins: skins
+            };
+
+            setMatchData(fullMatchData);
         };
 
         receiveData();

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Games.Dtos.Request
+namespace Games.Dtos.MatchManagerService
 {
-    public class AddPlayerRequestDto
+    public class AddPlayerDto
     {
         [Required]
         public Guid Id { get; set; }

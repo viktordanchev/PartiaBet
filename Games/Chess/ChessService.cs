@@ -1,10 +1,9 @@
-﻿using Games.Chess.Constants;
+﻿using Games.Chess.Enums;
 using Games.Chess.Models;
-using Games.Dtos;
 using Games.Dtos.Chess;
+using Games.Dtos.MatchManagerService;
 using Games.Interfaces;
 using Games.Models;
-using System.Data;
 
 namespace Games.Chess
 {
@@ -47,10 +46,10 @@ namespace Games.Chess
             InitializePieces(chessBoard, string.IsNullOrEmpty(chessBoard.WhitePlayerId));
         }
 
-        public void UpdateBoard(GameBoardModel board, BaseMakeMoveDto move)
+        public void UpdateBoard(GameBoardModel board, BaseMoveDto move)
         {
             var chessBoard = board as ChessBoardModel;
-            var chessMove = move as ChessMakeMoveDto;
+            var chessMove = move as ChessMoveDto;
             var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
 
             if (IsValidMove(chessBoard, chessMove))
@@ -60,17 +59,22 @@ namespace Games.Chess
             }
         }
 
-        public bool IsValidMove(GameBoardModel board, BaseMakeMoveDto move)
+        public bool IsValidMove(GameBoardModel board, BaseMoveDto move)
         {
             var chessBoard = board as ChessBoardModel;
-            var chessMove = move as ChessMakeMoveDto;
+            var chessMove = move as ChessMoveDto;
             bool isValidMove;
 
             switch (chessMove.PieceType)
             {
-                case PieceTypes.WhiteKing:
-                case PieceTypes.BlackKing:
+                case PieceType.King:
                     isValidMove = IsValidKingMove(chessBoard, chessMove);
+                    break;
+                case PieceType.Queen:
+                    isValidMove = IsValidQueenMove(chessBoard, chessMove);
+                    break;
+                case PieceType.Rook:
+                    isValidMove = IsValidRookMove(chessBoard, chessMove);
                     break;
                 default:
                     isValidMove = true;
@@ -80,7 +84,7 @@ namespace Games.Chess
             return isValidMove;
         }
 
-        private bool IsValidKingMove(ChessBoardModel board, ChessMakeMoveDto move)
+        private bool IsValidKingMove(ChessBoardModel board, ChessMoveDto move)
         {
             var isValidMove = false;
             var directions = new List<(int Row, int Col)>
@@ -95,15 +99,77 @@ namespace Games.Chess
                 (0, -1)
             };
 
-            foreach (var dir in directions) 
+            foreach (var dir in directions)
             {
-                var posibleRow = dir.Row + move.NewRow;
-                var posibleCol = dir.Col + move.NewCol;
+                var posibleRow = dir.Row + move.OldRow;
+                var posibleCol = dir.Col + move.OldCol;
 
-                if (posibleRow == move.OldRow && posibleCol == move.OldCol)
+                if (posibleRow == move.NewRow && posibleCol == move.NewCol)
                 {
                     isValidMove = true;
                     break;
+                }
+            }
+
+            return isValidMove;
+        }
+
+        private bool IsValidQueenMove(ChessBoardModel board, ChessMoveDto move)
+        {
+            var isValidMove = false;
+            var directions = new List<(int Row, int Col)>
+            {
+                (1, 1),
+                (1, -1),
+                (-1, -1),
+                (-1, 1),
+                (1, 0),
+                (-1, 0),
+                (0, 1),
+                (0, -1)
+            };
+
+            foreach (var dir in directions)
+            {
+                for (var i = 1; i < 8; i++)
+                {
+                    var posibleRow = dir.Row + move.OldRow * i;
+                    var posibleCol = dir.Col + move.OldCol * i;
+
+                    if (posibleRow == move.NewRow && posibleCol == move.NewCol)
+                    {
+                        isValidMove = true;
+                        break;
+                    }
+                }
+            }
+
+            return isValidMove;
+        }
+
+        private bool IsValidRookMove(ChessBoardModel board, ChessMoveDto move)
+        {
+            var isValidMove = false;
+            var directions = new List<(int Row, int Col)>
+            {
+                (1, 0),
+                (-1, 0),
+                (0, 1),
+                (0, -1)
+            };
+
+            foreach (var dir in directions)
+            {
+                for (var i = 1; i < 8; i++)
+                {
+                    var posibleRow = dir.Row + move.OldRow * i;
+                    var posibleCol = dir.Col + move.OldCol * i;
+
+                    if (posibleRow == move.NewRow && posibleCol == move.NewCol)
+                    {
+                        isValidMove = true;
+                        break;
+                    }
                 }
             }
 
@@ -114,19 +180,19 @@ namespace Games.Chess
         {
             for (int col = 0; col < 8; col++)
             {
-                board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhitePawn : PieceTypes.BlackPawn, Row = isWhite ? 1 : 6, Col = col });
+                board.Pieces.Add(new FigureModel() { Type = PieceType.Pawn, Row = isWhite ? 1 : 6, Col = col, IsWhite = isWhite });
             }
 
             var row = isWhite ? 0 : 7;
 
-            board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhiteRook : PieceTypes.BlackRook, Row = row, Col = 0 });
-            board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhiteRook : PieceTypes.BlackRook, Row = row, Col = 7 });
-            board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhiteKnight : PieceTypes.BlackKnight, Row = row, Col = 1 });
-            board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhiteKnight : PieceTypes.BlackKnight, Row = row, Col = 6 });
-            board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhiteBishop : PieceTypes.BlackBishop, Row = row, Col = 2 });
-            board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhiteBishop : PieceTypes.BlackBishop, Row = row, Col = 5 });
-            board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhiteKing : PieceTypes.BlackKing, Row = row, Col = 3 });
-            board.Pieces.Add(new FigureModel() { Type = isWhite ? PieceTypes.WhiteQueen : PieceTypes.BlackQueen, Row = row, Col = 4 });
+            board.Pieces.Add(new FigureModel() { Type = PieceType.Rook, Row = row, Col = 0, IsWhite = isWhite });
+            board.Pieces.Add(new FigureModel() { Type = PieceType.Rook, Row = row, Col = 7, IsWhite = isWhite });
+            board.Pieces.Add(new FigureModel() { Type = PieceType.Knight, Row = row, Col = 1, IsWhite = isWhite });
+            board.Pieces.Add(new FigureModel() { Type = PieceType.Knight, Row = row, Col = 6, IsWhite = isWhite });
+            board.Pieces.Add(new FigureModel() { Type = PieceType.Bishop, Row = row, Col = 2, IsWhite = isWhite });
+            board.Pieces.Add(new FigureModel() { Type = PieceType.Bishop, Row = row, Col = 5, IsWhite = isWhite });
+            board.Pieces.Add(new FigureModel() { Type = PieceType.King, Row = row, Col = 3, IsWhite = isWhite });
+            board.Pieces.Add(new FigureModel() { Type = PieceType.Queen, Row = row, Col = 4, IsWhite = isWhite });
         }
     }
 }

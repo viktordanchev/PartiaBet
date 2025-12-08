@@ -1,9 +1,5 @@
 ﻿using Core.Enums;
-using Games.Chess;
-using Games.Dtos;
-using Games.Dtos.Request;
-using Games.Dtos.Response;
-using Games.Interfaces;
+using Games.Dtos.MatchManagerService;
 using Games.Models;
 using Interfaces.Games;
 using System.Collections.Concurrent;
@@ -25,17 +21,17 @@ namespace Games.Services
             return matches[matchId].Game;
         }
 
-        public List<MatchResponse> GetMatches(GameType game)
+        public List<MatchDto> GetMatches(GameType game)
         {
             return matches
                 .Where(m => m.Value.Game == game)
-                .Select(m => new MatchResponse()
+                .Select(m => new MatchDto()
                 {
                     Id = m.Key,
                     BetAmount = m.Value.BetAmount,
                     MaxPlayersCount = m.Value.MaxPlayersCount,
                     Players = m.Value.Players
-                        .Select(p => new PlayerResponse()
+                        .Select(p => new PlayerDto()
                         {
                             Id = p.Id,
                             Username = p.Username,
@@ -46,7 +42,7 @@ namespace Games.Services
                 .ToList();
         }
 
-        public MatchResponse AddMatch(CreateMatchRequestDto match)
+        public MatchDto AddMatch(CreateMatchDto match)
         {
             var gameService = GameFactory.GetGameService(match.GameId);
 
@@ -63,7 +59,7 @@ namespace Games.Services
 
             matches.TryAdd(newMatchId, newMatch);
 
-            return new MatchResponse()
+            return new MatchDto()
             {
                 Id = newMatchId,
                 GameId = match.GameId,
@@ -72,7 +68,7 @@ namespace Games.Services
             };
         }
 
-        public PlayerResponse AddPersonToMatch(Guid matchId, AddPlayerRequestDto player)
+        public PlayerDto AddPersonToMatch(Guid matchId, AddPlayerDto player)
         {
             var match = matches[matchId];
             var gameService = GameFactory.GetGameService(match.Game);
@@ -93,7 +89,7 @@ namespace Games.Services
 
             gameService.AddToBoard(player.Id, match.Board);
 
-            return new PlayerResponse()
+            return new PlayerDto()
             {
                 Id = player.Id,
                 Username = player.Username,
@@ -103,17 +99,17 @@ namespace Games.Services
 
         }
 
-        public MatchRoomResponse GetMatch(Guid matchId)
+        public MatchDetailsDto GetMatch(Guid matchId)
         {
             var match = matches[matchId];
 
-            return new MatchRoomResponse()
+            return new MatchDetailsDto()
             {
                 Game = match.Game,
                 BetAmount = match.BetAmount,
                 SpectatorsCount = match.SpectatorsCount,
                 Players = match.Players
-                    .Select(p => new PlayerResponse()
+                    .Select(p => new PlayerDto()
                     {
                         Id = p.Id,
                         Username = p.Username,
@@ -124,7 +120,7 @@ namespace Games.Services
             };
         }
 
-        public void UpdateMatchBoard(Guid matchId, BaseMakeMoveDto move)
+        public void UpdateMatchBoard(Guid matchId, BaseMoveDto move)
         {
             var match = matches[matchId];
             var gameService = GameFactory.GetGameService(match.Game);

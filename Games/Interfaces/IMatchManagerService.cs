@@ -1,17 +1,15 @@
 ﻿using Core.Enums;
-using Games.Dtos;
-using Games.Dtos.Request;
-using Games.Dtos.Response;
+using Games.Dtos.MatchManagerService;
 
 namespace Interfaces.Games
 {
     public interface IMatchManagerService
     {
         GameType GetGame(Guid matchId);
-        MatchResponse AddMatch(CreateMatchRequestDto match);
-        PlayerResponse AddPersonToMatch(Guid matchId, AddPlayerRequestDto player);
-        List<MatchResponse> GetMatches(GameType gameId);
-        MatchRoomResponse GetMatch(Guid matchId);
-        void UpdateMatchBoard(Guid matchId, BaseMakeMoveDto move);
+        MatchDto AddMatch(CreateMatchDto match);
+        PlayerDto AddPersonToMatch(Guid matchId, AddPlayerDto player);
+        List<MatchDto> GetMatches(GameType gameId);
+        MatchDetailsDto GetMatch(Guid matchId);
+        void UpdateMatchBoard(Guid matchId, BaseMoveDto move);
     }
 }

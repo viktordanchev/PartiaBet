@@ -1,11 +1,13 @@
 ﻿using Common.Exceptions;
 using Core.Enums;
 using Games.Chess;
-using Games.Dtos;
 using Games.Dtos.Chess;
+using Games.Dtos.MatchManagerService;
 using Games.Interfaces;
 using Games.Models;
+using System;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using static Common.Constants.ErrorMessages;
 
 namespace Games.Services
@@ -21,13 +23,17 @@ namespace Games.Services
             };
         }
 
-        public static BaseMakeMoveDto GetMakeMoveDto(GameType game, string jsonData)
+        public static BaseMoveDto GetMakeMoveDto(GameType game, string jsonData)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+
             return game switch
             {
-                GameType.Chess => JsonSerializer.Deserialize<ChessMakeMoveDto>(
-                    jsonData,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
+                GameType.Chess => JsonSerializer.Deserialize<ChessMoveDto>(jsonData, options),
                 _ => throw new ApiException(InvalidRequest)
             };
         }

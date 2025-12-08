@@ -4,7 +4,7 @@ import Square from './Square';
 import getPieceMove from '../../../services/chess/move';
 import { useHub } from '../../../contexts/HubContext';
 
-const Board = ({ data }) => {
+const Board = ({ data, skins }) => {
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const playerId = decodedToken['Id'];
     const { connection } = useHub();
@@ -35,10 +35,8 @@ const Board = ({ data }) => {
     const isMyPiece = (piece) => {
         if (!piece.type) return false;
 
-        const pieceType = piece.type.charAt(0);
-
-        return pieceType === 'w' && playerId === data.whitePlayerId ||
-            pieceType === 'b' && playerId !== data.whitePlayerId;
+        return piece.isWhite && playerId === data.whitePlayerId ||
+            !piece.isWhite && playerId !== data.whitePlayerId;
     };
 
     const makeMove = async (oldRow, oldCol, row, col, pieceType) => {
@@ -80,7 +78,7 @@ const Board = ({ data }) => {
             setHighlightedSquares(cords || []);
         }
     };
-
+    
     return (
         <article className="grid grid-cols-8 rounded border-5 border-gray-900">
             {Array.from({ length: 8 * 8 }).map((_, index) => {
@@ -94,9 +92,12 @@ const Board = ({ data }) => {
 
                 const isClickable = isMyPiece(piece);
 
+                const skin = skins.find(s => s.type === piece.type);
+
                 return (
                     <Square
                         key={index}
+                        skin={piece.isWhite ? skin?.white: skin?.black}
                         square={piece}
                         isClickable={isClickable}
                         isHighlighted={isHighlighted}

@@ -1,5 +1,5 @@
 ﻿function getPieceMove(piece, pieces, isRotated) {
-    switch (piece.type.slice(1)) {
+    switch (piece.type) {
         case 'king':
             return getKingMove(piece, pieces);
         case 'queen':

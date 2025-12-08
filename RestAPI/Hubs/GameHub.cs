@@ -1,5 +1,4 @@
-﻿using Games.Dtos;
-using Games.Dtos.Request;
+﻿using Games.Dtos.MatchManagerService;
 using Games.Services;
 using Interfaces.Games;
 using Microsoft.AspNetCore.SignalR;
@@ -15,7 +14,7 @@ namespace RestAPI.Hubs
             _matchManagerService = gameManagerService;
         }
 
-        public async Task<Guid> CreateMatch(CreateMatchRequestDto matchData, AddPlayerRequestDto playerData)
+        public async Task<Guid> CreateMatch(CreateMatchDto matchData, AddPlayerDto playerData)
         {
             var newMatch = _matchManagerService.AddMatch(matchData);
             var personData = _matchManagerService.AddPersonToMatch(newMatch.Id, playerData);
@@ -27,7 +26,7 @@ namespace RestAPI.Hubs
             return newMatch.Id;
         }
 
-        public async Task JoinMatch(Guid matchId, AddPlayerRequestDto playerData)
+        public async Task JoinMatch(Guid matchId, AddPlayerDto playerData)
         {
             var playerResponse = _matchManagerService.AddPersonToMatch(matchId, playerData);
 
@@ -37,7 +36,7 @@ namespace RestAPI.Hubs
         public async Task MakeMove(Guid matchId, string playerId, string jsonData)
         {
             var gameType = _matchManagerService.GetGame(matchId);
-            BaseMakeMoveDto moveData;
+            BaseMoveDto moveData;
 
             try
             {

@@ -15,7 +15,7 @@ function PlayButton({ gameType }) {
     const stakeAmounts = [5, 10, 20, 50, 100];
     
     useClickOutside(dropdownRef, () => setShowStakeOptions(false));
-
+    
     const createMatch = async () => {
         var matchData = {
             gameId: gameType,
