@@ -120,11 +120,19 @@ namespace Games.Services
             };
         }
 
-        public void UpdateMatchBoard(Guid matchId, BaseMoveDto move)
+        public void UpdateMatchBoard(Guid matchId, BaseMoveDto move, string playerId)
         {
             var match = matches[matchId];
             var gameService = GameFactory.GetGameService(match.Game);
             gameService.UpdateBoard(match.Board, move);
+        }
+
+        public bool IsValidMove(Guid matchId, BaseMoveDto move, string playerId)
+        {
+            var match = matches[matchId];
+            var gameService = GameFactory.GetGameService(match.Game);
+
+            return gameService.IsValidMove(match.Board, move);
         }
     }
 }

@@ -35,20 +35,23 @@ namespace RestAPI.Hubs
 
         public async Task MakeMove(Guid matchId, string playerId, string jsonData)
         {
-            var gameType = _matchManagerService.GetGame(matchId);
             BaseMoveDto moveData;
 
             try
             {
+                var gameType = _matchManagerService.GetGame(matchId);
                 moveData = GameFactory.GetMakeMoveDto(gameType, jsonData);
-                _matchManagerService.UpdateMatchBoard(matchId, moveData);
             }
             catch
             {
                 throw new HubException();
             }
 
-            await Clients.All.SendAsync("ReceiveMove", moveData);
+            if (_matchManagerService.IsValidMove(matchId, moveData, playerId))
+            {
+                _matchManagerService.UpdateMatchBoard(matchId, moveData, playerId);
+                await Clients.All.SendAsync("ReceiveMove", moveData);
+            }
         }
     }
 }

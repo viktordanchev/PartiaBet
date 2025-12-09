@@ -10,6 +10,7 @@ namespace Interfaces.Games
         PlayerDto AddPersonToMatch(Guid matchId, AddPlayerDto player);
         List<MatchDto> GetMatches(GameType gameId);
         MatchDetailsDto GetMatch(Guid matchId);
-        void UpdateMatchBoard(Guid matchId, BaseMoveDto move);
+        void UpdateMatchBoard(Guid matchId, BaseMoveDto move, string playerId);
+        bool IsValidMove(Guid matchId, BaseMoveDto move, string playerId);
     }
 }

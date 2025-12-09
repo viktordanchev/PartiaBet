@@ -67,6 +67,11 @@ namespace Games.Chess
             var chessMove = move as ChessMoveDto;
             bool isValidMove;
 
+            if (chessMove.NewRow < 0 || chessMove.NewRow > 7 || chessMove.NewCol < 0 || chessMove.NewCol > 7)
+            {
+                return false;
+            }
+
             switch (chessMove.PieceType)
             {
                 case PieceType.King:
