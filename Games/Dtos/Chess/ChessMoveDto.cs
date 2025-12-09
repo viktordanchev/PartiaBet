@@ -5,7 +5,6 @@ namespace Games.Dtos.Chess
 {
     public class ChessMoveDto : BaseMoveDto
     {
-
         public int OldRow { get; set; }
 
         public int OldCol { get; set; }

@@ -11,7 +11,7 @@ namespace Games.Dtos.MatchManagerService
 
         public Guid Id { get; set; }
 
-        public GameType GameId { get; set; }
+        public GameType Game { get; set; }
 
         public decimal BetAmount { get; set; }
 

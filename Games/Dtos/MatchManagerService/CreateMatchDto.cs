@@ -6,7 +6,7 @@ namespace Games.Dtos.MatchManagerService
     public class CreateMatchDto
     {
         [Required]
-        public GameType GameId { get; set; }
+        public GameType Game { get; set; }
 
         [Required]
         public string DateAndTime { get; set; } = string.Empty;

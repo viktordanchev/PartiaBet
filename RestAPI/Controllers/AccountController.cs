@@ -1,4 +1,4 @@
-﻿using Core.DTOs.Requests.Account;
+﻿using Core.Dtos.Account;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using static Common.Constants.ErrorMessages;
@@ -27,7 +27,7 @@ namespace RestAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest data)
+        public async Task<IActionResult> Login(LoginDto data)
         {
             if (!await _userService.IsLoginDataValidAsync(data))
                 return BadRequest(new { Error = InvalidLoginData });
@@ -45,7 +45,7 @@ namespace RestAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterUserRequest data)
+        public async Task<IActionResult> Register(RegisterUserDto data)
         {
             if (_environment.IsProduction() && !_accountTokenService.IsTokenValid(data.Email, data.VrfCode))
                 return BadRequest(new { Error = InvalidVrfCode });
@@ -82,7 +82,7 @@ namespace RestAPI.Controllers
         }
 
         [HttpPost("recoverPass")]
-        public async Task<IActionResult> RecoverPassword(RecoverPasswordRequest data)
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordDto data)
         {
             if (!await _userService.IsUserExistAsync(data.Email))
             {

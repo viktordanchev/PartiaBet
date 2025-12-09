@@ -18,7 +18,7 @@ function PlayButton({ gameType }) {
     
     const createMatch = async () => {
         var matchData = {
-            gameId: gameType,
+            game: gameType,
             betAmount: betAmount,
             dateAndTime: new Date().toLocaleString("bg-BG")
         };

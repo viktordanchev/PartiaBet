@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.DTOs.Requests.Account
+namespace Core.Dtos.Account
 {
-    public class RecoverPasswordRequest
+    public class RecoverPasswordDto
     {
         [Required]
         public string Token { get; set; } = string.Empty;

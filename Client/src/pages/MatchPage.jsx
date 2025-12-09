@@ -32,22 +32,34 @@ const MatchPage = () => {
 
     useEffect(() => {
         const receiveData = async () => {
-            const [matchData, skins] = await Promise.all([
+            let [matchData, skins] = await Promise.all([
                 apiRequest('matches', 'getMatchData', 'POST', true, false, matchId),
                 apiRequest('matches', 'getSkins', 'GET', true, false)
             ]);
-            sessionStorage.setItem('currentMatchId', matchId);
-
+            
             setIsLoading(false);
 
-            const fullMatchData = {
+            const updatedPieces = matchData.board.pieces.map(p => {
+                const skin = skins.find(s => s.type === p.type);
+
+                return {
+                    ...p,
+                    imageUrl: p.isWhite ? skin.white : skin.black
+                };
+            });
+
+            matchData = {
                 ...matchData,
-                skins: skins
+                board: {
+                    ...matchData.board,
+                    pieces: updatedPieces
+                }
             };
 
-            setMatchData(fullMatchData);
+            setMatchData(matchData);
         };
 
+        sessionStorage.setItem('currentMatchId', matchId);
         receiveData();
     }, []);
 

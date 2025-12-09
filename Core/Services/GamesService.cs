@@ -1,4 +1,4 @@
-﻿using Core.DTOs.Responses.Games;
+﻿using Core.Dtos.Games;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 
@@ -13,12 +13,12 @@ namespace Core.Services
             _gamesRepository = gamesRepository;
         }
 
-        public async Task<IEnumerable<GameResponse>> GetAllAsync()
+        public async Task<IEnumerable<GameDto>> GetAllAsync()
         {
             return await _gamesRepository.GetAllAsync();
         }
 
-        public async Task<GameResponse?> GetGameAsync(string game)
+        public async Task<GameDto?> GetGameAsync(string game)
         {
             return await _gamesRepository.GetGameAsync(game);
         }

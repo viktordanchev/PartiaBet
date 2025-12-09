@@ -1,11 +1,11 @@
 ﻿using Common.Constants;
 using Common.Exceptions;
-using Core.DTOs.Requests.Account;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Core.DTOs;
+using Core.Dtos.Account;
 
 namespace Core.Services
 {
@@ -20,7 +20,7 @@ namespace Core.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task RegisterUserAsync(RegisterUserRequest data)
+        public async Task RegisterUserAsync(RegisterUserDto data)
         {
             var (emailExists, usernameExists) = await _userRepository.IsUserDataUniqueAsync(data.Email, data.Username);
 
@@ -46,7 +46,7 @@ namespace Core.Services
             await _userRepository.UpdatePasswordAsync(email, password);
         }
 
-        public async Task<bool> IsLoginDataValidAsync(LoginRequest request)
+        public async Task<bool> IsLoginDataValidAsync(LoginDto request)
         {
             var userPasswordHash = await _userRepository.GetUserPasswordHashAsync(request.Email);
 

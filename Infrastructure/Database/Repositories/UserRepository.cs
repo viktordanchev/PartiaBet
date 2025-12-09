@@ -1,5 +1,5 @@
-﻿using Core.DTOs;
-using Core.DTOs.Requests.Account;
+﻿using Core.Dtos.Account;
+using Core.DTOs;
 using Core.Interfaces.Repositories;
 using Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ namespace Infrastructure.Database.Repositories
             _database = database;
         }
 
-        public async Task AddUserAsync(RegisterUserRequest data)
+        public async Task AddUserAsync(RegisterUserDto data)
         {
             var user = new User
             {

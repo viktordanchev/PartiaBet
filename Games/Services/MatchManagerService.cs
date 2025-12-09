@@ -44,11 +44,11 @@ namespace Games.Services
 
         public MatchDto AddMatch(CreateMatchDto match)
         {
-            var gameService = GameFactory.GetGameService(match.GameId);
+            var gameService = GameFactory.GetGameService(match.Game);
 
             var newMatch = new MatchModel()
             {
-                Game = match.GameId,
+                Game = match.Game,
                 BetAmount = match.BetAmount,
                 DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
                 MaxPlayersCount = gameService.Configs.TeamSize * gameService.Configs.TeamsCount,
@@ -62,7 +62,7 @@ namespace Games.Services
             return new MatchDto()
             {
                 Id = newMatchId,
-                GameId = match.GameId,
+                Game = match.Game,
                 BetAmount = newMatch.BetAmount,
                 MaxPlayersCount = newMatch.MaxPlayersCount,
             };

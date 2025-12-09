@@ -1,13 +1,13 @@
 ﻿using Core.Enums;
 
-namespace Core.DTOs.Responses.Games
+namespace Core.Dtos.Games
 {
-    public class GameDetailsResponse
+    public class GameDto
     {
+        public GameType Id { get; set; }
+
         public string Name { get; set; } = string.Empty;
 
         public string ImageUrl { get; set; } = string.Empty;
-
-        public GameType GameType { get; set; }
     }
 }

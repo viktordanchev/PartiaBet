@@ -18,7 +18,12 @@ namespace Games.Chess
 
         public GameBoardModel CreateGameBoard()
         {
-            return new ChessBoardModel();
+            var chessBoard = new ChessBoardModel();
+
+            InitializePieces(chessBoard, true);
+            InitializePieces(chessBoard, false);
+
+            return chessBoard;
         }
 
         public void AddToBoard(Guid playerId, GameBoardModel board)
@@ -41,9 +46,6 @@ namespace Games.Chess
             {
                 chessBoard.WhitePlayerId = playerId.ToString();
             }
-
-            InitializePieces(chessBoard, !string.IsNullOrEmpty(chessBoard.WhitePlayerId));
-            InitializePieces(chessBoard, string.IsNullOrEmpty(chessBoard.WhitePlayerId));
         }
 
         public void UpdateBoard(GameBoardModel board, BaseMoveDto move)

@@ -1,16 +1,16 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Square from './Square';
-import getPieceMove from '../../../services/chess/move';
+import getValidMoves from '../../../services/chess/getValidMoves';
 import { useHub } from '../../../contexts/HubContext';
 
-const Board = ({ data, skins }) => {
+const Board = ({ data }) => {
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const playerId = decodedToken['Id'];
     const { connection } = useHub();
     const [pieces, setPieces] = useState(data.pieces);
     const [selectedPiece, setSelectedPiece] = useState(null);
-    const [highlightedSquares, setHighlightedSquares] = useState([]);
+    const [validSquares, setValidSquares] = useState([]);
     
     useEffect(() => {
         if (!connection) return;
@@ -28,81 +28,73 @@ const Board = ({ data, skins }) => {
         };
     }, [connection]);
 
-    const getPieceAt = (row, col) => {
-        return pieces.find(p => p.row === row && p.col === col) || null;
+    const isClickable = (square) => {
+        if (!square.type) return false;
+
+        return square.isWhite && playerId === data.whitePlayerId ||
+            !square.isWhite && playerId !== data.whitePlayerId ||
+            validSquares.some(vs => vs.row === square.row && vs.col === square.col);
     };
 
-    const isMyPiece = (piece) => {
-        if (!piece.type) return false;
-
-        return piece.isWhite && playerId === data.whitePlayerId ||
-            !piece.isWhite && playerId !== data.whitePlayerId;
-    };
-
-    const makeMove = async (oldRow, oldCol, row, col, pieceType) => {
-        var jsonData = {
-            oldRow: oldRow,
-            oldCol: oldCol,
-            newRow: row,
-            newCol: col,
-            pieceType: pieceType
-        };
-
+    const makeMove = async (moveData) => {
         const matchId = sessionStorage.getItem('currentMatchId');
-        
+
         try {
-            await connection.invoke("MakeMove", matchId, playerId, JSON.stringify(jsonData));
+            await connection.invoke("MakeMove", matchId, playerId, JSON.stringify(moveData));
         } catch (error) {
             console.error(error);
         }
     };
 
-    const handleClickSquare = async (row, col) => {
-        if (selectedPiece && highlightedSquares.some(s => s.newRow === row && s.newCol === col)) {
+    const handleClickSquare = async (piece) => {
+        if (selectedPiece && validSquares.some(s => s.row === piece.row && s.col === piece.col)) {
             setPieces(prev =>
                 prev.map(p =>
                     p.row === selectedPiece.row && p.col === selectedPiece.col
-                        ? { ...p, row: row, col: col }
+                        ? { ...p, row: piece.row, col: piece.col }
                         : p
                 )
             );
             setSelectedPiece(null);
-            setHighlightedSquares([]);
-            
-            await makeMove(selectedPiece.row, selectedPiece.col, row, col, selectedPiece.type);
+            setValidSquares([]);
+
+            await makeMove(
+                {
+                    oldRow: selectedPiece.row,
+                    oldCol: selectedPiece.col,
+                    newRow: piece.row,
+                    newCol: piece.col,
+                    pieceType:selectedPiece.type
+                });
         } else {
-            var piece = getPieceAt(row, col);
-            var cords = getPieceMove(piece, pieces, data.whitePlayerId === playerId);
+            var validMoves = getValidMoves(piece, pieces, data.whitePlayerId === playerId);
 
             setSelectedPiece(piece);
-            setHighlightedSquares(cords || []);
+            setValidSquares(validMoves);
         }
     };
-    
+
     return (
         <article className="grid grid-cols-8 rounded border-5 border-gray-900">
             {Array.from({ length: 8 * 8 }).map((_, index) => {
                 const [row, col] = [Math.floor(index / 8), index % 8].map(v => (playerId === data.whitePlayerId ? 7 - v : v));
 
-                const piece = getPieceAt(row, col) || { row, col };
+                const square = pieces.find(p => p.row === row && p.col === col) || { row, col };
 
-                const isHighlighted = highlightedSquares.some(
-                    s => s.newRow === row && s.newCol === col
+                const isHighlighted = validSquares.some(
+                    vs => vs.row === row && vs.col === col
                 );
 
-                const isClickable = isMyPiece(piece);
-
-                const skin = skins.find(s => s.type === piece.type);
+                const isSquareClickable = isClickable(square);
 
                 return (
                     <Square
                         key={index}
-                        skin={piece.isWhite ? skin?.white: skin?.black}
-                        square={piece}
-                        isClickable={isClickable}
+                        square={square}
+                        isClickable={isSquareClickable || isHighlighted}
                         isHighlighted={isHighlighted}
-                        selected={selectedPiece && selectedPiece.row === row && selectedPiece.col === col}
-                        onSelect={() => (isHighlighted || isClickable) && handleClickSquare(row, col)}
+                        isSelected={selectedPiece && selectedPiece.row === row && selectedPiece.col === col}
+                        onSelect={() => (isHighlighted || isSquareClickable) && handleClickSquare(square)}
                     />
                 );
             })}

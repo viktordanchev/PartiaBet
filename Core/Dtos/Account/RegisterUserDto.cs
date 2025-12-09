@@ -2,9 +2,9 @@
 using Core.CustomAttributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Core.DTOs.Requests.Account
+namespace Core.Dtos.Account
 {
-    public class RegisterUserRequest
+    public class RegisterUserDto
     {
         [Required]
         [EmailAddress]
