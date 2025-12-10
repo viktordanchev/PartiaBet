@@ -80,7 +80,9 @@ function getPawnMove(piece, pieces, areWhitePiecesMine) {
             if ((dir.col !== 0 && piece) ||
                 (dir.col === 0 && !piece)) {
                 if (piece) {
-                    validSquares.push({ row, col });
+                    if (piece.isWhite !== areWhitePiecesMine) {
+                        validSquares.push({ row, col });
+                    }
                 } else {
                     validSquares.push({ row, col });
                 }
