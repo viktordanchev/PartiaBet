@@ -8,7 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 function PlayButton({ gameType }) {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
-    const { connection } = useHub();
+    const { startConnection } = useHub();
     const { setIsLoading } = useLoading();
     const [showStakeOptions, setShowStakeOptions] = useState(false);
     const [betAmount, setBetAmount] = useState(0);
@@ -37,6 +37,7 @@ function PlayButton({ gameType }) {
         };
 
         setIsLoading(true);
+        var connection = await startConnection();
         var matchId = await connection.invoke("CreateMatch", matchData, playerData);
         setIsLoading(false);
 

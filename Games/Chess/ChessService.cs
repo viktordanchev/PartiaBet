@@ -54,24 +54,28 @@ namespace Games.Chess
             var chessMove = move as ChessMoveDto;
             var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
 
-            if (IsValidMove(chessBoard, chessMove))
-            {
-                piece.Row = chessMove.NewRow;
-                piece.Col = chessMove.NewCol;
-            }
+            piece.Row = chessMove.NewRow;
+            piece.Col = chessMove.NewCol;
         }
 
-        public bool IsValidMove(GameBoardModel board, BaseMoveDto move)
+        public bool IsValidMove(GameBoardModel board, BaseMoveDto move, string playerId)
         {
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveDto;
-            bool isValidMove;
 
             if (chessMove.NewRow < 0 || chessMove.NewRow > 7 || chessMove.NewCol < 0 || chessMove.NewCol > 7)
             {
                 return false;
             }
 
+            var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
+
+            if (piece != null && piece.IsWhite == (chessBoard.WhitePlayerId == playerId))
+            {
+                return false;
+            }
+
+            bool isValidMove;
             switch (chessMove.PieceType)
             {
                 case PieceType.King:

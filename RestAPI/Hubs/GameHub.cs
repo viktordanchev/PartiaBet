@@ -1,6 +1,7 @@
 ﻿using Games.Dtos.MatchManagerService;
 using Games.Services;
 using Interfaces.Games;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace RestAPI.Hubs
@@ -14,6 +15,7 @@ namespace RestAPI.Hubs
             _matchManagerService = gameManagerService;
         }
 
+        [Authorize]
         public async Task<Guid> CreateMatch(CreateMatchDto matchData, AddPlayerDto playerData)
         {
             var newMatch = _matchManagerService.AddMatch(matchData);
@@ -26,6 +28,7 @@ namespace RestAPI.Hubs
             return newMatch.Id;
         }
 
+        [Authorize]
         public async Task JoinMatch(Guid matchId, AddPlayerDto playerData)
         {
             var playerResponse = _matchManagerService.AddPersonToMatch(matchId, playerData);
@@ -33,7 +36,8 @@ namespace RestAPI.Hubs
             await Clients.All.SendAsync("ReceiveNewPlayer", playerResponse);
         }
 
-        public async Task MakeMove(Guid matchId, string playerId, string jsonData)
+        [Authorize]
+        public async Task MakeMove(Guid matchId, string jsonData)
         {
             BaseMoveDto moveData;
 
@@ -47,9 +51,11 @@ namespace RestAPI.Hubs
                 throw new HubException();
             }
 
+            var playerId = Context.User?.FindFirst("Id")?.Value;
+
             if (_matchManagerService.IsValidMove(matchId, moveData, playerId))
             {
-                _matchManagerService.UpdateMatchBoard(matchId, moveData, playerId);
+                _matchManagerService.UpdateMatchBoard(matchId, moveData);
                 await Clients.All.SendAsync("ReceiveMove", moveData);
             }
         }

@@ -40,7 +40,7 @@ const Board = ({ data }) => {
         const matchId = sessionStorage.getItem('currentMatchId');
 
         try {
-            await connection.invoke("MakeMove", matchId, playerId, JSON.stringify(moveData));
+            await connection.invoke("MakeMove", matchId, JSON.stringify(moveData));
         } catch (error) {
             console.error(error);
         }

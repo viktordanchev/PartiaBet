@@ -5,33 +5,45 @@ const HubContext = createContext();
 
 export const HubProvider = ({ children }) => {
     const [connection, setConnection] = useState(null);
-    var apiUrl = "https://localhost:7182";
-    
+
     useEffect(() => {
-        let newConnection;
-
-        const startConnection = async () => {
-            newConnection = new signalR.HubConnectionBuilder()
-                .withUrl(`${apiUrl}/game`)
-                .configureLogging(signalR.LogLevel.None)
-                .withAutomaticReconnect()
-                .build();
-
-            await newConnection.start();
-            setConnection(newConnection);
+        const initializeConnection = async () => {
+            await startConnection();
         };
 
-        startConnection();
+        initializeConnection();
 
         return () => {
-            if (newConnection) {
-                newConnection.stop();
-            }
+            stopConnection();
         };
     }, []);
 
+    const startConnection = async () => {
+        await stopConnection();
+
+        const newConnection = new signalR.HubConnectionBuilder()
+            .withUrl('https://localhost:7182/game', {
+                accessTokenFactory: () => localStorage.getItem('accessToken')
+            })
+            .configureLogging(signalR.LogLevel.None)
+            .withAutomaticReconnect()
+            .build();
+
+        await newConnection.start();
+        setConnection(newConnection);
+
+        return newConnection;
+    };
+
+    const stopConnection = async () => {
+        if (connection) {
+            await connection.stop();
+            setConnection(null);
+        }
+    };
+
     return (
-        <HubContext.Provider value={{ connection }}>
+        <HubContext.Provider value={{ connection, startConnection, stopConnection }}>
             {children}
         </HubContext.Provider>
     );
