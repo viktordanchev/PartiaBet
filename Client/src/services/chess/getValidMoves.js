@@ -69,7 +69,7 @@ function getPawnMove(piece, pieces, areWhitePiecesMine) {
     if (piece.row === 1 || piece.row === 6) {
         directions.push({ row: areWhitePiecesMine ? 2 : -2, col: 0 });
     }
-    
+
     for (const dir of directions) {
         const row = piece.row + dir.row;
         const col = piece.col + dir.col;
@@ -127,18 +127,18 @@ function getLinearMoves(piece, pieces, areWhitePiecesMine, directions) {
             const row = piece.row + dir.row * i;
             const col = piece.col + dir.col * i;
 
-            if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-                const piece = pieces.find(p => p.row === row && p.col === col);
+            if (row < 0 || row >= 8 || col < 0 || col >= 8) break;
 
-                if (piece) {
-                    if (piece.isWhite !== areWhitePiecesMine) {
-                        validSquares.push({ row, col });
-                    }
+            const pieceInSquare = pieces.find(p => p.row === row && p.col === col);
 
-                    break;
-                } else {
+            if (pieceInSquare) {
+                if (pieceInSquare.isWhite !== areWhitePiecesMine) {
                     validSquares.push({ row, col });
                 }
+
+               
+            } else {
+                validSquares.push({ row, col });
             }
         }
     }
@@ -153,16 +153,16 @@ function getSingleMoves(piece, pieces, areWhitePiecesMine, directions) {
         const row = piece.row + dir.row;
         const col = piece.col + dir.col;
 
-        if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-            const piece = pieces.find(p => p.row === row && p.col === col);
+        if (row < 0 || row >= 8 || col < 0 || col >= 8) break;
 
-            if (piece) {
-                if (piece.isWhite !== areWhitePiecesMine) {
-                    validSquares.push({ row, col });
-                }
-            } else {
+        const pieceInSquare = pieces.find(p => p.row === row && p.col === col);
+
+        if (pieceInSquare) {
+            if (pieceInSquare.isWhite !== areWhitePiecesMine) {
                 validSquares.push({ row, col });
             }
+        } else {
+            validSquares.push({ row, col });
         }
     }
 

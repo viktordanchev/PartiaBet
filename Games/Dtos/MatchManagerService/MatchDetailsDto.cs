@@ -1,5 +1,4 @@
 ﻿using Core.Enums;
-using Games.Models;
 
 namespace Games.Dtos.MatchManagerService
 {
@@ -18,6 +17,6 @@ namespace Games.Dtos.MatchManagerService
 
         public List<PlayerDto> Players { get; set; }
 
-        public GameBoardModel Board { get; set; } = null!;
+        public GameBoardDto Board { get; set; } = null!;
     }
 }

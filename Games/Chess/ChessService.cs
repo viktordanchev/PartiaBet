@@ -97,7 +97,6 @@ namespace Games.Chess
 
         private bool IsValidKingMove(ChessBoardModel board, ChessMoveDto move)
         {
-            var isValidMove = false;
             var directions = new List<(int Row, int Col)>
             {
                 (1, 0),
@@ -110,24 +109,11 @@ namespace Games.Chess
                 (0, -1)
             };
 
-            foreach (var dir in directions)
-            {
-                var posibleRow = dir.Row + move.OldRow;
-                var posibleCol = dir.Col + move.OldCol;
-
-                if (posibleRow == move.NewRow && posibleCol == move.NewCol)
-                {
-                    isValidMove = true;
-                    break;
-                }
-            }
-
-            return isValidMove;
+            return GetSingleMoves(move, directions);
         }
 
         private bool IsValidQueenMove(ChessBoardModel board, ChessMoveDto move)
         {
-            var isValidMove = false;
             var directions = new List<(int Row, int Col)>
             {
                 (1, 1),
@@ -140,22 +126,7 @@ namespace Games.Chess
                 (0, -1)
             };
 
-            foreach (var dir in directions)
-            {
-                for (var i = 1; i < 8; i++)
-                {
-                    var posibleRow = dir.Row + move.OldRow * i;
-                    var posibleCol = dir.Col + move.OldCol * i;
-
-                    if (posibleRow == move.NewRow && posibleCol == move.NewCol)
-                    {
-                        isValidMove = true;
-                        break;
-                    }
-                }
-            }
-
-            return isValidMove;
+            return GetLinearMoves(board, move, directions);
         }
 
         private bool IsValidRookMove(ChessBoardModel board, ChessMoveDto move)
@@ -181,6 +152,47 @@ namespace Games.Chess
                         isValidMove = true;
                         break;
                     }
+                }
+            }
+
+            return isValidMove;
+        }
+
+        private bool GetLinearMoves(ChessBoardModel board, ChessMoveDto move, List<(int Row, int Col)> directions)
+        {
+            foreach (var dir in directions)
+            {
+                for (var i = 1; i < 8; i++)
+                {
+                    var row = move.OldRow + dir.Row * i;
+                    var col = move.OldCol + dir.Col * i;
+
+                    if (row < 0 || row >= 8 || col < 0 || col >= 8) break;
+
+                    if (row == move.NewRow && col == move.NewCol) return true;
+
+                    if (board.Pieces[row, col] != null) break;
+                }
+            }
+
+            return false;
+        }
+
+        private bool GetSingleMoves(ChessMoveDto move, List<(int Row, int Col)> directions)
+        {
+            var isValidMove = false;
+
+            foreach (var dir in directions)
+            {
+                var row = move.OldRow + dir.Row;
+                var col = move.OldCol + dir.Col;
+
+                if (row < 0 || row >= 8 || col < 0 || col >= 8) break;
+
+                if (row == move.NewRow && col == move.NewCol)
+                {
+                    isValidMove = true;
+                    break;
                 }
             }
 
