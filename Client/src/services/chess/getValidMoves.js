@@ -136,7 +136,7 @@ function getLinearMoves(piece, pieces, areWhitePiecesMine, directions) {
                     validSquares.push({ row, col });
                 }
 
-               
+                break;
             } else {
                 validSquares.push({ row, col });
             }
