@@ -1,10 +1,10 @@
-﻿using Core.Dtos.Games;
+﻿using Core.Models.Games;
 
 namespace Core.Interfaces.Services
 {
     public interface IGamesService
     {
-        Task<IEnumerable<GameDto>> GetAllAsync();
-        Task<GameDto?> GetGameAsync(string game);
+        Task<IEnumerable<GameModel>> GetAllAsync();
+        Task<GameModel?> GetGameAsync(string game);
     }
 }

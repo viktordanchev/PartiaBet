@@ -1,5 +1,7 @@
-﻿using Core.Interfaces.Services;
+﻿using AutoMapper;
+using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using RestAPI.Dtos.Game;
 
 namespace RestAPI.Controllers
 {
@@ -8,18 +10,21 @@ namespace RestAPI.Controllers
     public class GamesController : Controller
     {
         private readonly IGamesService _gamesService;
+        private readonly IMapper _mapper;
 
-        public GamesController(IGamesService gamesService)
+        public GamesController(IGamesService gamesService, IMapper mapper)
         {
             _gamesService = gamesService;
+            _mapper = mapper;
         }
 
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllGames()
         {
             var games = await _gamesService.GetAllAsync();
+            var gamesDto = _mapper.Map<IEnumerable<GameDto>>(games);
 
-            return Ok(games);
+            return Ok(gamesDto);
         }
 
         [HttpPost("getGameData")]
@@ -32,7 +37,9 @@ namespace RestAPI.Controllers
                 return NotFound("Game not found");
             }
 
-            return Ok(gameData);
+            var gameDataDto = _mapper.Map<GameDto>(gameData);
+
+            return Ok(gameDataDto);
         }
     }
 }

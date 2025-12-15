@@ -1,5 +1,4 @@
-﻿using Core.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Database.Entities
@@ -20,8 +19,10 @@ namespace Infrastructure.Database.Entities
 
         public TimeSpan Duration { get; set; }
 
+        public bool IsActive { get; set; }
+
         [Required]
-        public Core.Enums.GameType GameId { get; set; }
+        public int GameId { get; set; }
 
         [ForeignKey(nameof(GameId))]
         public Game Game { get; set; } = null!;

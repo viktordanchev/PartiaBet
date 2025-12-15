@@ -1,6 +1,4 @@
-﻿using Core.Enums;
-
-namespace Games.Models
+﻿namespace Core.Models.Match
 {
     public class MatchModel
     {
@@ -9,17 +7,11 @@ namespace Games.Models
             Players = new List<PlayerModel>();
         }
 
-        public GameType Game { get; set; }
+        public Guid Id { get; set; }
 
         public decimal BetAmount { get; set; }
 
-        public DateTime DateAndTime { get; set; }
-
         public int MaxPlayersCount { get; set; }
-
-        public int SpectatorsCount { get; set; }
-
-        public GameBoardModel Board { get; set; } = null!;
 
         public List<PlayerModel> Players { get; set; }
     }

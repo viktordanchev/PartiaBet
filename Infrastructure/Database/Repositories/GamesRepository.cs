@@ -1,5 +1,5 @@
-﻿using Core.Dtos.Games;
-using Core.Interfaces.Repositories;
+﻿using Core.Interfaces.Repositories;
+using Core.Models.Games;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database.Repositories
@@ -13,11 +13,11 @@ namespace Infrastructure.Database.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<GameDto>> GetAllAsync()
+        public async Task<IEnumerable<GameModel>> GetAllAsync()
         {
             return await _context.Games
                 .AsNoTracking()
-                .Select(g => new GameDto()
+                .Select(g => new GameModel()
                 {
                     Id = g.Id,
                     Name = g.Name,
@@ -26,12 +26,12 @@ namespace Infrastructure.Database.Repositories
                 .ToListAsync();
         }
 
-        public async Task<GameDto?> GetGameAsync(string game)
+        public async Task<GameModel?> GetGameAsync(string game)
         {
             return await _context.Games
                 .AsNoTracking()
                 .Where(g => g.Name.ToLower() == game.ToLower())
-                .Select(g => new GameDto()
+                .Select(g => new GameModel()
                 {
                     Id = g.Id,
                     Name = g.Name,

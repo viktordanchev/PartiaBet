@@ -1,6 +1,4 @@
-﻿using Core.Enums;
-
-namespace Games.Dtos.MatchManagerService
+﻿namespace RestAPI.Dtos.Match
 {
     public class MatchDto
     {
@@ -8,10 +6,6 @@ namespace Games.Dtos.MatchManagerService
         {
             Players = new List<PlayerDto>();
         }
-
-        public Guid Id { get; set; }
-
-        public GameType Game { get; set; }
 
         public decimal BetAmount { get; set; }
 

@@ -1,5 +1,5 @@
-﻿using Core.DTOs;
-using Core.Interfaces.Services;
+﻿using Core.Interfaces.Services;
+using Core.Models.User;
 using Core.Services.Configs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -51,7 +51,7 @@ namespace Core.Services
         /// <summary>
         /// Generate JWT access token.
         /// </summary>
-        public string GenerateAccessToken(UserClaimsDto userClaims)
+        public string GenerateAccessToken(UserClaimsModel userClaims)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

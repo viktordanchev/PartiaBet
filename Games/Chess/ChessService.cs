@@ -1,9 +1,9 @@
-﻿using Games.Chess.Enums;
+﻿using Core.Models.Match;
+using Games.Chess.Enums;
 using Games.Chess.Models;
 using Games.Dtos.Chess;
 using Games.Dtos.MatchManagerService;
 using Games.Interfaces;
-using Games.Models;
 
 namespace Games.Chess
 {
@@ -171,7 +171,7 @@ namespace Games.Chess
 
                     if (row == move.NewRow && col == move.NewCol) return true;
 
-                    if (board.Pieces[row, col] != null) break;
+                    if (board.Pieces.Any(p => p.Row == row && p.Col == col)) break;
                 }
             }
 

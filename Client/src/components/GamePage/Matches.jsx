@@ -4,7 +4,7 @@ import useApiRequest from '../../hooks/useApiRequest';
 import Loading from '../Loading';
 import { useHub } from '../../contexts/HubContext';
 
-const Matches = ({ gameType }) => {
+const Matches = ({ gameId }) => {
     const { connection } = useHub();
     const apiRequest = useApiRequest();
     const [matches, setMatches] = useState([]);
@@ -14,7 +14,7 @@ const Matches = ({ gameType }) => {
     
     useEffect(() => {
         const receiveData = async () => {
-            const matches = await apiRequest('matches', 'getActiveMatches', 'POST', false, false, gameType);
+            const matches = await apiRequest('matches', 'getActiveMatches', 'POST', false, false, gameId);
 
             setIsLoading(false);
             setMatches(matches);

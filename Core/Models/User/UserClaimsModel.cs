@@ -1,8 +1,8 @@
-﻿namespace Core.DTOs
+﻿namespace Core.Models.User
 {
-    public class UserClaimsDto
+    public class UserClaimsModel
     {
-        public UserClaimsDto()
+        public UserClaimsModel()
         {
             Roles = new List<string>();
         }

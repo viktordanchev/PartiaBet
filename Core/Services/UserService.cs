@@ -4,8 +4,7 @@ using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
-using Core.DTOs;
-using Core.Dtos.Account;
+using Core.Models.User;
 
 namespace Core.Services
 {
@@ -20,7 +19,7 @@ namespace Core.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task RegisterUserAsync(RegisterUserDto data)
+        public async Task RegisterUserAsync(RegisterUserModel data)
         {
             var (emailExists, usernameExists) = await _userRepository.IsUserDataUniqueAsync(data.Email, data.Username);
 
@@ -46,17 +45,17 @@ namespace Core.Services
             await _userRepository.UpdatePasswordAsync(email, password);
         }
 
-        public async Task<bool> IsLoginDataValidAsync(LoginDto request)
+        public async Task<bool> IsLoginDataValidAsync(LoginUserModel data)
         {
-            var userPasswordHash = await _userRepository.GetUserPasswordHashAsync(request.Email);
+            var userPasswordHash = await _userRepository.GetUserPasswordHashAsync(data.Email);
 
             if (userPasswordHash == null)
                 return false;
 
-            return _passwordHasher.VerifyHashedPassword(null!, userPasswordHash, request.Password) == PasswordVerificationResult.Success;
+            return _passwordHasher.VerifyHashedPassword(null!, userPasswordHash, data.Password) == PasswordVerificationResult.Success;
         }
 
-        public async Task<UserClaimsDto> GetClaimsAsync(string email)
+        public async Task<UserClaimsModel> GetClaimsAsync(string email)
         {
             return await _userRepository.GetUserClaimsByEmailAsync(email);
         }

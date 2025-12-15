@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.Dtos.Account
+namespace RestAPI.Dtos.User
 {
-    public class LoginDto
+    public class LoginUserDto
     {
         [Required]
         [EmailAddress]

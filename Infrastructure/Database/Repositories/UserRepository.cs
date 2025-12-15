@@ -1,6 +1,5 @@
-﻿using Core.Dtos.Account;
-using Core.DTOs;
-using Core.Interfaces.Repositories;
+﻿using Core.Interfaces.Repositories;
+using Core.Models.User;
 using Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -16,7 +15,7 @@ namespace Infrastructure.Database.Repositories
             _database = database;
         }
 
-        public async Task AddUserAsync(RegisterUserDto data)
+        public async Task AddUserAsync(RegisterUserModel data)
         {
             var user = new User
             {
@@ -65,12 +64,12 @@ namespace Infrastructure.Database.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<UserClaimsDto> GetUserClaimsByEmailAsync(string email)
+        public async Task<UserClaimsModel> GetUserClaimsByEmailAsync(string email)
         {
             return await _database.Users
                 .AsNoTracking()
                 .Where(u => u.Email == email)
-                .Select(u => new UserClaimsDto
+                .Select(u => new UserClaimsModel
                 {
                     Id = u.Id.ToString(),
                     Email = u.Email,

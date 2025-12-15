@@ -1,5 +1,5 @@
-﻿using Games.Dtos.MatchManagerService;
-using Games.Models;
+﻿using Core.Models.Match;
+using Games.Dtos.MatchManagerService;
 
 namespace Games.Interfaces
 {

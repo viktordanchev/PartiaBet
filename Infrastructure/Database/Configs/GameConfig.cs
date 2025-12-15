@@ -1,44 +1,47 @@
-﻿using Core.Enums;
-using Infrastructure.Database.Entities;
+﻿using Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Database.Configs
 {
-    public class GameConfig : IEntityTypeConfiguration<Entities.Game>
+    public class GameConfig : IEntityTypeConfiguration<Game>
     {
-        public void Configure(EntityTypeBuilder<Entities.Game> builder)
+        public void Configure(EntityTypeBuilder<Game> builder)
         {
             builder.HasData(SeedGames());
         }
 
-        private Entities.Game[] SeedGames()
+        private Game[] SeedGames()
         {
-            return new Entities.Game[]
+            return new Game[]
             {
-                new Entities.Game
+                new Game()
                 {
-                    Id = Core.Enums.GameType.Chess,
+                    Id = 1,
                     Name = "Chess",
-                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg"
+                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg",
+                    MaxPlayersCount = 2
                 },
-                new Entities.Game
+                new Game()
                 {
-                    Id = Core.Enums.GameType.Backgammon,
+                    Id = 2,
                     Name = "Backgammon",
-                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png"
+                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png",
+                    MaxPlayersCount = 2
                 },
-                new Entities.Game
+                new Game
                 {
-                    Id = Core.Enums.GameType.Belote,
+                    Id = 3,
                     Name = "Belote",
-                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png"
+                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png",
+                    MaxPlayersCount = 4
                 },
-                new Entities.Game
+                new Game
                 {
-                    Id = Core.Enums.GameType.SixtySix,
+                    Id = 4,
                     Name = "Sixty-Six",
-                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png"
+                    ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png",
+                    MaxPlayersCount = 2
                 }
             };
         }

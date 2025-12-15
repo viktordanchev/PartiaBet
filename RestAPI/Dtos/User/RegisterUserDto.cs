@@ -2,7 +2,7 @@
 using Core.CustomAttributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Core.Dtos.Account
+namespace RestAPI.Dtos.User
 {
     public class RegisterUserDto
     {

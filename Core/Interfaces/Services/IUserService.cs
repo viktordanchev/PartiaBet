@@ -1,14 +1,13 @@
-﻿using Core.Dtos.Account;
-using Core.DTOs;
+﻿using Core.Models.User;
 
 namespace Core.Interfaces.Services
 {
     public interface IUserService
     {
-        Task RegisterUserAsync(RegisterUserDto data);
+        Task RegisterUserAsync(RegisterUserModel data);
         Task<bool> IsUserExistAsync(string email);
         Task UpdatePasswordAsync(string email, string password);
-        Task<bool> IsLoginDataValidAsync(LoginDto request);
-        Task<UserClaimsDto> GetClaimsAsync(string email);
+        Task<bool> IsLoginDataValidAsync(LoginUserModel data);
+        Task<UserClaimsModel> GetClaimsAsync(string email);
     }
 }

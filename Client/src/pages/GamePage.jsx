@@ -36,7 +36,7 @@ function GamePage() {
                         <GameInfo gameData={gameData} />
                         <TopPlayers />
                     </div>
-                    <Matches gameType={gameData.id} />
+                    <Matches gameId={gameData.id} />
                     <GameRules game={gameData.name} />
                 </>}
         </section>

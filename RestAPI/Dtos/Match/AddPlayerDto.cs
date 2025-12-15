@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Games.Dtos.MatchManagerService
+namespace RestAPI.Dtos.Match
 {
     public class AddPlayerDto
     {

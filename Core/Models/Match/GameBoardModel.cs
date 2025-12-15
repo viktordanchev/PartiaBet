@@ -1,4 +1,4 @@
-﻿namespace Games.Models
+﻿namespace Core.Models.Match
 {
     public abstract class GameBoardModel
     {

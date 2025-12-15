@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper();
 builder.Services.AddDbContextExtension(builder.Configuration, builder.Environment);
 builder.Services.AddJWTAuthentication(builder.Configuration);
 builder.Services.AddCorsExtension(builder.Configuration);

@@ -1,4 +1,7 @@
 ﻿using Core.Interfaces.Repositories;
+using Core.Models.Match;
+using Infrastructure.Database.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database.Repositories
 {
@@ -11,19 +14,86 @@ namespace Infrastructure.Database.Repositories
             _context = context;
         }
 
-        //public async Task<Guid> AddMatch(AddMatchRequest match)
-        //{
-        //    var newMatch = new Match()
-        //    {
-        //        BetAmount = match.BetAmount,
-        //        DateAndTime = DateTime.Parse(match.DateAndTime, new CultureInfo("bg-BG")),
-        //        GameId = match.GameId,
-        //    };
-        //
-        //    await _context.MatchHistory.AddAsync(newMatch);
-        //    await _context.SaveChangesAsync();
-        //
-        //    return newMatch.Id;
-        //}
+        public async Task<MatchModel> AddMatchAsync(AddMatchModel data)
+        {
+            var newMatch = new Match()
+            {
+                BetAmount = data.BetAmount,
+                //DateAndTime = DateTime.Parse(data.DateAndTime, new CultureInfo("bg-BG")),
+                GameId = data.GameId
+            };
+
+            await _context.MatchHistory.AddAsync(newMatch);
+            await _context.SaveChangesAsync();
+
+            return new MatchModel()
+            {
+                Id = newMatch.Id,
+                BetAmount = newMatch.BetAmount,
+                MaxPlayersCount = newMatch.Game.MaxPlayersCount,
+                Players = new List<PlayerModel>()
+            };
+        }
+
+        public async Task TryAddPlayerToMatchAsync(Guid playerId, Guid matchId)
+        {
+            var match = await _context.MatchHistory.FirstOrDefaultAsync(m => m.Id == matchId);
+
+            if (match != null)
+            {
+                match.Players.Add(
+                    new UserMatch()
+                    {
+                        PlayerId = playerId,
+                        MatchId = matchId
+                    });
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(int gameId)
+        {
+            var matches = await _context.MatchHistory
+                .Where(m => m.GameId == gameId && m.IsActive)
+                .Select(m => new MatchModel()
+                {
+                    BetAmount = m.BetAmount,
+                    MaxPlayersCount = m.Game.MaxPlayersCount,
+                    Players = m.Players
+                        .Select(um => new PlayerModel()
+                        {
+                            Username = um.Player.Username,
+                            ProfileImageUrl = um.Player.ImageUrl,
+                            Rating = 1000
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            return matches;
+        }
+
+        public async Task<MatchDetailsModel> GetMatchDetailsAsync(Guid matchId)
+        {
+            var match = await _context.MatchHistory
+                .Where(m => m.Id == matchId)
+                .Select(m => new MatchDetailsModel()
+                {
+                    BetAmount = m.BetAmount,
+                    MaxPlayersCount = m.Game.MaxPlayersCount,
+                    Players = m.Players
+                        .Select(um => new PlayerModel()
+                        {
+                            Username = um.Player.Username,
+                            ProfileImageUrl = um.Player.ImageUrl,
+                            Rating = 1000
+                        })
+                        .ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            return match;
+        }
     }
 }

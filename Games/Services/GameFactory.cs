@@ -4,8 +4,6 @@ using Games.Chess;
 using Games.Dtos.Chess;
 using Games.Dtos.MatchManagerService;
 using Games.Interfaces;
-using Games.Models;
-using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Common.Constants.ErrorMessages;

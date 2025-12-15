@@ -5,7 +5,7 @@ import { useHub } from '../../../contexts/HubContext';
 import { useLoading } from '../../../contexts/LoadingContext';
 import { jwtDecode } from 'jwt-decode';
 
-function PlayButton({ gameType }) {
+function PlayButton({ gameId }) {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const { startConnection } = useHub();
@@ -18,7 +18,7 @@ function PlayButton({ gameType }) {
     
     const createMatch = async () => {
         var matchData = {
-            game: gameType,
+            gameId: gameId,
             betAmount: betAmount,
             dateAndTime: new Date().toLocaleString("bg-BG")
         };

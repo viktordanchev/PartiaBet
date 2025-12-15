@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Games.Dtos.MatchManagerService
 {
-    [JsonDerivedType(typeof(ChessBoardDto), typeDiscriminator: "chess")]
+    [JsonDerivedType(typeof(ChessBoardDto))]
     public abstract class GameBoardDto
     {
     }

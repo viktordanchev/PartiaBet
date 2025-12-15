@@ -1,9 +1,10 @@
-﻿using Core.DTOs.Responses;
-using Core.Enums;
+﻿using AutoMapper;
+using Core.DTOs.Responses;
+using Core.Interfaces.Services;
 using Games.Chess.Enums;
-using Interfaces.Games;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestAPI.Dtos.Match;
 
 namespace RestAPI.Controllers
 {
@@ -11,26 +12,29 @@ namespace RestAPI.Controllers
     [Route("api/matches")]
     public class MatchesController : Controller
     {
-        private readonly IMatchManagerService _matchManagerService;
+        private readonly IMatchService _matchService;
+        private readonly IMapper _mapper;
 
-        public MatchesController(IMatchManagerService gameManagerService)
+        public MatchesController(IMatchService matchService, IMapper mapper)
         {
-            _matchManagerService = gameManagerService;
+            _matchService = matchService;
+            _mapper = mapper;
         }
 
         [HttpPost("getActiveMatches")]
-        public IActionResult GetActiveMatches([FromBody] GameType game)
+        public async Task<IActionResult> GetActiveMatches([FromBody] int gameId)
         {
-            var activeMatches = _matchManagerService.GetMatches(game);
+            var activeMatches = await _matchService.GetActiveMatchesAsync(gameId);
+            var activeMatchesDto = _mapper.Map<IEnumerable<MatchDto>>(activeMatches);
 
-            return Ok(activeMatches);
+            return Ok(activeMatchesDto);
         }
 
         [HttpPost("getMatchData")]
         [Authorize]
         public IActionResult GetMatchData([FromBody] Guid matchId)
         {
-            var activeMatches = _matchManagerService.GetMatch(matchId);
+            var activeMatches = _matchService.GetMatch(matchId);
 
             return Ok(activeMatches);
         }

@@ -1,63 +1,66 @@
-﻿using Games.Dtos.MatchManagerService;
-using Games.Services;
-using Interfaces.Games;
+﻿using AutoMapper;
+using Core.Interfaces.Services;
+using Core.Models.Match;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using RestAPI.Dtos.Match;
 
 namespace RestAPI.Hubs
 {
     public class GameHub : Hub
     {
-        private readonly IMatchManagerService _matchManagerService;
+        private readonly IMatchService _matchService;
+        private readonly IMapper _mapper;
 
-        public GameHub(IMatchManagerService gameManagerService)
+        public GameHub(IMatchService matchService, IMapper mapper)
         {
-            _matchManagerService = gameManagerService;
+            _matchService = matchService;
+            _mapper = mapper;
         }
 
         [Authorize]
-        public async Task<Guid> CreateMatch(CreateMatchDto matchData, AddPlayerDto playerData)
+        public async Task<Guid> CreateMatch(AddMatchDto matchData, AddPlayerDto playerData)
         {
-            var newMatch = _matchManagerService.AddMatch(matchData);
-            var personData = _matchManagerService.AddPersonToMatch(newMatch.Id, playerData);
+            var matchModel = _mapper.Map<AddMatchModel>(matchData);
 
-            newMatch.Players.Add(personData);
+            var match = await _matchService.AddMatchAsync(matchModel);
+            await _matchService.AddPersonToMatch(match.Id, playerData.Id);
 
-            await Clients.All.SendAsync("ReceiveMatch", newMatch);
+            await Clients.All.SendAsync("ReceiveMatch", match);
 
-            return newMatch.Id;
+            return match.Id;
         }
 
         [Authorize]
         public async Task JoinMatch(Guid matchId, AddPlayerDto playerData)
         {
-            var playerResponse = _matchManagerService.AddPersonToMatch(matchId, playerData);
+            var playerResponse = _matchService.AddPersonToMatch(matchId, playerData.Id);
 
             await Clients.All.SendAsync("ReceiveNewPlayer", playerResponse);
         }
 
-        [Authorize]
-        public async Task MakeMove(Guid matchId, string jsonData)
-        {
-            BaseMoveDto moveData;
-
-            try
-            {
-                var gameType = _matchManagerService.GetGame(matchId);
-                moveData = GameFactory.GetMakeMoveDto(gameType, jsonData);
-            }
-            catch
-            {
-                throw new HubException();
-            }
-
-            var playerId = Context.User?.FindFirst("Id")?.Value;
-
-            if (_matchManagerService.IsValidMove(matchId, moveData, playerId))
-            {
-                _matchManagerService.UpdateMatchBoard(matchId, moveData);
-                await Clients.All.SendAsync("ReceiveMove", moveData);
-            }
-        }
+        //[Authorize]
+        //public async Task MakeMove(Guid matchId, string jsonData)
+        //{
+        //    BaseMoveDto moveData;
+        //
+        //    try
+        //    {
+        //        var gameType = _matchService.GetGame(matchId);
+        //        moveData = GameFactory.GetMakeMoveDto(gameType, jsonData);
+        //    }
+        //    catch
+        //    {
+        //        throw new HubException();
+        //    }
+        //
+        //    var playerId = Context.User?.FindFirst("Id")?.Value;
+        //
+        //    if (_matchService.IsValidMove(matchId, moveData, playerId))
+        //    {
+        //        _matchService.UpdateMatchBoard(matchId, moveData);
+        //        await Clients.All.SendAsync("ReceiveMove", moveData);
+        //    }
+        //}
     }
 }

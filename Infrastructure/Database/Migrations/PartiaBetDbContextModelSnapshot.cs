@@ -74,11 +74,17 @@ namespace Infrastructure.Database.Migrations
             modelBuilder.Entity("Infrastructure.Database.Entities.Game", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ImgUrl")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("MaxPlayersCount")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -93,24 +99,28 @@ namespace Infrastructure.Database.Migrations
                         {
                             Id = 1,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg",
+                            MaxPlayersCount = 2,
                             Name = "Chess"
                         },
                         new
                         {
                             Id = 2,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png",
+                            MaxPlayersCount = 2,
                             Name = "Backgammon"
                         },
                         new
                         {
                             Id = 3,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png",
+                            MaxPlayersCount = 4,
                             Name = "Belote"
                         },
                         new
                         {
                             Id = 4,
                             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png",
+                            MaxPlayersCount = 2,
                             Name = "Sixty-Six"
                         });
                 });
@@ -132,6 +142,9 @@ namespace Infrastructure.Database.Migrations
 
                     b.Property<int>("GameId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

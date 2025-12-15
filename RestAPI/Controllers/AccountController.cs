@@ -1,6 +1,8 @@
-﻿using Core.Dtos.Account;
+﻿using AutoMapper;
 using Core.Interfaces.Services;
+using Core.Models.User;
 using Microsoft.AspNetCore.Mvc;
+using RestAPI.Dtos.User;
 using static Common.Constants.ErrorMessages;
 using static Common.Constants.Messages;
 
@@ -14,22 +16,27 @@ namespace RestAPI.Controllers
         private readonly IAccountTokenService _accountTokenService;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IHostEnvironment _environment;
+        private readonly IMapper _mapper;
 
         public AccountController(IUserService userService,
             IAccountTokenService accountTokenService,
             IJwtTokenService jwtTokenService,
-            IHostEnvironment environment)
+            IHostEnvironment environment,
+            IMapper mapper)
         {
             _userService = userService;
             _accountTokenService = accountTokenService;
             _jwtTokenService = jwtTokenService;
             _environment = environment;
+            _mapper = mapper;
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto data)
+        public async Task<IActionResult> Login(LoginUserDto data)
         {
-            if (!await _userService.IsLoginDataValidAsync(data))
+            var dataModel = _mapper.Map<LoginUserModel>(data);
+
+            if (!await _userService.IsLoginDataValidAsync(dataModel))
                 return BadRequest(new { Error = InvalidLoginData });
 
             var userClaims = await _userService.GetClaimsAsync(data.Email);
@@ -47,10 +54,12 @@ namespace RestAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserDto data)
         {
+            var dataModel = _mapper.Map<RegisterUserModel>(data);
+
             if (_environment.IsProduction() && !_accountTokenService.IsTokenValid(data.Email, data.VrfCode))
                 return BadRequest(new { Error = InvalidVrfCode });
             
-            await _userService.RegisterUserAsync(data);
+            await _userService.RegisterUserAsync(dataModel);
 
             return NoContent();
         }
@@ -81,22 +90,22 @@ namespace RestAPI.Controllers
             return Ok(new { Message = SendedPassRecoverLink });
         }
 
-        [HttpPost("recoverPass")]
-        public async Task<IActionResult> RecoverPassword(RecoverPasswordDto data)
-        {
-            if (!await _userService.IsUserExistAsync(data.Email))
-            {
-                return BadRequest(new { Error = NotRegistered });
-            }
-            else if (_accountTokenService.IsTokenValid(data.Email, data.Token))
-            {
-                return BadRequest(new { Error = InvalidToken });
-            }
-
-            await _userService.UpdatePasswordAsync(data.Email, data.Password);
-
-            return Ok();
-        }
+        //[HttpPost("recoverPass")]
+        //public async Task<IActionResult> RecoverPassword(RecoverPasswordDto data)
+        //{
+        //    if (!await _userService.IsUserExistAsync(data.Email))
+        //    {
+        //        return BadRequest(new { Error = NotRegistered });
+        //    }
+        //    else if (_accountTokenService.IsTokenValid(data.Email, data.Token))
+        //    {
+        //        return BadRequest(new { Error = InvalidToken });
+        //    }
+        //
+        //    await _userService.UpdatePasswordAsync(data.Email, data.Password);
+        //
+        //    return Ok();
+        //}
 
         [HttpGet("refreshToken")]
         public async Task<IActionResult> RefreshToken()

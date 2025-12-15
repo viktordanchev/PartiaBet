@@ -1,4 +1,4 @@
-﻿using Games.Models;
+﻿using Core.Models.Match;
 
 namespace Games.Chess.Models
 {

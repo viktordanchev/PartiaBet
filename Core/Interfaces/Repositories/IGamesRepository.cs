@@ -1,10 +1,10 @@
-﻿using Core.Dtos.Games;
+﻿using Core.Models.Games;
 
 namespace Core.Interfaces.Repositories
 {
     public interface IGamesRepository
     {
-        Task<IEnumerable<GameDto>> GetAllAsync();
-        Task<GameDto?> GetGameAsync(string game);
+        Task<IEnumerable<GameModel>> GetAllAsync();
+        Task<GameModel?> GetGameAsync(string game);
     }
 }

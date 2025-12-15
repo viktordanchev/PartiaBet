@@ -1,10 +1,8 @@
-﻿using Core.Enums;
-
-namespace Core.Dtos.Games
+﻿namespace RestAPI.Dtos.Game
 {
     public class GameDto
     {
-        public GameType Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
 
