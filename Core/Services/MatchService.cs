@@ -1,17 +1,25 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Enums;
+using Core.Games.Models;
+using Core.Interfaces.Games;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models.Match;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace Core.Services
 {
     public class MatchService : IMatchService
     {
         private IMatchRepository _matchRepository;
-        //private DBREDS
+        private IDistributedCache _redis;
+        private IGameFactory _gameFactory;
 
-        public MatchService(IMatchRepository matchRepository)
+        public MatchService(IMatchRepository matchRepository, IDistributedCache redis, IGameFactory gameFactory)
         {
             _matchRepository = matchRepository;
+            _redis = redis;
+            _gameFactory = gameFactory;
         }
 
         public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(int gameId)
@@ -19,14 +27,16 @@ namespace Core.Services
             return await _matchRepository.GetActiveMatchesAsync(gameId);
         }
 
-        public async Task<MatchModel> AddMatchAsync(AddMatchModel data)
+        public async Task<MatchModel> CreateMatchAsync(AddMatchModel data)
         {
-            var matchId = await _matchRepository.AddMatchAsync(data);
+            var match = await _matchRepository.AddMatchAsync(data);
+            var gameService = _gameFactory.GetGameService(GameType.Chess);
 
-            return new MatchModel()
-            {
-               
-            };
+            var model = gameService.CreateGameBoard();
+            var gameBoardJSON = JsonSerializer.Serialize(model, model.GetType());
+            await _redis.SetStringAsync(match.Id.ToString(), gameBoardJSON);
+            
+            return match;
         }
 
         public async Task AddPersonToMatch(Guid matchId, Guid playerId)
@@ -37,7 +47,10 @@ namespace Core.Services
         public async Task<MatchDetailsModel> GetMatch(Guid matchId)
         {
             var match = await _matchRepository.GetMatchDetailsAsync(matchId);
+            var gameBoardJSON = await _redis.GetStringAsync(matchId.ToString());
 
+            var gameBoard = JsonSerializer.Deserialize<ChessBoardModel>(gameBoardJSON);
+            match.Board = gameBoard;
             return match;
         }
     }

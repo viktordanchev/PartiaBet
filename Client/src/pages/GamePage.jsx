@@ -6,13 +6,26 @@ import Matches from '../components/GamePage/Matches';
 import GameRules from '../components/GamePage/GameRules';
 import Loading from '../components/Loading';
 import useApiRequest from '../hooks/useApiRequest';
+import { useHub } from '../contexts/HubContext';
 
 function GamePage() {
     const { game } = useParams();
     const apiRequest = useApiRequest();
+    const { startConnection } = useHub();
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState({});
-    
+
+    useEffect(() => {
+        if (!gameData?.id) return;
+
+        const initiateConnection = async () => {
+            const connection = await startConnection();
+            await connection.invoke("JoinGame", gameData.id);
+        };
+
+        initiateConnection();
+    }, [gameData]);
+
     useEffect(() => {
         const receiveData = async () => {
             const gameData = await apiRequest('games', 'getGameData', 'POST', false, false, game);

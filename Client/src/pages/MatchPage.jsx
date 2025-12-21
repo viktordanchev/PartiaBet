@@ -36,7 +36,7 @@ const MatchPage = () => {
                 apiRequest('matches', 'getMatchData', 'POST', true, false, matchId),
                 apiRequest('matches', 'getSkins', 'GET', true, false)
             ]);
-            
+            console.log(matchData, skins);
             setIsLoading(false);
 
             const updatedPieces = matchData.board.pieces.map(p => {
@@ -81,7 +81,7 @@ const MatchPage = () => {
             {isLoading ? <Loading size={'small'} /> :
                 <>
                     <div className="flex flex-col items-end gap-3">
-                        <Spectators peopleCount={matchData.spectatorsCount} />
+                        <Spectators peopleCount={0} />
                         <p className="text-2xl font-semibold text-gray-300">Bet: {matchData.betAmount}$</p>
                     </div>
                     {renderGame(matchData)}

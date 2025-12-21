@@ -18,15 +18,20 @@ namespace RestAPI.Hubs
             _mapper = mapper;
         }
 
+        public async Task JoinGame(int gameId)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"game-{gameId}");
+        }
+
         [Authorize]
         public async Task<Guid> CreateMatch(AddMatchDto matchData, AddPlayerDto playerData)
         {
             var matchModel = _mapper.Map<AddMatchModel>(matchData);
 
-            var match = await _matchService.AddMatchAsync(matchModel);
+            var match = await _matchService.CreateMatchAsync(matchModel);
             await _matchService.AddPersonToMatch(match.Id, playerData.Id);
 
-            await Clients.All.SendAsync("ReceiveMatch", match);
+            await Clients.Group($"game-{matchData.GameId}").SendAsync("ReceiveMatch", match);
 
             return match.Id;
         }

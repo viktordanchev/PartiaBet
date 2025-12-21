@@ -1,18 +1,18 @@
 ﻿using Common.Exceptions;
 using Core.Enums;
+using Core.Interfaces.Games;
+using Core.Models.Match;
 using Games.Chess;
 using Games.Dtos.Chess;
-using Games.Dtos.MatchManagerService;
-using Games.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Common.Constants.ErrorMessages;
 
-namespace Games.Services
+namespace Games.Factories
 {
-    public class GameFactory
+    public class GameFactory : IGameFactory
     {
-        public static IGameService GetGameService(GameType game)
+        public IGameService GetGameService(GameType game)
         {
             return game switch
             {
@@ -21,7 +21,7 @@ namespace Games.Services
             };
         }
 
-        public static BaseMoveDto GetMakeMoveDto(GameType game, string jsonData)
+        public BaseMoveDto GetMakeMoveDto(GameType game, string jsonData)
         {
             var options = new JsonSerializerOptions
             {

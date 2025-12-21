@@ -1,8 +1,10 @@
 ﻿using Core.Interfaces.ExternalServices;
+using Core.Interfaces.Games;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
 using Core.Services.Configs;
+using Games.Factories;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
 using Infrastructure.Services;
@@ -89,6 +91,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IGamesService, GamesService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IMatchService, MatchService>();
+            services.AddScoped<IGameFactory, GameFactory>();
 
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {

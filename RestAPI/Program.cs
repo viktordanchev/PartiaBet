@@ -25,6 +25,11 @@ builder.Services.AddSignalR()
             new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
         );
     });
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "PartiaBet";
+});
 
 var app = builder.Build();
 

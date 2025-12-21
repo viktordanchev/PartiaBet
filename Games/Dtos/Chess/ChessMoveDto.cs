@@ -1,5 +1,5 @@
-﻿using Games.Chess.Enums;
-using Games.Dtos.MatchManagerService;
+﻿using Core.Models.Match;
+using Games.Chess.Enums;
 
 namespace Games.Dtos.Chess
 {

@@ -1,4 +1,4 @@
-﻿namespace Games.Dtos.MatchManagerService
+﻿namespace Core.Models.Match
 {
     public abstract class BaseMoveDto
     {

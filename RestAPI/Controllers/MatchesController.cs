@@ -32,9 +32,9 @@ namespace RestAPI.Controllers
 
         [HttpPost("getMatchData")]
         [Authorize]
-        public IActionResult GetMatchData([FromBody] Guid matchId)
+        public async Task<IActionResult> GetMatchData([FromBody] Guid matchId)
         {
-            var activeMatches = _matchService.GetMatch(matchId);
+            var activeMatches = await _matchService.GetMatch(matchId);
 
             return Ok(activeMatches);
         }

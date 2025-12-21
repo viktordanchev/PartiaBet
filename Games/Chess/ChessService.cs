@@ -1,21 +1,13 @@
-﻿using Core.Models.Match;
+﻿using Core.Interfaces.Games;
+using Core.Models.Match;
 using Games.Chess.Enums;
 using Games.Chess.Models;
 using Games.Dtos.Chess;
-using Games.Dtos.MatchManagerService;
-using Games.Interfaces;
 
 namespace Games.Chess
 {
     public class ChessService : IGameService
     {
-        public ChessService()
-        {
-            Configs = new ChessConfigs();
-        }
-
-        public IGameConfigs Configs { get; }
-
         public GameBoardModel CreateGameBoard()
         {
             var chessBoard = new ChessBoardModel();

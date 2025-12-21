@@ -1,22 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import * as signalR from "@microsoft/signalr";
 
 const HubContext = createContext();
 
 export const HubProvider = ({ children }) => {
     const [connection, setConnection] = useState(null);
-
-    useEffect(() => {
-        const initializeConnection = async () => {
-            await startConnection();
-        };
-
-        initializeConnection();
-
-        return () => {
-            stopConnection();
-        };
-    }, []);
 
     const startConnection = async () => {
         await stopConnection();

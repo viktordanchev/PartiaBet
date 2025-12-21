@@ -25,6 +25,9 @@ namespace Infrastructure.Database.Repositories
 
             await _context.MatchHistory.AddAsync(newMatch);
             await _context.SaveChangesAsync();
+            await _context.Entry(newMatch)
+                .Reference(m => m.Game)
+                .LoadAsync();
 
             return new MatchModel()
             {
