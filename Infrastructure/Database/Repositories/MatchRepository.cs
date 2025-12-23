@@ -98,5 +98,13 @@ namespace Infrastructure.Database.Repositories
 
             return match;
         }
+
+        public async Task<int> GetGameIdAsync(Guid matchId)
+        {
+            return await _context.MatchHistory
+                .Where(m => m.Id == matchId)
+                .Select(m => m.GameId)
+                .FirstOrDefaultAsync();
+        }
     }
 }

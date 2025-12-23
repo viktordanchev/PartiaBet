@@ -1,4 +1,4 @@
-﻿using Core.Games.Models;
+﻿using Core.Models.Games.Chess;
 using System.Text.Json.Serialization;
 
 namespace Core.Models.Match

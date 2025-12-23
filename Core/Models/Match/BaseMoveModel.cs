@@ -1,6 +1,6 @@
 ﻿namespace Core.Models.Match
 {
-    public abstract class BaseMoveDto
+    public abstract class BaseMoveModel
     {
     }
 }

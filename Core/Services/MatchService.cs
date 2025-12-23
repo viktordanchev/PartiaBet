@@ -1,5 +1,4 @@
 ﻿using Core.Enums;
-using Core.Games.Models;
 using Core.Interfaces.Games;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
@@ -33,9 +32,9 @@ namespace Core.Services
             var gameService = _gameFactory.GetGameService(GameType.Chess);
 
             var model = gameService.CreateGameBoard();
-            var gameBoardJSON = JsonSerializer.Serialize(model, model.GetType());
+            var gameBoardJSON = JsonSerializer.Serialize(model);
             await _redis.SetStringAsync(match.Id.ToString(), gameBoardJSON);
-            
+
             return match;
         }
 
@@ -49,9 +48,21 @@ namespace Core.Services
             var match = await _matchRepository.GetMatchDetailsAsync(matchId);
             var gameBoardJSON = await _redis.GetStringAsync(matchId.ToString());
 
-            var gameBoard = JsonSerializer.Deserialize<ChessBoardModel>(gameBoardJSON);
+            var gameBoard = JsonSerializer.Deserialize<GameBoardModel>(gameBoardJSON);
             match.Board = gameBoard;
             return match;
+        }
+
+        public async Task TryMakeMove(Guid matchId, BaseMoveModel moveData)
+        {
+
+        }
+
+        public async Task<GameType> GetMatchGameTypeAsync(Guid matchId)
+        {
+            var gameId = await _matchRepository.GetGameIdAsync(matchId);
+
+            return (GameType)gameId;
         }
     }
 }

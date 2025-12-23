@@ -1,9 +1,9 @@
 ﻿using Core.Games.Enums;
 using Core.Models.Match;
 
-namespace Games.Dtos.Chess
+namespace Core.Models.Games.Chess
 {
-    public class ChessMoveDto : BaseMoveModel
+    public class ChessMoveModel : BaseMoveModel
     {
         public int OldRow { get; set; }
 

@@ -51,6 +51,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
-app.MapHub<GameHub>("/game");
+app.MapHub<MatchHub>("/match");
 
 app.Run();

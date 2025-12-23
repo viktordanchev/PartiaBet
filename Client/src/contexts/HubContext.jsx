@@ -10,7 +10,7 @@ export const HubProvider = ({ children }) => {
         await stopConnection();
 
         const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl('https://localhost:7182/game', {
+            .withUrl('https://localhost:7182/match', {
                 accessTokenFactory: () => localStorage.getItem('accessToken')
             })
             .configureLogging(signalR.LogLevel.None)

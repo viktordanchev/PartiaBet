@@ -1,6 +1,6 @@
-﻿using Games.Chess.Enums;
+﻿using Core.Games.Enums;
 
-namespace Games.Chess.Models
+namespace Core.Models.Games.Chess
 {
     public class FigureModel
     {

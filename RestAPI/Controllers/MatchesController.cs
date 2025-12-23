@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Core.DTOs.Responses;
+using Core.Games.Enums;
 using Core.Interfaces.Services;
-using Games.Chess.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestAPI.Dtos.Match;

@@ -1,7 +1,7 @@
-﻿using Core.Interfaces.Games;
+﻿using Core.Games.Enums;
+using Core.Interfaces.Games;
+using Core.Models.Games.Chess;
 using Core.Models.Match;
-using Games.Chess.Enums;
-using Games.Chess.Models;
 using Games.Dtos.Chess;
 
 namespace Games.Chess
@@ -40,7 +40,7 @@ namespace Games.Chess
             }
         }
 
-        public void UpdateBoard(GameBoardModel board, BaseMoveDto move)
+        public void UpdateBoard(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveDto;
@@ -50,7 +50,7 @@ namespace Games.Chess
             piece.Col = chessMove.NewCol;
         }
 
-        public bool IsValidMove(GameBoardModel board, BaseMoveDto move, string playerId)
+        public bool IsValidMove(GameBoardModel board, BaseMoveModel move, string playerId)
         {
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveDto;

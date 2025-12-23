@@ -1,18 +1,19 @@
 ﻿using AutoMapper;
 using Core.Interfaces.Services;
 using Core.Models.Match;
+using Games.Factories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using RestAPI.Dtos.Match;
 
 namespace RestAPI.Hubs
 {
-    public class GameHub : Hub
+    public class MatchHub : Hub
     {
         private readonly IMatchService _matchService;
         private readonly IMapper _mapper;
 
-        public GameHub(IMatchService matchService, IMapper mapper)
+        public MatchHub(IMatchService matchService, IMapper mapper)
         {
             _matchService = matchService;
             _mapper = mapper;
@@ -44,28 +45,28 @@ namespace RestAPI.Hubs
             await Clients.All.SendAsync("ReceiveNewPlayer", playerResponse);
         }
 
-        //[Authorize]
-        //public async Task MakeMove(Guid matchId, string jsonData)
-        //{
-        //    BaseMoveDto moveData;
-        //
-        //    try
-        //    {
-        //        var gameType = _matchService.GetGame(matchId);
-        //        moveData = GameFactory.GetMakeMoveDto(gameType, jsonData);
-        //    }
-        //    catch
-        //    {
-        //        throw new HubException();
-        //    }
-        //
-        //    var playerId = Context.User?.FindFirst("Id")?.Value;
-        //
-        //    if (_matchService.IsValidMove(matchId, moveData, playerId))
-        //    {
-        //        _matchService.UpdateMatchBoard(matchId, moveData);
-        //        await Clients.All.SendAsync("ReceiveMove", moveData);
-        //    }
-        //}
+        [Authorize]
+        public async Task MakeMove(Guid matchId, string jsonData)
+        {
+            BaseMoveModel moveData;
+
+            try
+            {
+                var gameType = await _matchService.GetMatchGameTypeAsync(matchId);
+                moveData = GameFactory.GetMakeMoveDto(gameType, jsonData);
+            }
+            catch
+            {
+                throw new HubException();
+            }
+        
+            var playerId = Context.User?.FindFirst("Id")?.Value;
+        
+            if (_matchService.IsValidMove(matchId, moveData, playerId))
+            {
+                _matchService.UpdateMatchBoard(matchId, moveData);
+                await Clients.All.SendAsync("ReceiveMove", moveData);
+            }
+        }
     }
 }

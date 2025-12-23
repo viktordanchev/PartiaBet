@@ -6,7 +6,7 @@ namespace Core.Interfaces.Games
     {
         GameBoardModel CreateGameBoard();
         void AddToBoard(Guid playerId, GameBoardModel board);
-        void UpdateBoard(GameBoardModel board, BaseMoveDto move);
-        bool IsValidMove(GameBoardModel board, BaseMoveDto move, string playerId);
+        void UpdateBoard(GameBoardModel board, BaseMoveModel move);
+        bool IsValidMove(GameBoardModel board, BaseMoveModel move, string playerId);
     }
 }

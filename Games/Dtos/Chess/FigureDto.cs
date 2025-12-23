@@ -1,4 +1,4 @@
-﻿using Games.Chess.Enums;
+﻿using Core.Games.Enums;
 
 namespace Games.Dtos.Chess
 {

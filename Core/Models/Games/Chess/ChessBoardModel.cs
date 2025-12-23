@@ -1,6 +1,6 @@
 ﻿using Core.Models.Match;
 
-namespace Games.Chess.Models
+namespace Core.Models.Games.Chess
 {
     public class ChessBoardModel : GameBoardModel
     {

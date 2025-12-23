@@ -36,7 +36,7 @@ const MatchPage = () => {
                 apiRequest('matches', 'getMatchData', 'POST', true, false, matchId),
                 apiRequest('matches', 'getSkins', 'GET', true, false)
             ]);
-            console.log(matchData, skins);
+            
             setIsLoading(false);
 
             const updatedPieces = matchData.board.pieces.map(p => {
