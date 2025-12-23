@@ -5,6 +5,7 @@ using Core.Interfaces.Services;
 using Core.Models.Match;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Core.Services
 {
@@ -38,9 +39,11 @@ namespace Core.Services
             return match;
         }
 
-        public async Task AddPersonToMatch(Guid matchId, Guid playerId)
+        public async Task<PlayerModel> AddPersonToMatch(Guid matchId, Guid playerId)
         {
-            await _matchRepository.TryAddPlayerToMatchAsync(playerId, matchId);
+            var addedPlayer = await _matchRepository.TryAddPlayerToMatchAsync(playerId, matchId);
+
+            return addedPlayer;
         }
 
         public async Task<MatchDetailsModel> GetMatch(Guid matchId)
@@ -53,9 +56,19 @@ namespace Core.Services
             return match;
         }
 
-        public async Task TryMakeMove(Guid matchId, BaseMoveModel moveData)
+        public async Task TryMakeMove(Guid matchId, GameType game, string playerId, BaseMoveModel moveData)
         {
+            var gameService = _gameFactory.GetGameService(game);
+            var gameBoardJSON = await _redis.GetStringAsync(matchId.ToString());
+            var gameBoard = JsonSerializer.Deserialize<GameBoardModel>(gameBoardJSON);
 
+            if (gameService.IsValidMove(gameBoard, moveData, playerId))
+            {
+                gameService.UpdateBoard(gameBoard, moveData);
+
+                gameBoardJSON = JsonSerializer.Serialize<GameBoardModel>(gameBoard);
+                await _redis.SetStringAsync(matchId.ToString(), gameBoardJSON);
+            }
         }
 
         public async Task<GameType> GetMatchGameTypeAsync(Guid matchId)

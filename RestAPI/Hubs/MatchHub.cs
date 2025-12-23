@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Interfaces.Games;
 using Core.Interfaces.Services;
 using Core.Models.Match;
 using Games.Factories;
@@ -12,11 +13,13 @@ namespace RestAPI.Hubs
     {
         private readonly IMatchService _matchService;
         private readonly IMapper _mapper;
+        private readonly IGameFactory _gameFactory;
 
-        public MatchHub(IMatchService matchService, IMapper mapper)
+        public MatchHub(IMatchService matchService, IMapper mapper, IGameFactory gameFactory)
         {
             _matchService = matchService;
             _mapper = mapper;
+            _gameFactory = gameFactory;
         }
 
         public async Task JoinGame(int gameId)
@@ -40,7 +43,7 @@ namespace RestAPI.Hubs
         [Authorize]
         public async Task JoinMatch(Guid matchId, AddPlayerDto playerData)
         {
-            var playerResponse = _matchService.AddPersonToMatch(matchId, playerData.Id);
+            var playerResponse = await _matchService.AddPersonToMatch(matchId, playerData.Id);
 
             await Clients.All.SendAsync("ReceiveNewPlayer", playerResponse);
         }
@@ -53,20 +56,19 @@ namespace RestAPI.Hubs
             try
             {
                 var gameType = await _matchService.GetMatchGameTypeAsync(matchId);
-                moveData = GameFactory.GetMakeMoveDto(gameType, jsonData);
+                moveData = _gameFactory.GetMakeMoveDto(gameType, jsonData);
             }
             catch
             {
                 throw new HubException();
             }
-        
+
             var playerId = Context.User?.FindFirst("Id")?.Value;
-        
-            if (_matchService.IsValidMove(matchId, moveData, playerId))
-            {
-                _matchService.UpdateMatchBoard(matchId, moveData);
-                await Clients.All.SendAsync("ReceiveMove", moveData);
-            }
+            var game = await _matchService.GetMatchGameTypeAsync(matchId);
+
+            await _matchService.TryMakeMove(matchId, game, playerId, moveData);
+
+            await Clients.All.SendAsync("ReceiveMove", moveData);
         }
     }
 }

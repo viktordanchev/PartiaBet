@@ -38,9 +38,9 @@ namespace Infrastructure.Database.Repositories
             };
         }
 
-        public async Task TryAddPlayerToMatchAsync(Guid playerId, Guid matchId)
+        public async Task<PlayerModel> TryAddPlayerToMatchAsync(Guid playerId, Guid matchId)
         {
-            var match = await _context.MatchHistory.FirstOrDefaultAsync(m => m.Id == matchId);
+            var match = await _context.MatchHistory.FindAsync(matchId);
 
             if (match != null)
             {
@@ -53,6 +53,16 @@ namespace Infrastructure.Database.Repositories
 
                 await _context.SaveChangesAsync();
             }
+
+            var addedPlayer = await _context.Users.FindAsync(playerId);
+
+            return new PlayerModel()
+            {
+                Id = addedPlayer.Id,
+                ProfileImageUrl = addedPlayer.ImageUrl,
+                Rating = 1000,
+                Username = addedPlayer.Username
+            };
         }
 
         public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(int gameId)
@@ -88,6 +98,7 @@ namespace Infrastructure.Database.Repositories
                     Players = m.Players
                         .Select(um => new PlayerModel()
                         {
+                            Id = um.PlayerId,
                             Username = um.Player.Username,
                             ProfileImageUrl = um.Player.ImageUrl,
                             Rating = 1000
