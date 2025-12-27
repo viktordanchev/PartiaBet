@@ -18,28 +18,6 @@ namespace Games.Chess
             return chessBoard;
         }
 
-        public void AddToBoard(Guid playerId, GameBoardModel board)
-        {
-            var chessBoard = board as ChessBoardModel;
-
-            if (chessBoard.Pieces.Count > 0)
-            {
-                if (string.IsNullOrEmpty(chessBoard.WhitePlayerId))
-                {
-                    chessBoard.WhitePlayerId = playerId.ToString();
-                }
-
-                return;
-            }
-
-            var isWhiteTaken = new Random().Next(0, 2) == 0;
-
-            if (isWhiteTaken)
-            {
-                chessBoard.WhitePlayerId = playerId.ToString();
-            }
-        }
-
         public void UpdateBoard(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
@@ -50,7 +28,7 @@ namespace Games.Chess
             piece.Col = chessMove.NewCol;
         }
 
-        public bool IsValidMove(GameBoardModel board, BaseMoveModel move, string playerId)
+        public bool IsValidMove(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveDto;
@@ -62,8 +40,8 @@ namespace Games.Chess
 
             var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
 
-            if (piece != null && piece.IsWhite == (chessBoard.WhitePlayerId == playerId))
-            {
+            if (piece != null && piece.IsWhite == chessBoard.IsHostWhite)
+            { 
                 return false;
             }
 

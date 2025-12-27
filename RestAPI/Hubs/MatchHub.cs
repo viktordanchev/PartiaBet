@@ -2,7 +2,6 @@
 using Core.Interfaces.Games;
 using Core.Interfaces.Services;
 using Core.Models.Match;
-using Games.Factories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using RestAPI.Dtos.Match;

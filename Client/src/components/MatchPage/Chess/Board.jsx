@@ -1,12 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
 import Square from './Square';
 import getValidMoves from '../../../services/chess/getValidMoves';
 import { useHub } from '../../../contexts/HubContext';
 
 const Board = ({ data }) => {
-    const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
-    const playerId = decodedToken['Id'];
     const { connection } = useHub();
     const [pieces, setPieces] = useState(data.pieces);
     const [selectedPiece, setSelectedPiece] = useState(null);
@@ -31,8 +28,8 @@ const Board = ({ data }) => {
     const isClickable = (square) => {
         if (!square.type) return false;
 
-        return square.isWhite && playerId === data.whitePlayerId ||
-            !square.isWhite && playerId !== data.whitePlayerId ||
+        return square.isWhite && data.isHostWhite ||
+            !square.isWhite && !data.isHostWhite ||
             validSquares.some(vs => vs.row === square.row && vs.col === square.col);
     };
 
@@ -67,7 +64,7 @@ const Board = ({ data }) => {
                     pieceType:selectedPiece.type
                 });
         } else {
-            var validMoves = getValidMoves(piece, pieces, data.whitePlayerId === playerId);
+            var validMoves = getValidMoves(piece, pieces, data.isHostWhite);
 
             setSelectedPiece(piece);
             setValidSquares(validMoves);
@@ -77,7 +74,7 @@ const Board = ({ data }) => {
     return (
         <article className="grid grid-cols-8 rounded border-5 border-gray-900">
             {Array.from({ length: 8 * 8 }).map((_, index) => {
-                const [row, col] = [Math.floor(index / 8), index % 8].map(v => (playerId === data.whitePlayerId ? 7 - v : v));
+                const [row, col] = [Math.floor(index / 8), index % 8].map(v => (data.isHostWhite ? 7 - v : v));
 
                 const square = pieces.find(p => p.row === row && p.col === col) || { row, col };
 

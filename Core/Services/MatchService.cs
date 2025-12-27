@@ -5,7 +5,6 @@ using Core.Interfaces.Services;
 using Core.Models.Match;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Core.Services
 {
@@ -62,7 +61,7 @@ namespace Core.Services
             var gameBoardJSON = await _redis.GetStringAsync(matchId.ToString());
             var gameBoard = JsonSerializer.Deserialize<GameBoardModel>(gameBoardJSON);
 
-            if (gameService.IsValidMove(gameBoard, moveData, playerId))
+            if (gameService.IsValidMove(gameBoard, moveData))
             {
                 gameService.UpdateBoard(gameBoard, moveData);
 
