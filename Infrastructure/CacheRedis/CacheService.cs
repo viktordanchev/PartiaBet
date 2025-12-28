@@ -1,10 +1,11 @@
-﻿using Core.Models.Match;
+﻿using Core.Interfaces.Repositories;
+using Core.Models.Match;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 
 namespace Infrastructure.CacheRedis
 {
-    public class CacheService
+    public class CacheService : ICacheService
     {
         private IDistributedCache _redis;
 

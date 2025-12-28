@@ -78,6 +78,7 @@ namespace Infrastructure.Database.Repositories
                     Players = m.Players
                         .Select(um => new PlayerModel()
                         {
+                            Id = um.PlayerId,
                             Username = um.Player.Username,
                             ProfileImageUrl = um.Player.ImageUrl,
                             Rating = 1000

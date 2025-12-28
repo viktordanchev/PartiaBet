@@ -15,7 +15,7 @@ const Matches = ({ gameId }) => {
     useEffect(() => {
         const receiveData = async () => {
             const matches = await apiRequest('matches', 'getActiveMatches', 'POST', false, false, gameId);
-
+            
             setIsLoading(false);
             setMatches(matches);
         };

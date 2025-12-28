@@ -12,7 +12,7 @@ const MatchPage = () => {
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [matchData, setMatchData] = useState(null);
-
+    
     useEffect(() => {
         if (!connection) return;
 

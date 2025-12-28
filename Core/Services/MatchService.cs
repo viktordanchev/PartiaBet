@@ -46,6 +46,8 @@ namespace Core.Services
 
             gameService.AddPlayerToBoard(gameBoard, playerId, playersCount);
 
+            await _cacheService.AddItem(matchId, gameBoard);
+
             return addedPlayer;
         }
 

@@ -5,6 +5,7 @@ using Core.Interfaces.Services;
 using Core.Services;
 using Core.Services.Configs;
 using Games.Factories;
+using Infrastructure.CacheRedis;
 using Infrastructure.Database;
 using Infrastructure.Database.Repositories;
 using Infrastructure.Services;
@@ -79,7 +80,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<IGamesRepository, GamesRepository>();
-            services.AddScoped<IGamesRepository, GamesRepository>();
+            services.AddScoped<ICacheService, CacheService>();
         }
 
         public static void AddServices(this IServiceCollection services)

@@ -17,7 +17,7 @@ export const HubProvider = ({ children }) => {
         };
 
         startNewConnection();
-    }, []);
+    }, [localStorage.getItem('accessToken')]);
 
     const joinGame = async (gameId) => {
         const newConnection = await startConnection();
@@ -37,7 +37,7 @@ export const HubProvider = ({ children }) => {
         if (connection) return connection;
 
         await stopConnection();
-
+        console.log(localStorage.getItem('accessToken'));
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl('https://localhost:7182/match', {
                 accessTokenFactory: () => localStorage.getItem('accessToken')
