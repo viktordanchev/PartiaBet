@@ -3,21 +3,19 @@ using Core.Interfaces.Games;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models.Match;
-using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
 
 namespace Core.Services
 {
     public class MatchService : IMatchService
     {
         private IMatchRepository _matchRepository;
-        private IDistributedCache _redis;
+        private ICacheService _cacheService;
         private IGameFactory _gameFactory;
 
-        public MatchService(IMatchRepository matchRepository, IDistributedCache redis, IGameFactory gameFactory)
+        public MatchService(IMatchRepository matchRepository, ICacheService cacheService, IGameFactory gameFactory)
         {
             _matchRepository = matchRepository;
-            _redis = redis;
+            _cacheService = cacheService;
             _gameFactory = gameFactory;
         }
 
@@ -33,16 +31,14 @@ namespace Core.Services
 
             var model = gameService.CreateGameBoard();
             model.MaxPlayersCount = match.MaxPlayersCount;
-            var gameBoardJSON = JsonSerializer.Serialize(model);
-            await _redis.SetStringAsync(match.Id.ToString(), gameBoardJSON);
+            await _cacheService.AddItem(match.Id, model);
 
             return match;
         }
 
         public async Task<PlayerModel> AddPersonToMatch(Guid matchId, Guid playerId)
         {
-            var gameBoardJSON = await _redis.GetStringAsync(matchId.ToString());
-            var gameBoard = JsonSerializer.Deserialize<GameBoardModel>(gameBoardJSON);
+            var gameBoard = await _cacheService.GetItem(matchId);
             var playersCount = await _matchRepository.GetPlayersCountAsync(matchId);
             var gameType = await GetMatchGameTypeAsync(matchId);
             var gameService = _gameFactory.GetGameService(gameType);
@@ -56,9 +52,8 @@ namespace Core.Services
         public async Task<MatchDetailsModel> GetMatch(Guid matchId)
         {
             var match = await _matchRepository.GetMatchDetailsAsync(matchId);
-            var gameBoardJSON = await _redis.GetStringAsync(matchId.ToString());
+            var gameBoard = await _cacheService.GetItem(matchId);
 
-            var gameBoard = JsonSerializer.Deserialize<GameBoardModel>(gameBoardJSON);
             match.Board = gameBoard;
             return match;
         }
@@ -66,15 +61,13 @@ namespace Core.Services
         public async Task TryMakeMove(Guid matchId, GameType game, string playerId, BaseMoveModel moveData)
         {
             var gameService = _gameFactory.GetGameService(game);
-            var gameBoardJSON = await _redis.GetStringAsync(matchId.ToString());
-            var gameBoard = JsonSerializer.Deserialize<GameBoardModel>(gameBoardJSON);
+            var gameBoard = await _cacheService.GetItem(matchId);
 
             if (gameService.IsValidMove(gameBoard, moveData))
             {
                 gameService.UpdateBoard(gameBoard, moveData);
 
-                gameBoardJSON = JsonSerializer.Serialize<GameBoardModel>(gameBoard);
-                await _redis.SetStringAsync(matchId.ToString(), gameBoardJSON);
+                await _cacheService.AddItem(matchId, gameBoard);
             }
         }
 

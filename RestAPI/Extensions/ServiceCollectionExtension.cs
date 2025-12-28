@@ -79,6 +79,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<IGamesRepository, GamesRepository>();
+            services.AddScoped<IGamesRepository, GamesRepository>();
         }
 
         public static void AddServices(this IServiceCollection services)
