@@ -32,6 +32,7 @@ namespace Core.Services
             var gameService = _gameFactory.GetGameService(GameType.Chess);
 
             var model = gameService.CreateGameBoard();
+            model.MaxPlayersCount = match.MaxPlayersCount;
             var gameBoardJSON = JsonSerializer.Serialize(model);
             await _redis.SetStringAsync(match.Id.ToString(), gameBoardJSON);
 
@@ -40,7 +41,14 @@ namespace Core.Services
 
         public async Task<PlayerModel> AddPersonToMatch(Guid matchId, Guid playerId)
         {
+            var gameBoardJSON = await _redis.GetStringAsync(matchId.ToString());
+            var gameBoard = JsonSerializer.Deserialize<GameBoardModel>(gameBoardJSON);
+            var playersCount = await _matchRepository.GetPlayersCountAsync(matchId);
+            var gameType = await GetMatchGameTypeAsync(matchId);
+            var gameService = _gameFactory.GetGameService(gameType);
             var addedPlayer = await _matchRepository.TryAddPlayerToMatchAsync(playerId, matchId);
+
+            gameService.AddPlayerToBoard(gameBoard, playerId, playersCount);
 
             return addedPlayer;
         }

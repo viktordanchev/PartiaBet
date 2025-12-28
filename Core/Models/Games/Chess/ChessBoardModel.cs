@@ -7,10 +7,9 @@ namespace Core.Models.Games.Chess
         public ChessBoardModel()
         {
             Pieces = new List<FigureModel>();
-            IsHostWhite = new Random().Next(0, 2) == 0;
         }
 
-        public bool IsHostWhite { get; }
+        public Guid WhitePlayerId { get; set; }
 
         public List<FigureModel> Pieces { get; set; }
     }

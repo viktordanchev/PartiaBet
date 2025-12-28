@@ -10,6 +10,8 @@ namespace RestAPI.Mapper
         {
             CreateMap<AddMatchDto, AddMatchModel>();
             CreateMap<AddPlayerDto, AddPlayerModel>();
+            CreateMap<MatchModel, MatchDto>();
+            CreateMap<PlayerModel, PlayerDto>();
         }
     }
 }

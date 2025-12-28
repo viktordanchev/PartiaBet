@@ -20,7 +20,8 @@ namespace Infrastructure.Database.Repositories
             {
                 BetAmount = data.BetAmount,
                 //DateAndTime = DateTime.Parse(data.DateAndTime, new CultureInfo("bg-BG")),
-                GameId = data.GameId
+                GameId = data.GameId,
+                IsActive = true
             };
 
             await _context.MatchHistory.AddAsync(newMatch);
@@ -71,6 +72,7 @@ namespace Infrastructure.Database.Repositories
                 .Where(m => m.GameId == gameId && m.IsActive)
                 .Select(m => new MatchModel()
                 {
+                    Id = m.Id,
                     BetAmount = m.BetAmount,
                     MaxPlayersCount = m.Game.MaxPlayersCount,
                     Players = m.Players
@@ -116,6 +118,14 @@ namespace Infrastructure.Database.Repositories
                 .Where(m => m.Id == matchId)
                 .Select(m => m.GameId)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> GetPlayersCountAsync(Guid matchId)
+        {
+            return await _context.MatchHistory
+                .Where(m => m.Id == matchId)
+                .Select(m => m.Players.Count)
+                .FirstAsync();
         }
     }
 }

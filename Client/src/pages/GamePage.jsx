@@ -11,7 +11,7 @@ import { useHub } from '../contexts/HubContext';
 function GamePage() {
     const { game } = useParams();
     const apiRequest = useApiRequest();
-    const { startConnection } = useHub();
+    const { joinGame } = useHub();
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState({});
 
@@ -19,8 +19,7 @@ function GamePage() {
         if (!gameData?.id) return;
 
         const initiateConnection = async () => {
-            const connection = await startConnection();
-            await connection.invoke("JoinGame", gameData.id);
+            await joinGame(gameData.id);
         };
 
         initiateConnection();

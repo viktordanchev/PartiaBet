@@ -28,6 +28,26 @@ namespace Games.Chess
             piece.Col = chessMove.NewCol;
         }
 
+        public void AddPlayerToBoard(GameBoardModel board, Guid playerId, int playersCount)
+        {
+            var chessBoard = board as ChessBoardModel;
+
+            if (chessBoard.WhitePlayerId == Guid.Empty)
+            {
+                if (playersCount > 0 && chessBoard.WhitePlayerId == Guid.Empty)
+                {
+                    chessBoard.WhitePlayerId = playerId;
+                }
+                else
+                {
+                    if (new Random().Next(0, 2) == 0)
+                    {
+                        chessBoard.WhitePlayerId = playerId;
+                    }
+                }
+            }
+        }
+
         public bool IsValidMove(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
@@ -40,10 +60,10 @@ namespace Games.Chess
 
             var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
 
-            if (piece != null && piece.IsWhite == chessBoard.IsHostWhite)
-            { 
-                return false;
-            }
+            //if (piece != null && piece.IsWhite == chessBoard.IsHostWhite)
+            //{
+            //    return false;
+            //}
 
             bool isValidMove;
             switch (chessMove.PieceType)

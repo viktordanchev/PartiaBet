@@ -7,6 +7,8 @@
             Players = new List<PlayerDto>();
         }
 
+        public Guid Id { get; set; }
+
         public decimal BetAmount { get; set; }
 
         public int MaxPlayersCount { get; set; }

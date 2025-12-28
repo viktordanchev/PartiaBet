@@ -21,7 +21,7 @@ namespace RestAPI.Hubs
             _gameFactory = gameFactory;
         }
 
-        public async Task JoinGame(int gameId)
+        public async Task JoinGame(string gameId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, $"game-{gameId}");
         }

@@ -8,11 +8,9 @@ import { useLoading } from '../contexts/LoadingContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotifications } from '../contexts/NotificationsContext';
 import { loginSchema } from '../constants/validationSchemes';
-import { useHub } from '../contexts/HubContext';
 
 function LoginPage() {
     const navigate = useNavigate();
-    const { startConnection } = useHub();
     const apiRequest = useApiRequest();
     const { updateToken } = useAuth();
     const { setIsLoading } = useLoading();
@@ -32,7 +30,6 @@ function LoginPage() {
             showMessage(response.error, 'error');
         } else {
             updateToken(response.token);
-            await startConnection();
             navigate('/');
         }
 

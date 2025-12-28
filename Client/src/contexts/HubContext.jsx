@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import * as signalR from "@microsoft/signalr";
 
 const HubContext = createContext();
@@ -6,7 +6,36 @@ const HubContext = createContext();
 export const HubProvider = ({ children }) => {
     const [connection, setConnection] = useState(null);
 
+    useEffect(() => {
+        const startNewConnection = async () => {
+            const newConnection = await startConnection();
+            const gameId = sessionStorage.getItem("gameId");
+
+            if (gameId) {
+                await newConnection.invoke("JoinGame", gameId);
+            }
+        };
+
+        startNewConnection();
+    }, []);
+
+    const joinGame = async (gameId) => {
+        const newConnection = await startConnection();
+
+        sessionStorage.setItem("gameId", gameId);
+        await newConnection.invoke("JoinGame", gameId.toString());
+    };
+
+    const stopConnection = async () => {
+        if (connection) {
+            await connection.stop();
+            setConnection(null);
+        }
+    };
+
     const startConnection = async () => {
+        if (connection) return connection;
+
         await stopConnection();
 
         const newConnection = new signalR.HubConnectionBuilder()
@@ -23,15 +52,8 @@ export const HubProvider = ({ children }) => {
         return newConnection;
     };
 
-    const stopConnection = async () => {
-        if (connection) {
-            await connection.stop();
-            setConnection(null);
-        }
-    };
-
     return (
-        <HubContext.Provider value={{ connection, startConnection, stopConnection }}>
+        <HubContext.Provider value={{ connection, joinGame, stopConnection }}>
             {children}
         </HubContext.Provider>
     );

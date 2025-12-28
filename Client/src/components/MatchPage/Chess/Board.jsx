@@ -11,7 +11,7 @@ const Board = ({ data }) => {
     
     useEffect(() => {
         if (!connection) return;
-
+        
         const handleReceiveMove = (data) => {
             setPieces(prev =>
                 prev.map(p => p.row === data.oldRow && p.col === data.oldCol ? { ...p, row: data.newRow, col: data.newCol } : p)
