@@ -1,4 +1,4 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Interfaces.Infrastructure;
 using Core.Models.Games;
 using Microsoft.EntityFrameworkCore;
 

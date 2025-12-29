@@ -28,7 +28,7 @@ namespace Games.Chess
             piece.Col = chessMove.NewCol;
         }
 
-        public void AddPlayerToBoard(GameBoardModel board, Guid playerId, int playersCount)
+        public void UpdatePlayersInBoard(GameBoardModel board, Guid playerId, int playersCount)
         {
             var chessBoard = board as ChessBoardModel;
 

@@ -1,4 +1,4 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.Games;
 

@@ -7,6 +7,6 @@ namespace Core.Interfaces.Games
         GameBoardModel CreateGameBoard();
         void UpdateBoard(GameBoardModel board, BaseMoveModel move);
         bool IsValidMove(GameBoardModel board, BaseMoveModel move);
-        void AddPlayerToBoard(GameBoardModel board, Guid playerId, int playersCount);
+        void UpdatePlayersInBoard(GameBoardModel board, Guid playerId, int playersCount);
     }
 }

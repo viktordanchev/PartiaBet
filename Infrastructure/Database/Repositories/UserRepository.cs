@@ -1,4 +1,4 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Interfaces.Infrastructure;
 using Core.Models.User;
 using Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;

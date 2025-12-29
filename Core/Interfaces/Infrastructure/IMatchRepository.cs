@@ -1,6 +1,6 @@
 ﻿using Core.Models.Match;
 
-namespace Core.Interfaces.Repositories
+namespace Core.Interfaces.Infrastructure
 {
     public interface IMatchRepository
     {

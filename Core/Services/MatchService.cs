@@ -1,6 +1,6 @@
 ﻿using Core.Enums;
 using Core.Interfaces.Games;
-using Core.Interfaces.Repositories;
+using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.Match;
 
@@ -44,7 +44,7 @@ namespace Core.Services
             var gameService = _gameFactory.GetGameService(gameType);
             var addedPlayer = await _matchRepository.TryAddPlayerToMatchAsync(playerId, matchId);
 
-            gameService.AddPlayerToBoard(gameBoard, playerId, playersCount);
+            gameService.UpdatePlayersInBoard(gameBoard, playerId, playersCount);
 
             await _cacheService.AddItem(matchId, gameBoard);
 
@@ -53,6 +53,13 @@ namespace Core.Services
 
         public async Task RemovePlayerFromMatch(Guid matchId, Guid playerId)
         {
+            var gameBoard = await _cacheService.GetItem(matchId);
+            var playersCount = await _matchRepository.GetPlayersCountAsync(matchId);
+            var gameType = await GetMatchGameTypeAsync(matchId);
+            var gameService = _gameFactory.GetGameService(gameType);
+
+            gameService.UpdatePlayersInBoard(gameBoard, playerId, playersCount);
+
             await _matchRepository.TryRemovePlayerFromMatchAsync(playerId, matchId);
         }
 

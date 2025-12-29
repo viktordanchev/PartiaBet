@@ -1,6 +1,6 @@
 ﻿using Common.Constants;
 using Common.Exceptions;
-using Core.Interfaces.Repositories;
+using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;

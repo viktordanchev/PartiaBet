@@ -1,6 +1,6 @@
 ﻿using Core.Interfaces.ExternalServices;
 using Core.Interfaces.Games;
-using Core.Interfaces.Repositories;
+using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Services;
 using Core.Services.Configs;

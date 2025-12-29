@@ -1,4 +1,4 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Interfaces.Infrastructure;
 using Core.Models.Match;
 using Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;
