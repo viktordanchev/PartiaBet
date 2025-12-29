@@ -12,10 +12,10 @@ const MatchPage = () => {
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [matchData, setMatchData] = useState(null);
-    
+
     useEffect(() => {
         if (!connection) return;
-
+        
         const handleReceiveNewPlayer = (player) => {
             setMatchData(prev => ({
                 ...prev,
@@ -23,10 +23,25 @@ const MatchPage = () => {
             }));
         };
 
+        const handleRemovePlayer = (playerId) => {
+            setMatchData(prev => ({
+                ...prev,
+                players: prev.players.filter(player => player.id !== playerId)
+            }));
+        };
+
         connection.on("ReceiveNewPlayer", handleReceiveNewPlayer);
+        connection.on("RemovePlayer", handleRemovePlayer);
 
         return () => {
             connection.off("ReceiveNewPlayer", handleReceiveNewPlayer);
+            connection.off("RemovePlayer", handleRemovePlayer);
+            
+            const leave = async () => {
+                await connection.invoke("LeaveMatch", matchId);
+            };
+
+            leave();
         };
     }, [connection]);
 

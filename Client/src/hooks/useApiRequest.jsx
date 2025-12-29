@@ -4,8 +4,8 @@ import { fetchError } from '../constants/errorMessages';
 
 function useApiRequest() {
     const navigate = useNavigate();
-    const { updateToken, token } = useAuth();
-
+    const { updateToken } = useAuth();
+    const token = localStorage.getItem('accessToken');
     const apiUrl = 'https://localhost:7182/api';
     const headers = { 'Content-Type': 'application/json' };
 

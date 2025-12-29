@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import * as signalR from "@microsoft/signalr";
+import { useAuth } from "./AuthContext";
 
 const HubContext = createContext();
 
 export const HubProvider = ({ children }) => {
     const [connection, setConnection] = useState(null);
+    const { isAuthenticated } = useAuth();
 
     useEffect(() => {
         const startNewConnection = async () => {
@@ -17,7 +19,7 @@ export const HubProvider = ({ children }) => {
         };
 
         startNewConnection();
-    }, [localStorage.getItem('accessToken')]);
+    }, [isAuthenticated]);
 
     const joinGame = async (gameId) => {
         const newConnection = await startConnection();
@@ -34,10 +36,8 @@ export const HubProvider = ({ children }) => {
     };
 
     const startConnection = async () => {
-        if (connection) return connection;
-
         await stopConnection();
-        console.log(localStorage.getItem('accessToken'));
+
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl('https://localhost:7182/match', {
                 accessTokenFactory: () => localStorage.getItem('accessToken')

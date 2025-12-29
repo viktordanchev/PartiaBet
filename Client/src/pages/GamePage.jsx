@@ -14,7 +14,7 @@ function GamePage() {
     const { joinGame } = useHub();
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState({});
-
+    
     useEffect(() => {
         if (!gameData?.id) return;
 

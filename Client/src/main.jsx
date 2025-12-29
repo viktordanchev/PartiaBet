@@ -8,15 +8,15 @@ import { NotificationsProvider } from './contexts/NotificationsContext';
 import { AuthProvider } from './contexts/AuthContext';
 
 createRoot(document.getElementById('root')).render(
-    <BrowserRouter>
-        <AuthProvider>
-            <HubProvider>
+    <AuthProvider>
+        <HubProvider>
+            <BrowserRouter>
                 <LoadingProvider>
                     <NotificationsProvider>
                         <App />
                     </NotificationsProvider>
                 </LoadingProvider>
-            </HubProvider>
-        </AuthProvider>
-    </BrowserRouter>
+            </BrowserRouter>
+        </HubProvider>
+    </AuthProvider>
 )

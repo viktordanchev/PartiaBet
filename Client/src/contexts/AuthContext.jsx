@@ -3,14 +3,12 @@
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(() => localStorage.getItem('accessToken'));
-    const [isAuthenticated, setIsAuthenticated] = useState(!!token);
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('accessToken'));
     
-    const updateToken = (token) => {
-        localStorage.setItem('accessToken', token);
-        setToken(token);
+    const updateToken = (newToken) => {
+        localStorage.setItem('accessToken', newToken);
 
-        if (token) {
+        if (newToken) {
             setIsAuthenticated(true);
         } else {
             setIsAuthenticated(false);
@@ -19,13 +17,11 @@ export const AuthProvider = ({ children }) => {
 
     const removeToken = () => {
         localStorage.removeItem('accessToken');
-        setToken(null);
         setIsAuthenticated(false);
     };
 
     return (
         <AuthContext.Provider value={{
-            token,
             isAuthenticated,
             updateToken,
             removeToken

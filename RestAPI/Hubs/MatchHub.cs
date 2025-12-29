@@ -42,7 +42,8 @@ namespace RestAPI.Hubs
         [Authorize]
         public async Task JoinMatch(Guid matchId, AddPlayerDto playerData)
         {
-            var playerResponse = await _matchService.AddPersonToMatch(matchId, playerData.Id);
+            var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
+            var playerResponse = await _matchService.AddPersonToMatch(matchId, playerId);
 
             await Clients.All.SendAsync("ReceiveNewPlayer", playerResponse);
         }
@@ -68,6 +69,16 @@ namespace RestAPI.Hubs
             await _matchService.TryMakeMove(matchId, game, playerId, moveData);
 
             await Clients.All.SendAsync("ReceiveMove", moveData);
+        }
+
+        [Authorize]
+        public async Task LeaveMatch(Guid matchId)
+        {
+            var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
+
+            await _matchService.RemovePlayerFromMatch(matchId, playerId);
+
+            await Clients.All.SendAsync("RemovePlayer", playerId);
         }
     }
 }

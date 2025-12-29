@@ -26,8 +26,6 @@ function App() {
                 <Header isLogoVis={pagesNoNav} />
                 <main className="flex-grow flex">
                     <Routes>
-                        <Route path="*" element={<NotFoundPage />} />
-
                         <Route path="/" element={<HomePage />} />
                         <Route path="/friends" element={<FriendsPage />} />
                         <Route path="/games/:game" element={<GamePage />} />
@@ -35,6 +33,8 @@ function App() {
 
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
+
+                        <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                 </main>
                 <Footer />

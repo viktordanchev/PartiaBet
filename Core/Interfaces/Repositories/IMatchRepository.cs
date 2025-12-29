@@ -6,6 +6,7 @@ namespace Core.Interfaces.Repositories
     {
         Task<MatchModel> AddMatchAsync(AddMatchModel data);
         Task<PlayerModel> TryAddPlayerToMatchAsync(Guid playerId, Guid matchId);
+        Task TryRemovePlayerFromMatchAsync(Guid playerId, Guid matchId);
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(int gameId);
         Task<MatchDetailsModel> GetMatchDetailsAsync(Guid matchId);
         Task<int> GetGameIdAsync(Guid matchId);

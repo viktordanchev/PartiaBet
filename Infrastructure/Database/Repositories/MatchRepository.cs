@@ -66,6 +66,18 @@ namespace Infrastructure.Database.Repositories
             };
         }
 
+        public async Task TryRemovePlayerFromMatchAsync(Guid playerId, Guid matchId)
+        {
+            var userMatch = await _context.UserMatch
+                .FirstOrDefaultAsync(um => um.PlayerId == playerId && um.MatchId == matchId);
+
+            if (userMatch != null)
+            {
+                _context.UserMatch.Remove(userMatch);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(int gameId)
         {
             var matches = await _context.MatchHistory

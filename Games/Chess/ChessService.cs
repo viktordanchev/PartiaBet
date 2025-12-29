@@ -34,7 +34,7 @@ namespace Games.Chess
 
             if (chessBoard.WhitePlayerId == Guid.Empty)
             {
-                if (playersCount > 0 && chessBoard.WhitePlayerId == Guid.Empty)
+                if (playersCount > 0)
                 {
                     chessBoard.WhitePlayerId = playerId;
                 }
@@ -45,6 +45,10 @@ namespace Games.Chess
                         chessBoard.WhitePlayerId = playerId;
                     }
                 }
+            }
+            else if (chessBoard.WhitePlayerId == playerId)
+            {
+                chessBoard.WhitePlayerId = Guid.Empty;
             }
         }
 

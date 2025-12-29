@@ -51,6 +51,11 @@ namespace Core.Services
             return addedPlayer;
         }
 
+        public async Task RemovePlayerFromMatch(Guid matchId, Guid playerId)
+        {
+            await _matchRepository.TryRemovePlayerFromMatchAsync(playerId, matchId);
+        }
+
         public async Task<MatchDetailsModel> GetMatch(Guid matchId)
         {
             var match = await _matchRepository.GetMatchDetailsAsync(matchId);

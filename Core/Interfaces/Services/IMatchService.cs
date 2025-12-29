@@ -7,6 +7,7 @@ namespace Core.Interfaces.Services
     {
         Task<MatchModel> CreateMatchAsync(AddMatchModel data);
         Task<PlayerModel> AddPersonToMatch(Guid matchId, Guid playerId);
+        Task RemovePlayerFromMatch(Guid matchId, Guid playerId);
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(int gameId);
         Task<MatchDetailsModel> GetMatch(Guid matchId);
         Task TryMakeMove(Guid matchId, GameType game, string playerId, BaseMoveModel moveData);
