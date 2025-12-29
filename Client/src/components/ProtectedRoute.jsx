@@ -1,22 +1,14 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuthContext } from '../contexts/AuthContext';
-import jwtDecoder from '../services/jwtDecoder';
-import RestrictedPage from '../pages/RestrictedPage';
+import { useAuth } from '../contexts/AuthContext';
 
 function ProtectedRoute({ children, role = null }) {
-    const { isAuthenticated } = useAuthContext();
+    const { isAuthenticated } = useAuth();
 
     if (!isAuthenticated)
         return <Navigate to="/login" replace />;
 
-    if (role) {
-        const { roles } = jwtDecoder();
-
-        if (!roles || !roles.includes(role)) return <RestrictedPage />;
-    }
-
-    return React.cloneElement(children);
+    return children;
 }
 
 export default ProtectedRoute;

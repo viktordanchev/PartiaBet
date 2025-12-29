@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import NavigationBar from './components/NavigationBar';
 import SessionEndNotification from './components/SessionEndNotification';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
     const location = useLocation();
@@ -29,7 +30,7 @@ function App() {
                         <Route path="/" element={<HomePage />} />
                         <Route path="/friends" element={<FriendsPage />} />
                         <Route path="/games/:game" element={<GamePage />} />
-                        <Route path="/games/:game/match/:matchId" element={<MatchPage />} />
+                        <Route path="/games/:game/match/:matchId" element={<ProtectedRoute><MatchPage /></ProtectedRoute>} />
 
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
