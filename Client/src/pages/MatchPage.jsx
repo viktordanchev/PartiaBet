@@ -15,7 +15,7 @@ const MatchPage = () => {
 
     useEffect(() => {
         if (!connection) return;
-        
+
         const handleReceiveNewPlayer = (player) => {
             setMatchData(prev => ({
                 ...prev,
@@ -30,18 +30,24 @@ const MatchPage = () => {
             }));
         };
 
+        const leaveMatch = async () => {
+            await connection.invoke("LeaveMatch", matchId);
+        };
+
+        const handleBeforeUnload = () => {
+            leaveMatch();
+        };
+
         connection.on("ReceiveNewPlayer", handleReceiveNewPlayer);
         connection.on("RemovePlayer", handleRemovePlayer);
+        window.addEventListener("beforeunload", handleBeforeUnload);
 
         return () => {
             connection.off("ReceiveNewPlayer", handleReceiveNewPlayer);
             connection.off("RemovePlayer", handleRemovePlayer);
-            
-            const leave = async () => {
-                await connection.invoke("LeaveMatch", matchId);
-            };
+            window.removeEventListener("beforeunload", handleBeforeUnload);
 
-            leave();
+            leaveMatch();
         };
     }, [connection]);
 
