@@ -91,5 +91,10 @@ namespace Core.Services
 
             return (GameType)gameId;
         }
+
+        public async Task<bool> IsMatchInProgressAsync(Guid matchId)
+        {
+            return true;
+        }
     }
 }

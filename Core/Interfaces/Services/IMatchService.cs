@@ -12,5 +12,6 @@ namespace Core.Interfaces.Services
         Task<MatchDetailsModel> GetMatch(Guid matchId);
         Task TryMakeMove(Guid matchId, GameType game, string playerId, BaseMoveModel moveData);
         Task<GameType> GetMatchGameTypeAsync(Guid matchId);
+        Task<bool> IsMatchInProgressAsync(Guid matchId);
     }
 }

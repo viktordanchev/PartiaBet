@@ -5,6 +5,7 @@ using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestAPI.Dtos.Match;
+using System.Threading.Tasks;
 
 namespace RestAPI.Controllers
 {
@@ -50,7 +51,7 @@ namespace RestAPI.Controllers
                     Type = PieceType.Bishop,
                     White = "https://partiabetstorage.blob.core.windows.net/chess-pieces/classic-white-bishop.svg",
                     Black = "https://partiabetstorage.blob.core.windows.net/chess-pieces/classic-black-bishop.svg"
-                },  
+                },
                 new PieceSkinDto
                 {
                     Type = PieceType.King,
@@ -84,6 +85,18 @@ namespace RestAPI.Controllers
             };
 
             return Ok(skins);
+        }
+
+        public async Task<IActionResult> LeaveMatch([FromBody] Guid matchId)
+        {
+            var playerId = Guid.Parse(HttpContext.User.FindFirst("Id").Value);
+
+            if (await _matchService.IsMatchInProgressAsync(matchId))
+            {
+
+            }
+
+            return Ok();
         }
     }
 }
