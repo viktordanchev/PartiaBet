@@ -1,7 +1,7 @@
 ﻿using Core.Games.Enums;
 using Core.Interfaces.Games;
+using Core.Models.Games;
 using Core.Models.Games.Chess;
-using Core.Models.Match;
 using Games.Dtos.Chess;
 
 namespace Games.Chess
@@ -28,27 +28,24 @@ namespace Games.Chess
             piece.Col = chessMove.NewCol;
         }
 
-        public void UpdatePlayersInBoard(GameBoardModel board, Guid playerId, int playersCount)
+        public void UpdatePlayersInBoard(GameBoardModel board, Guid playerId)
         {
             var chessBoard = board as ChessBoardModel;
 
-            if (chessBoard.WhitePlayerId == Guid.Empty)
+            if (chessBoard.WhitePlayerId != Guid.Empty)
             {
-                if (playersCount > 0)
+                chessBoard.BlackPlayerId = playerId;
+            }
+            else if (chessBoard.BlackPlayerId != Guid.Empty)
+            {
+                chessBoard.WhitePlayerId = playerId;
+            }
+            else 
+            {
+                if (new Random().Next(0, 2) == 0)
                 {
                     chessBoard.WhitePlayerId = playerId;
                 }
-                else
-                {
-                    if (new Random().Next(0, 2) == 0)
-                    {
-                        chessBoard.WhitePlayerId = playerId;
-                    }
-                }
-            }
-            else if (chessBoard.WhitePlayerId == playerId)
-            {
-                chessBoard.WhitePlayerId = Guid.Empty;
             }
         }
 

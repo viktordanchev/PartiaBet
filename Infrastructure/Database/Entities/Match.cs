@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Core.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Database.Entities
 {
@@ -17,15 +17,11 @@ namespace Infrastructure.Database.Entities
 
         public DateTime DateAndTime { get; set; }
 
-        public TimeSpan Duration { get; set; }
-
-        public bool IsActive { get; set; }
+        [Required]
+        public MatchStatus MatchStatus { get; set; }
 
         [Required]
-        public int GameId { get; set; }
-
-        [ForeignKey(nameof(GameId))]
-        public Game Game { get; set; } = null!;
+        public GameType GameType { get; set; }
 
         public ICollection<UserMatch> Players { get; set; } = new List<UserMatch>();
     }

@@ -18,5 +18,9 @@ namespace Infrastructure.Database.Entities
         public User Player { get; set; } = null!;
 
         public int TeamNumber { get; set; }
+
+        public bool IsWinner { get; set; }
+
+        public bool IsLeaver { get; set; }
     }
 }

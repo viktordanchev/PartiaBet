@@ -1,4 +1,4 @@
-﻿using Core.Models.Match;
+﻿using Core.Models.Games;
 
 namespace Core.Interfaces.Games
 {
@@ -7,6 +7,6 @@ namespace Core.Interfaces.Games
         GameBoardModel CreateGameBoard();
         void UpdateBoard(GameBoardModel board, BaseMoveModel move);
         bool IsValidMove(GameBoardModel board, BaseMoveModel move);
-        void UpdatePlayersInBoard(GameBoardModel board, Guid playerId, int playersCount);
+        void UpdatePlayersInBoard(GameBoardModel board, Guid playerId);
     }
 }

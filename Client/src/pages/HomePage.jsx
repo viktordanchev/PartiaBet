@@ -29,7 +29,7 @@ function HomePage() {
                 <>
                     {games.map((game) => (
                         <GameCard
-                            key={game.id}
+                            key={game.gameType}
                             data={game}
                         />
                     ))}

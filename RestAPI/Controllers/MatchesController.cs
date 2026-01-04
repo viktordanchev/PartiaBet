@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Core.DTOs.Responses;
+using Core.Enums;
 using Core.Games.Enums;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestAPI.Dtos.Match;
-using System.Threading.Tasks;
 
 namespace RestAPI.Controllers
 {
@@ -14,18 +14,20 @@ namespace RestAPI.Controllers
     public class MatchesController : Controller
     {
         private readonly IMatchService _matchService;
+        private readonly IMatchTimer _matchTimerManagere;
         private readonly IMapper _mapper;
 
-        public MatchesController(IMatchService matchService, IMapper mapper)
+        public MatchesController(IMatchService matchService, IMatchTimer matchTimerManagere, IMapper mapper)
         {
             _matchService = matchService;
             _mapper = mapper;
+            _matchTimerManagere = matchTimerManagere;
         }
 
         [HttpPost("getActiveMatches")]
-        public async Task<IActionResult> GetActiveMatches([FromBody] int gameId)
+        public async Task<IActionResult> GetActiveMatches([FromBody] GameType gameType)
         {
-            var activeMatches = await _matchService.GetActiveMatchesAsync(gameId);
+            var activeMatches = await _matchService.GetActiveMatchesAsync(gameType);
             var activeMatchesDto = _mapper.Map<IEnumerable<MatchDto>>(activeMatches);
 
             return Ok(activeMatchesDto);
@@ -35,9 +37,19 @@ namespace RestAPI.Controllers
         [Authorize]
         public async Task<IActionResult> GetMatchData([FromBody] Guid matchId)
         {
-            var activeMatches = await _matchService.GetMatch(matchId);
+            var match = await _matchService.GetMatchAsync(matchId);
+            var matchDto = _mapper.Map<MatchDto>(match);
 
-            return Ok(activeMatches);
+            return Ok(matchDto);
+        }
+
+        [HttpPost("isPlayerLeaver")]
+        [Authorize]
+        public IActionResult IsPlayerLeaver([FromBody] Guid playerId)
+        {
+            var isLeaver = _matchTimerManagere.HasActiveTimer(playerId);
+
+            return Ok(isLeaver);
         }
 
         [HttpGet("getSkins")]
@@ -85,18 +97,6 @@ namespace RestAPI.Controllers
             };
 
             return Ok(skins);
-        }
-
-        public async Task<IActionResult> LeaveMatch([FromBody] Guid matchId)
-        {
-            var playerId = Guid.Parse(HttpContext.User.FindFirst("Id").Value);
-
-            if (await _matchService.IsMatchInProgressAsync(matchId))
-            {
-
-            }
-
-            return Ok();
         }
     }
 }

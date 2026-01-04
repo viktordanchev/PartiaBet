@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Core.Interfaces.Games;
+using Core.Enums;
 using Core.Interfaces.Services;
 using Core.Models.Match;
 using Microsoft.AspNetCore.Authorization;
@@ -12,18 +12,16 @@ namespace RestAPI.Hubs
     {
         private readonly IMatchService _matchService;
         private readonly IMapper _mapper;
-        private readonly IGameFactory _gameFactory;
 
-        public MatchHub(IMatchService matchService, IMapper mapper, IGameFactory gameFactory)
+        public MatchHub(IMatchService matchService, IMapper mapper)
         {
             _matchService = matchService;
             _mapper = mapper;
-            _gameFactory = gameFactory;
         }
 
-        public async Task JoinGame(string gameId)
+        public async Task JoinGame(GameType gameType)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"game-{gameId}");
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{gameType}");
         }
 
         [Authorize]
@@ -32,9 +30,10 @@ namespace RestAPI.Hubs
             var matchModel = _mapper.Map<AddMatchModel>(matchData);
 
             var match = await _matchService.CreateMatchAsync(matchModel);
-            await _matchService.AddPersonToMatch(match.Id, playerData.Id);
+            await _matchService.AddPlayerAsync(match.Id, playerData.Id);
 
-            await Clients.Group($"game-{matchData.GameId}").SendAsync("ReceiveMatch", match);
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{match.Id}");
+            await Clients.Group($"{matchData.GameType}").SendAsync("ReceiveMatch", match);
 
             return match.Id;
         }
@@ -43,32 +42,23 @@ namespace RestAPI.Hubs
         public async Task JoinMatch(Guid matchId, AddPlayerDto playerData)
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            var playerResponse = await _matchService.AddPersonToMatch(matchId, playerId);
+            var playerResponse = await _matchService.AddPlayerAsync(matchId, playerId);
 
-            await Clients.All.SendAsync("ReceiveNewPlayer", playerResponse);
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{matchId}");
+            await Clients.Group($"{matchId}").SendAsync("ReceiveNewPlayer", playerResponse);
         }
 
         [Authorize]
         public async Task MakeMove(Guid matchId, string jsonData)
         {
-            BaseMoveModel moveData;
+            var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
 
-            try
+            var (isValidMove, moveData) = await _matchService.TryMakeMoveAsync(matchId, playerId, jsonData);
+
+            if (isValidMove)
             {
-                var gameType = await _matchService.GetMatchGameTypeAsync(matchId);
-                moveData = _gameFactory.GetMakeMoveDto(gameType, jsonData);
+                await Clients.Group($"{matchId}").SendAsync("ReceiveMove", moveData);
             }
-            catch
-            {
-                throw new HubException();
-            }
-
-            var playerId = Context.User?.FindFirst("Id")?.Value;
-            var game = await _matchService.GetMatchGameTypeAsync(matchId);
-
-            await _matchService.TryMakeMove(matchId, game, playerId, moveData);
-
-            await Clients.All.SendAsync("ReceiveMove", moveData);
         }
 
         [Authorize]
@@ -76,9 +66,9 @@ namespace RestAPI.Hubs
         {
             var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
 
-            await _matchService.RemovePlayerFromMatch(matchId, playerId);
+            await _matchService.RemovePlayerAsync(matchId, playerId);
 
-            await Clients.All.SendAsync("RemovePlayer", playerId);
+            await Clients.Group($"{matchId}").SendAsync("RemovePlayer", playerId);
         }
     }
 }

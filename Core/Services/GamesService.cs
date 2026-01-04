@@ -1,4 +1,4 @@
-﻿using Core.Interfaces.Infrastructure;
+﻿using Core.Interfaces.Games;
 using Core.Interfaces.Services;
 using Core.Models.Games;
 
@@ -6,21 +6,23 @@ namespace Core.Services
 {
     public class GamesService : IGamesService
     {
-        private readonly IGamesRepository _gamesRepository;
+        private readonly IGameProvider _gameProvider;
 
-        public GamesService(IGamesRepository gamesRepository)
+        public GamesService(IGameProvider gameProvider)
         {
-            _gamesRepository = gamesRepository;
+            _gameProvider = gameProvider;
         }
 
-        public async Task<IEnumerable<GameModel>> GetAllAsync()
+        public IEnumerable<GameModel> GetAll()
         {
-            return await _gamesRepository.GetAllAsync();
+            return _gameProvider.GenerateAllGames();
         }
 
-        public async Task<GameModel?> GetGameAsync(string game)
+        public GameModel? GetGame(string game)
         {
-            return await _gamesRepository.GetGameAsync(game);
+            var allGames = _gameProvider.GenerateAllGames();
+
+            return allGames.FirstOrDefault(g => g.Name.Equals(game, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

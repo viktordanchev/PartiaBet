@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Infrastructure;
+﻿using Core.Enums;
+using Core.Interfaces.Infrastructure;
 using Core.Models.Match;
 using Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -19,27 +20,23 @@ namespace Infrastructure.Database.Repositories
             var newMatch = new Match()
             {
                 BetAmount = data.BetAmount,
-                //DateAndTime = DateTime.Parse(data.DateAndTime, new CultureInfo("bg-BG")),
-                GameId = data.GameId,
-                IsActive = true
+                DateAndTime = DateTime.UtcNow,
+                GameType = data.GameType,
+                MatchStatus = MatchStatus.Created
             };
 
             await _context.MatchHistory.AddAsync(newMatch);
             await _context.SaveChangesAsync();
-            await _context.Entry(newMatch)
-                .Reference(m => m.Game)
-                .LoadAsync();
 
             return new MatchModel()
             {
                 Id = newMatch.Id,
                 BetAmount = newMatch.BetAmount,
-                MaxPlayersCount = newMatch.Game.MaxPlayersCount,
                 Players = new List<PlayerModel>()
             };
         }
 
-        public async Task<PlayerModel> TryAddPlayerToMatchAsync(Guid playerId, Guid matchId)
+        public async Task<PlayerModel> AddPlayerAsync(Guid playerId, Guid matchId)
         {
             var match = await _context.MatchHistory.FindAsync(matchId);
 
@@ -66,7 +63,7 @@ namespace Infrastructure.Database.Repositories
             };
         }
 
-        public async Task TryRemovePlayerFromMatchAsync(Guid playerId, Guid matchId)
+        public async Task RemovePlayerAsync(Guid playerId, Guid matchId)
         {
             var userMatch = await _context.UserMatch
                 .FirstOrDefaultAsync(um => um.PlayerId == playerId && um.MatchId == matchId);
@@ -78,15 +75,14 @@ namespace Infrastructure.Database.Repositories
             }
         }
 
-        public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(int gameId)
+        public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType)
         {
             var matches = await _context.MatchHistory
-                .Where(m => m.GameId == gameId && m.IsActive)
+                .Where(m => m.GameType == gameType && m.MatchStatus == MatchStatus.Created || m.MatchStatus == MatchStatus.Ongoing)
                 .Select(m => new MatchModel()
                 {
                     Id = m.Id,
                     BetAmount = m.BetAmount,
-                    MaxPlayersCount = m.Game.MaxPlayersCount,
                     Players = m.Players
                         .Select(um => new PlayerModel()
                         {
@@ -102,14 +98,14 @@ namespace Infrastructure.Database.Repositories
             return matches;
         }
 
-        public async Task<MatchDetailsModel> GetMatchDetailsAsync(Guid matchId)
+        public async Task<MatchModel> GetMatchAsync(Guid matchId)
         {
             var match = await _context.MatchHistory
                 .Where(m => m.Id == matchId)
-                .Select(m => new MatchDetailsModel()
+                .Select(m => new MatchModel()
                 {
+                    Id = m.Id,
                     BetAmount = m.BetAmount,
-                    MaxPlayersCount = m.Game.MaxPlayersCount,
                     Players = m.Players
                         .Select(um => new PlayerModel()
                         {
@@ -125,20 +121,19 @@ namespace Infrastructure.Database.Repositories
             return match;
         }
 
-        public async Task<int> GetGameIdAsync(Guid matchId)
+        public async Task<MatchModel> GetMatchInternalAsync(Guid matchId)
         {
-            return await _context.MatchHistory
+            var match = await _context.MatchHistory
                 .Where(m => m.Id == matchId)
-                .Select(m => m.GameId)
+                .Select(m => new MatchModel()
+                {
+                    Id = m.Id,
+                    GameType = m.GameType,
+                    MatchStatus = m.MatchStatus,
+                })
                 .FirstOrDefaultAsync();
-        }
 
-        public async Task<int> GetPlayersCountAsync(Guid matchId)
-        {
-            return await _context.MatchHistory
-                .Where(m => m.Id == matchId)
-                .Select(m => m.Players.Count)
-                .FirstAsync();
+            return match;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Core.Enums;
-using Core.Models.Match;
+using Core.Models.Games;
 
 namespace Core.Interfaces.Games
 {

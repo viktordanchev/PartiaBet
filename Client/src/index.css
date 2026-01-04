@@ -14,6 +14,12 @@
     }
 }
 
+@keyframes borderSpin {
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
 @layer utilities {
     .scrollbar-main {
         scrollbar-width: auto;
@@ -42,11 +48,27 @@
             background-color: #51dacf;
             border-radius: 3px;
         }
+
+    .card-wrapper {
+        overflow: hidden;
+    }
+
+        .card-wrapper::before {
+            content: '';
+            position: absolute;
+            left: -25%;
+            top: -25%;
+            width: 150%;
+            height: 150%;
+            background: conic-gradient( color-mix(in srgb, var(--color-maincolor) 100%, transparent) 0deg, color-mix(in srgb, var(--color-maincolor) 100%, transparent) 0deg, transparent 80deg );
+            animation: borderSpin 5s linear infinite;
+        }
 }
 
 .animate-bounce-left-right {
     animation: bounceLeftRight 0.2s ease-in-out 3;
 }
+
 html, body {
     height: 100%;
     overflow: auto;

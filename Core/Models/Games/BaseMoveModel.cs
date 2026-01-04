@@ -1,4 +1,4 @@
-﻿namespace Core.Models.Match
+﻿namespace Core.Models.Games
 {
     public abstract class BaseMoveModel
     {

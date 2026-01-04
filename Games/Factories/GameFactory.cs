@@ -1,7 +1,7 @@
 ﻿using Common.Exceptions;
 using Core.Enums;
 using Core.Interfaces.Games;
-using Core.Models.Match;
+using Core.Models.Games;
 using Games.Chess;
 using Games.Dtos.Chess;
 using System.Text.Json;

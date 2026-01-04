@@ -4,8 +4,6 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Infrastructure.Database.Migrations
 {
     /// <inheritdoc />
@@ -15,18 +13,18 @@ namespace Infrastructure.Database.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Games",
+                name: "MatchHistory",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    ImgUrl = table.Column<string>(type: "text", nullable: false),
-                    MaxPlayersCount = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    BetAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    DateAndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    MatchStatus = table.Column<int>(type: "integer", nullable: false),
+                    GameType = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Games", x => x.Id);
+                    table.PrimaryKey("PK_MatchHistory", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,28 +56,6 @@ namespace Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MatchHistory",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    BetAmount = table.Column<decimal>(type: "numeric", nullable: false),
-                    DateAndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Duration = table.Column<TimeSpan>(type: "interval", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    GameId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MatchHistory", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MatchHistory_Games_GameId",
-                        column: x => x.GameId,
-                        principalTable: "Games",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -165,6 +141,33 @@ namespace Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserMatch",
+                columns: table => new
+                {
+                    MatchId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PlayerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TeamNumber = table.Column<int>(type: "integer", nullable: false),
+                    IsWinner = table.Column<bool>(type: "boolean", nullable: false),
+                    IsLeaver = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMatch", x => new { x.PlayerId, x.MatchId });
+                    table.ForeignKey(
+                        name: "FK_UserMatch_MatchHistory_MatchId",
+                        column: x => x.MatchId,
+                        principalTable: "MatchHistory",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserMatch_Users_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UsersRoles",
                 columns: table => new
                 {
@@ -190,42 +193,6 @@ namespace Infrastructure.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "UserMatch",
-                columns: table => new
-                {
-                    MatchId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PlayerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TeamNumber = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserMatch", x => new { x.PlayerId, x.MatchId });
-                    table.ForeignKey(
-                        name: "FK_UserMatch_MatchHistory_MatchId",
-                        column: x => x.MatchId,
-                        principalTable: "MatchHistory",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserMatch_Users_PlayerId",
-                        column: x => x.PlayerId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Games",
-                columns: new[] { "Id", "ImgUrl", "MaxPlayersCount", "Name" },
-                values: new object[,]
-                {
-                    { 1, "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg", 2, "Chess" },
-                    { 2, "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png", 2, "Backgammon" },
-                    { 3, "https://partiabetstorage.blob.core.windows.net/game-images/belote.png", 4, "Belote" },
-                    { 4, "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png", 2, "Sixty-Six" }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_ChatMessages_ReceiverId",
                 table: "ChatMessages",
@@ -240,11 +207,6 @@ namespace Infrastructure.Database.Migrations
                 name: "IX_Friendship_FriendId",
                 table: "Friendship",
                 column: "FriendId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MatchHistory_GameId",
-                table: "MatchHistory",
-                column: "GameId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionHistory_ReceiverId",
@@ -310,9 +272,6 @@ namespace Infrastructure.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Games");
         }
     }
 }

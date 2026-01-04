@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(PartiaBetDbContext))]
-    [Migration("20251215132559_InitialCreate")]
+    [Migration("20260103182211_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -74,60 +74,6 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("Friendship");
                 });
 
-            modelBuilder.Entity("Infrastructure.Database.Entities.Game", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImgUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("MaxPlayersCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Games");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg",
-                            MaxPlayersCount = 2,
-                            Name = "Chess"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png",
-                            MaxPlayersCount = 2,
-                            Name = "Backgammon"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/belote.png",
-                            MaxPlayersCount = 4,
-                            Name = "Belote"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/sixty-six.png",
-                            MaxPlayersCount = 2,
-                            Name = "Sixty-Six"
-                        });
-                });
-
             modelBuilder.Entity("Infrastructure.Database.Entities.Match", b =>
                 {
                     b.Property<Guid>("Id")
@@ -140,18 +86,13 @@ namespace Infrastructure.Database.Migrations
                     b.Property<DateTime>("DateAndTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("interval");
-
-                    b.Property<int>("GameId")
+                    b.Property<int>("GameType")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.Property<int>("MatchStatus")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GameId");
 
                     b.ToTable("MatchHistory");
                 });
@@ -242,6 +183,12 @@ namespace Infrastructure.Database.Migrations
                     b.Property<Guid>("MatchId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsLeaver")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsWinner")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("TeamNumber")
                         .HasColumnType("integer");
 
@@ -328,17 +275,6 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("Friend");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Infrastructure.Database.Entities.Match", b =>
-                {
-                    b.HasOne("Infrastructure.Database.Entities.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("Infrastructure.Database.Entities.Transaction", b =>

@@ -1,4 +1,4 @@
-﻿using Core.Models.Match;
+﻿using Core.Models.Games;
 
 namespace Core.Interfaces.Infrastructure
 {

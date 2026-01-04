@@ -1,5 +1,5 @@
 ﻿using Core.Interfaces.Infrastructure;
-using Core.Models.Match;
+using Core.Models.Games;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 

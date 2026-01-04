@@ -37,7 +37,7 @@ const Board = ({ data }) => {
     };
 
     const makeMove = async (moveData) => {
-        const matchId = sessionStorage.getItem('currentMatchId');
+        const matchId = localStorage.getItem('currentMatchId');
 
         try {
             await connection.invoke("MakeMove", matchId, JSON.stringify(moveData));
@@ -73,7 +73,7 @@ const Board = ({ data }) => {
             setValidSquares(validMoves);
         }
     };
-
+    
     return (
         <article className="grid grid-cols-8 rounded border-5 border-gray-900">
             {Array.from({ length: 8 * 8 }).map((_, index) => {

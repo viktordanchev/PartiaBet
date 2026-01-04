@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Core.Models.Games;
-using RestAPI.Dtos.Game;
+using RestAPI.Dtos.Games;
 
 namespace RestAPI.Mapper
 {

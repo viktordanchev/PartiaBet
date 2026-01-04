@@ -2,7 +2,7 @@
 {
     public enum PlayerRole
     {
-        Player,
+        Player = 1,
         Spectator
     }
 }

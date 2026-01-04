@@ -1,11 +1,15 @@
-﻿namespace RestAPI.Dtos.Game
+﻿using Core.Enums;
+
+namespace RestAPI.Dtos.Games
 {
     public class GameDto
     {
-        public int Id { get; set; }
+        public GameType GameType { get; set; }
 
         public string Name { get; set; } = string.Empty;
 
         public string ImageUrl { get; set; } = string.Empty;
+
+        public int MaxPlayersCount { get; set; }
     }
 }

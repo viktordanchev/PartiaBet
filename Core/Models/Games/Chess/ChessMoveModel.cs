@@ -1,5 +1,4 @@
 ﻿using Core.Games.Enums;
-using Core.Models.Match;
 
 namespace Core.Models.Games.Chess
 {

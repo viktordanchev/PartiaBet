@@ -1,6 +1,4 @@
-﻿using Core.Models.Match;
-
-namespace Core.Models.Games.Chess
+﻿namespace Core.Models.Games.Chess
 {
     public class ChessBoardModel : GameBoardModel
     {
@@ -10,6 +8,8 @@ namespace Core.Models.Games.Chess
         }
 
         public Guid WhitePlayerId { get; set; }
+
+        public Guid BlackPlayerId { get; set; }
 
         public List<FigureModel> Pieces { get; set; }
     }

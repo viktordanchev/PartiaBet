@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using RestAPI.Dtos.Game;
+using RestAPI.Dtos.Games;
 
 namespace RestAPI.Controllers
 {
@@ -19,20 +19,20 @@ namespace RestAPI.Controllers
         }
 
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAllGames()
+        public IActionResult GetAllGames()
         {
-            var games = await _gamesService.GetAllAsync();
+            var games = _gamesService.GetAll();
             var gamesDto = _mapper.Map<IEnumerable<GameDto>>(games);
 
             return Ok(gamesDto);
         }
 
         [HttpPost("getGameData")]
-        public async Task<IActionResult> GetGameData([FromBody] string game)
+        public IActionResult GetGameData([FromBody] string game)
         {
-            var gameData = await _gamesService.GetGameAsync(game);
+            var gameData = _gamesService.GetGame(game);
 
-            if(gameData == null)
+            if (gameData == null)
             {
                 return NotFound("Game not found");
             }

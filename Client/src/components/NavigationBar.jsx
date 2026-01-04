@@ -16,9 +16,9 @@ const NavigationBar = () => {
 
     return (
         <section className="fixed h-full w-80 bg-gray-900 text-xl font-medium text-gray-300">
-            <a href="/" className="block p-6">
+            <NavLink to="/" className="block p-6" end>
                 <img src={Logo} />
-            </a>
+            </NavLink>
             <nav className="flex flex-col space-y-3 p-3">
                 <NavLink to="/"
                     className={({ isActive }) =>

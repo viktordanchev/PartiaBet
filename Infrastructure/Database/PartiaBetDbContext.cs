@@ -19,14 +19,12 @@ namespace Infrastructure.Database
         public DbSet<Friendship> Friendship { get; set; }
         public DbSet<Transaction> TransactionHistory { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
-        public DbSet<Game> Games { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new FriendshipConfig());
             builder.ApplyConfiguration(new UserConfig());
             builder.ApplyConfiguration(new UserMatchConfig());
-            builder.ApplyConfiguration(new GameConfig());
 
             base.OnModelCreating(builder);
         }

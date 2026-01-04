@@ -16,10 +16,10 @@ function GamePage() {
     const [gameData, setGameData] = useState({});
     
     useEffect(() => {
-        if (!gameData?.id) return;
+        if (!gameData?.gameType) return;
 
         const initiateConnection = async () => {
-            await joinGame(gameData.id);
+            await joinGame(gameData.gameType);
         };
 
         initiateConnection();
@@ -48,7 +48,7 @@ function GamePage() {
                         <GameInfo gameData={gameData} />
                         <TopPlayers />
                     </div>
-                    <Matches gameId={gameData.id} />
+                    <Matches gameType={gameData.gameType} />
                     <GameRules game={gameData.name} />
                 </>}
         </section>

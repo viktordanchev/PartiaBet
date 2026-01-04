@@ -12,7 +12,7 @@ const MatchPage = () => {
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [matchData, setMatchData] = useState(null);
-
+    
     useEffect(() => {
         if (!connection) return;
 
@@ -57,7 +57,7 @@ const MatchPage = () => {
                 apiRequest('matches', 'getMatchData', 'POST', true, false, matchId),
                 apiRequest('matches', 'getSkins', 'GET', true, false)
             ]);
-            
+
             setIsLoading(false);
 
             const updatedPieces = matchData.board.pieces.map(p => {
@@ -80,8 +80,8 @@ const MatchPage = () => {
             setMatchData(matchData);
         };
 
-        sessionStorage.setItem('currentMatchId', matchId);
         receiveData();
+        localStorage.setItem('currentMatchId', matchId);
     }, []);
 
     const renderGame = (matchData) => {

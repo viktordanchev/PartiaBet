@@ -4,6 +4,7 @@ using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Services;
 using Core.Services.Configs;
+using Games;
 using Games.Factories;
 using Infrastructure.CacheRedis;
 using Infrastructure.Database;
@@ -16,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestAPI.Filters;
 using RestAPI.Mapper;
+using RestAPI.Services;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
@@ -79,7 +81,6 @@ namespace RestAPI.Extensions
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
-            services.AddScoped<IGamesRepository, GamesRepository>();
             services.AddScoped<ICacheService, CacheService>();
         }
 
@@ -95,6 +96,8 @@ namespace RestAPI.Extensions
             services.AddScoped<IMatchService, MatchService>();
             services.AddScoped<IGameFactory, GameFactory>();
 
+            services.AddSingleton<IGameProvider, GameProvider>();
+            services.AddSingleton<IMatchTimer, MatchTimer>();
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
                 var configuration = "localhost:6379";
