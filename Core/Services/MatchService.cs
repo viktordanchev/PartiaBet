@@ -59,6 +59,12 @@ namespace Core.Services
         public async Task<PlayerModel> AddPlayerAsync(Guid matchId, Guid playerId)
         {
             var match = await _matchRepository.GetMatchInternalAsync(matchId);
+
+            if(match.MatchStatus == MatchStatus.Ongoing || match.Players.Any(p => p.Id == playerId))
+            {
+                throw new InvalidOperationException("Cannot join an ongoing match.");
+            }
+
             var gameBoard = await _cacheService.GetItem(matchId);
             var gameService = _gameFactory.GetGameService(match.GameType);
             var addedPlayer = await _matchRepository.AddPlayerAsync(playerId, matchId);
@@ -66,11 +72,19 @@ namespace Core.Services
             gameService.UpdatePlayersInBoard(gameBoard, playerId);
             await _cacheService.AddItem(matchId, gameBoard);
 
+            var maxPlayersCount = _gameProvider.GetMaxPlayersCount(match.GameType);
+
+            if (maxPlayersCount == match.Players.Count + 1) 
+            { 
+                await _matchRepository.UpdateStatusAsync(matchId, MatchStatus.Ongoing);
+            }
+
             return addedPlayer;
         }
 
-        public async Task RemovePlayerAsync(Guid matchId, Guid playerId)
+        public async Task<bool> RemovePlayerAsync(Guid matchId, Guid playerId)
         {
+            var isRemoved = false;
             var match = await _matchRepository.GetMatchInternalAsync(matchId);
 
             if (match.MatchStatus == MatchStatus.Ongoing)
@@ -79,12 +93,15 @@ namespace Core.Services
             }
             else
             {
+                isRemoved = true;
                 var gameBoard = await _cacheService.GetItem(matchId);
                 var gameService = _gameFactory.GetGameService(match.GameType);
 
                 gameService.UpdatePlayersInBoard(gameBoard, playerId);
                 await _matchRepository.RemovePlayerAsync(playerId, matchId);
             }
+
+            return isRemoved;
         }
 
         public async Task<MatchModel> GetMatchAsync(Guid matchId)

@@ -8,7 +8,7 @@ namespace Core.Interfaces.Services
     {
         Task<MatchModel> CreateMatchAsync(AddMatchModel data);
         Task<PlayerModel> AddPlayerAsync(Guid matchId, Guid playerId);
-        Task RemovePlayerAsync(Guid matchId, Guid playerId);
+        Task<bool> RemovePlayerAsync(Guid matchId, Guid playerId);
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType);
         Task<MatchModel> GetMatchAsync(Guid matchId);
         Task<(bool, BaseMoveModel)> TryMakeMoveAsync(Guid matchId, Guid playerId, string moveJson);

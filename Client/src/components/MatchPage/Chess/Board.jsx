@@ -1,10 +1,12 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import Square from './Square';
 import getValidMoves from '../../../services/chess/getValidMoves';
 import { useHub } from '../../../contexts/HubContext';
 
 const Board = ({ data }) => {
+    const { matchId } = useParams();
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const { connection } = useHub();
     const [pieces, setPieces] = useState(data.pieces);
@@ -37,8 +39,6 @@ const Board = ({ data }) => {
     };
 
     const makeMove = async (moveData) => {
-        const matchId = localStorage.getItem('currentMatchId');
-
         try {
             await connection.invoke("MakeMove", matchId, JSON.stringify(moveData));
         } catch (error) {

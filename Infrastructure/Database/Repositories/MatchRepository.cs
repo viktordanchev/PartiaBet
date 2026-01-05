@@ -78,7 +78,7 @@ namespace Infrastructure.Database.Repositories
         public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType)
         {
             var matches = await _context.MatchHistory
-                .Where(m => m.GameType == gameType && m.MatchStatus == MatchStatus.Created || m.MatchStatus == MatchStatus.Ongoing)
+                .Where(m => m.GameType == gameType && (m.MatchStatus == MatchStatus.Created || m.MatchStatus == MatchStatus.Ongoing))
                 .Select(m => new MatchModel()
                 {
                     Id = m.Id,
@@ -130,10 +130,27 @@ namespace Infrastructure.Database.Repositories
                     Id = m.Id,
                     GameType = m.GameType,
                     MatchStatus = m.MatchStatus,
+                    Players = m.Players
+                        .Select(um => new PlayerModel()
+                        {
+                            Id = um.PlayerId
+                        })
+                        .ToList()
                 })
                 .FirstOrDefaultAsync();
 
             return match;
+        }
+
+        public async Task UpdateStatusAsync(Guid matchId, MatchStatus matchStatus)
+        {
+            var match = await _context.MatchHistory.FindAsync(matchId);
+
+            if (match != null)
+            {
+                match.MatchStatus = matchStatus;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

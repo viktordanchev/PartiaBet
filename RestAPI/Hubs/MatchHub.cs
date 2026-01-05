@@ -65,10 +65,12 @@ namespace RestAPI.Hubs
         public async Task LeaveMatch(Guid matchId)
         {
             var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
+            var isRemoved = await _matchService.RemovePlayerAsync(matchId, playerId);
 
-            await _matchService.RemovePlayerAsync(matchId, playerId);
-
-            await Clients.Group($"{matchId}").SendAsync("RemovePlayer", playerId);
+            if (isRemoved)
+            {
+                await Clients.Group($"{matchId}").SendAsync("RemovePlayer", playerId);
+            }
         }
     }
 }
