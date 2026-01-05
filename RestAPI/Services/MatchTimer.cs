@@ -17,12 +17,19 @@ namespace RestAPI.Services
             _hubContext = hubContext;
         }
 
-        public void StartTimer(Guid matchId, Guid palyerId, TimeSpan duration)
+        public void StartMoveTimer() 
+        {
+
+        }
+
+        public void StartLeaverTimer(Guid matchId, Guid palyerId)
         {
             StopTimer(palyerId);
 
             var cts = new CancellationTokenSource();
             _timers[palyerId] = cts;
+
+            var duration = TimeSpan.FromMinutes(5);
 
             _ = Task.Run(async () =>
             {

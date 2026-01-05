@@ -89,7 +89,7 @@ namespace Core.Services
 
             if (match.MatchStatus == MatchStatus.Ongoing)
             {
-                _matchTimerManager.StartTimer(matchId, playerId, TimeSpan.FromMinutes(5));
+                _matchTimerManager.StartLeaverTimer(matchId, playerId);
             }
             else
             {
@@ -129,6 +129,11 @@ namespace Core.Services
             }
 
             return (isValidMove, moveData);
+        }
+
+        public async Task EndMatch(Guid matchId) 
+        {
+            
         }
     }
 }

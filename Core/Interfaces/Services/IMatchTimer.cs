@@ -2,7 +2,7 @@
 {
     public interface IMatchTimer
     {
-        void StartTimer(Guid matchId, Guid palyerId, TimeSpan duration);
+        void StartLeaverTimer(Guid matchId, Guid palyerId);
         void StopTimer(Guid matchId);
         bool HasActiveTimer(Guid matchId);
     }
