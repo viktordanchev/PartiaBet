@@ -8,5 +8,6 @@ namespace Core.Interfaces.Games
         void UpdateBoard(GameBoardModel board, BaseMoveModel move);
         bool IsValidMove(GameBoardModel board, BaseMoveModel move);
         void UpdatePlayersInBoard(GameBoardModel board, Guid playerId);
+        bool IsWinningMove(GameBoardModel board);
     }
 }

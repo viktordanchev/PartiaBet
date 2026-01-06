@@ -113,7 +113,7 @@ namespace Core.Services
             return match;
         }
 
-        public async Task<(bool, BaseMoveModel)> TryMakeMoveAsync(Guid matchId, Guid playerId, string moveJson)
+        public async Task<MoveResultModel> TryMakeMoveAsync(Guid matchId, Guid playerId, string moveJson)
         {
             var match = await _matchRepository.GetMatchInternalAsync(matchId);
             var gameBoard = await _cacheService.GetItem(matchId);
@@ -122,18 +122,25 @@ namespace Core.Services
             var gameService = _gameFactory.GetGameService(match.GameType);
             var isValidMove = gameService.IsValidMove(gameBoard, moveData);
 
-            if (isValidMove)
+            if (!isValidMove)
             {
-                gameService.UpdateBoard(gameBoard, moveData);
-                await _cacheService.AddItem(matchId, gameBoard);
+                return MoveResultModel.Invalid(moveData);
             }
 
-            return (isValidMove, moveData);
+            gameService.UpdateBoard(gameBoard, moveData);
+            await _cacheService.AddItem(matchId, gameBoard);
+
+            if (gameService.IsWinningMove(gameBoard))
+            {
+                return MoveResultModel.Win(moveData, playerId);
+            }
+
+            return MoveResultModel.Success(moveData);
         }
 
         public async Task EndMatch(Guid matchId) 
         {
-            
+            await _matchRepository.UpdateStatusAsync(matchId, MatchStatus.Finished);
         }
     }
 }

@@ -11,6 +11,6 @@ namespace Core.Interfaces.Services
         Task<bool> RemovePlayerAsync(Guid matchId, Guid playerId);
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType);
         Task<MatchModel> GetMatchAsync(Guid matchId);
-        Task<(bool, BaseMoveModel)> TryMakeMoveAsync(Guid matchId, Guid playerId, string moveJson);
+        Task<MoveResultModel> TryMakeMoveAsync(Guid matchId, Guid playerId, string moveJson);
     }
 }

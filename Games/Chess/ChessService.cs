@@ -18,6 +18,16 @@ namespace Games.Chess
             return chessBoard;
         }
 
+        public bool IsWinningMove(GameBoardModel board)
+        {
+            var chessBoard = board as ChessBoardModel;
+
+            var whiteKing = chessBoard.Pieces.FirstOrDefault(p => p.Type == PieceType.King && p.IsWhite);
+            var blackKing = chessBoard.Pieces.FirstOrDefault(p => p.Type == PieceType.King && !p.IsWhite);
+
+            return whiteKing == null || blackKing == null;
+        }
+
         public void UpdateBoard(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;

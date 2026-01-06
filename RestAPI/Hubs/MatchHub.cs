@@ -53,11 +53,11 @@ namespace RestAPI.Hubs
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
 
-            var (isValidMove, moveData) = await _matchService.TryMakeMoveAsync(matchId, playerId, jsonData);
-
-            if (isValidMove)
+            var move = await _matchService.TryMakeMoveAsync(matchId, playerId, jsonData);
+            move.
+            if (move.IsValid)
             {
-                await Clients.Group($"{matchId}").SendAsync("ReceiveMove", moveData);
+                await Clients.Group($"{matchId}").SendAsync("ReceiveMove", move.Move);
             }
         }
 
