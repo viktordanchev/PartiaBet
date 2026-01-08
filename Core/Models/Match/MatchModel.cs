@@ -20,6 +20,8 @@ namespace Core.Models.Match
 
         public int MaxPlayersCount { get; set; }
 
+        public Guid CurrentTurnPlayerId { get; set; }
+
         public GameBoardModel? Board { get; set; }
 
         public List<PlayerModel> Players { get; set; }

@@ -1,14 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClickOutside } from '../../../hooks/useClickOutside';
-import { useHub } from '../../../contexts/HubContext';
+import { useMatchHub } from '../../../contexts/MatchHubContext';
 import { useLoading } from '../../../contexts/LoadingContext';
-import { jwtDecode } from 'jwt-decode';
 
 function PlayButton({ gameType }) {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
-    const { connection } = useHub();
+    const { connection } = useMatchHub();
     const { setIsLoading } = useLoading();
     const [showStakeOptions, setShowStakeOptions] = useState(false);
     const [betAmount, setBetAmount] = useState(0);
@@ -17,11 +16,6 @@ function PlayButton({ gameType }) {
     useClickOutside(dropdownRef, () => setShowStakeOptions(false));
     
     const createMatch = async () => {
-        var matchData = {
-            gameType,
-            betAmount
-        };
-
         const token = localStorage.getItem('accessToken');
 
         if (!token) {
@@ -29,14 +23,13 @@ function PlayButton({ gameType }) {
             return;
         }
 
-        var playerData = {
-            id: jwtDecode(token)['Id'],
-            username: jwtDecode(token)['Username'],
-            profileImageUrl: jwtDecode(token)['ProfileImageUrl'],
+        var matchData = {
+            gameType,
+            betAmount
         };
 
         setIsLoading(true);
-        var matchId = await connection.invoke("CreateMatch", matchData, playerData);
+        var matchId = await connection.invoke("CreateMatch", matchData);
         setIsLoading(false);
 
         navigate(`/games/chess/match/${matchId}`);

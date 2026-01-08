@@ -3,32 +3,27 @@ import { useParams } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import Square from './Square';
 import getValidMoves from '../../../services/chess/getValidMoves';
-import { useHub } from '../../../contexts/HubContext';
+import { useMatchHub } from '../../../contexts/MatchHubContext';
 
 const Board = ({ data }) => {
     const { matchId } = useParams();
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
-    const { connection } = useHub();
+    const { connection, newMove } = useMatchHub();
     const [pieces, setPieces] = useState(data.pieces);
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [validSquares, setValidSquares] = useState([]);
     const isHostWhite = data.whitePlayerId === decodedToken['Id'];
-   
+
     useEffect(() => {
-        if (!connection) return;
+        if (!newMove) return;
         
-        const handleReceiveMove = (data) => {
-            setPieces(prev =>
-                prev.map(p => p.row === data.oldRow && p.col === data.oldCol ? { ...p, row: data.newRow, col: data.newCol } : p)
-            );
-        };
+        const { oldRow, oldCol, newRow, newCol } = newMove.moveData;
 
-        connection.on("ReceiveMove", handleReceiveMove);
-
-        return () => {
-            connection.off("ReceiveMove", handleReceiveMove);
-        };
-    }, [connection]);
+        setPieces(prev =>
+            prev.map(p => p.row === oldRow && p.col === oldCol ?
+                { ...p, row: newRow, col: newCol } : p)
+        );
+    }, [newMove]);
 
     const isClickable = (square) => {
         if (!square.type) return false;

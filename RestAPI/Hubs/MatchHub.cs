@@ -11,11 +11,15 @@ namespace RestAPI.Hubs
     public class MatchHub : Hub
     {
         private readonly IMatchService _matchService;
+        private readonly IMatchTimer _matchTimer;
         private readonly IMapper _mapper;
 
-        public MatchHub(IMatchService matchService, IMapper mapper)
+        public MatchHub(IMatchService matchService, 
+            IMatchTimer matchTimer, 
+            IMapper mapper)
         {
             _matchService = matchService;
+            _matchTimer = matchTimer;
             _mapper = mapper;
         }
 
@@ -25,39 +29,51 @@ namespace RestAPI.Hubs
         }
 
         [Authorize]
-        public async Task<Guid> CreateMatch(AddMatchDto matchData, AddPlayerDto playerData)
+        public async Task<Guid> CreateMatch(AddMatchDto matchData)
         {
+            var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
             var matchModel = _mapper.Map<AddMatchModel>(matchData);
 
             var match = await _matchService.CreateMatchAsync(matchModel);
-            await _matchService.AddPlayerAsync(match.Id, playerData.Id);
+            match.Players.Add(await _matchService.AddPlayerAsync(match, playerId));
+
+            var matchDto = _mapper.Map<MatchDto>(match);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{match.Id}");
-            await Clients.Group($"{matchData.GameType}").SendAsync("ReceiveMatch", match);
+            await Clients.Group($"{matchData.GameType}").SendAsync("ReceiveMatch", matchDto);
 
             return match.Id;
         }
 
         [Authorize]
-        public async Task JoinMatch(Guid matchId, AddPlayerDto playerData)
+        public async Task JoinMatch(Guid matchId)
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            var playerResponse = await _matchService.AddPlayerAsync(matchId, playerId);
+            var match = await _matchService.GetMatchInternalAsync(matchId);
+            var playerResponse = await _matchService.AddPlayerAsync(match, playerId);
+
+            var playerDto = _mapper.Map<PlayerDto>(playerResponse);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{matchId}");
-            await Clients.Group($"{matchId}").SendAsync("ReceiveNewPlayer", playerResponse);
+            await Clients.Group($"{matchId}").SendAsync("ReceiveNewPlayer", playerDto);
         }
 
         [Authorize]
         public async Task MakeMove(Guid matchId, string jsonData)
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
+            var match = await _matchService.GetMatchInternalAsync(matchId);
 
-            var move = await _matchService.TryMakeMoveAsync(matchId, playerId, jsonData);
-            move.
-            if (move.IsValid)
+            _matchTimer.PauseTurnTimer(match.GameType, playerId);
+
+            var moveResult = await _matchService.TryMakeMoveAsync(match, playerId, jsonData);
+            
+            if (moveResult.IsValid)
             {
-                await Clients.Group($"{matchId}").SendAsync("ReceiveMove", move.Move);
+                var newPlayerId = await _matchService.SwtichTurnAsync(match, playerId);
+                var duration = _matchTimer.StartTurnTimer(match.GameType, newPlayerId, match.Id);
+
+                await Clients.Group($"{matchId}").SendAsync("ReceiveMove", moveResult.MoveData, newPlayerId, duration);
             }
         }
 
@@ -65,11 +81,16 @@ namespace RestAPI.Hubs
         public async Task LeaveMatch(Guid matchId)
         {
             var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
-            var isRemoved = await _matchService.RemovePlayerAsync(matchId, playerId);
-
-            if (isRemoved)
+            var match = await _matchService.GetMatchInternalAsync(matchId);
+            
+            if (match.MatchStatus == MatchStatus.Ongoing)
             {
-                await Clients.Group($"{matchId}").SendAsync("RemovePlayer", playerId);
+                _matchTimer.StartLeaverTimer(match.GameType, match.Id, playerId);
+                await _matchService.UpdatePlayerStatusAsync(matchId, playerId, PlayerStatus.Disconnected);
+            }
+            else
+            {
+                await _matchService.RemovePlayerAsync(match, playerId);
             }
         }
     }

@@ -4,52 +4,23 @@ import Loading from '../components/Loading';
 import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
 import Spectators from '../components/MatchPage/Spectators';
 import useApiRequest from '../hooks/useApiRequest';
-import { useHub } from '../contexts/HubContext';
+import { useMatchHub } from '../contexts/MatchHubContext';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-    const { connection } = useHub();
+    const { newPlayer } = useMatchHub();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [matchData, setMatchData] = useState(null);
-    
+
     useEffect(() => {
-        if (!connection) return;
+        if (!matchData) return;
 
-        const handleReceiveNewPlayer = (player) => {
-            setMatchData(prev => ({
-                ...prev,
-                players: [player, ...prev.players]
-            }));
-        };
-
-        const handleRemovePlayer = (playerId) => {
-            setMatchData(prev => ({
-                ...prev,
-                players: prev.players.filter(player => player.id !== playerId)
-            }));
-        };
-
-        const leaveMatch = async () => {
-            await connection.invoke("LeaveMatch", matchId);
-        };
-
-        const handleBeforeUnload = () => {
-            leaveMatch();
-        };
-
-        connection.on("ReceiveNewPlayer", handleReceiveNewPlayer);
-        connection.on("RemovePlayer", handleRemovePlayer);
-        window.addEventListener("beforeunload", handleBeforeUnload);
-
-        return () => {
-            connection.off("ReceiveNewPlayer", handleReceiveNewPlayer);
-            connection.off("RemovePlayer", handleRemovePlayer);
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-
-            leaveMatch();
-        };
-    }, [connection]);
+        setMatchData(prev => ({
+            ...prev,
+            players: [...prev.players, newPlayer]
+        }));
+    }, [newPlayer]);
 
     useEffect(() => {
         const receiveData = async () => {

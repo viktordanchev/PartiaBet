@@ -15,7 +15,10 @@ namespace Infrastructure.Database.Entities
 
         public decimal BetAmount { get; set; }
 
+        [Required]
         public DateTime DateAndTime { get; set; }
+
+        public Guid CurrentTurnPlayerId { get; set; }
 
         [Required]
         public MatchStatus MatchStatus { get; set; }

@@ -80,6 +80,9 @@ namespace Infrastructure.Database.Migrations
                     b.Property<decimal>("BetAmount")
                         .HasColumnType("numeric");
 
+                    b.Property<Guid>("CurrentTurnPlayerId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("DateAndTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -180,13 +183,13 @@ namespace Infrastructure.Database.Migrations
                     b.Property<Guid>("MatchId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("IsLeaver")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsWinner")
-                        .HasColumnType("boolean");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TeamNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TurnOrder")
                         .HasColumnType("integer");
 
                     b.HasKey("PlayerId", "MatchId");

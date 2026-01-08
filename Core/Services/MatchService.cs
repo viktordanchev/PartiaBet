@@ -4,7 +4,6 @@ using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.Games;
 using Core.Models.Match;
-using System.Text.Json;
 
 namespace Core.Services
 {
@@ -13,21 +12,26 @@ namespace Core.Services
         private IMatchRepository _matchRepository;
         private ICacheService _cacheService;
         private IGameFactory _gameFactory;
-        private IMatchTimer _matchTimerManager;
         private IGameProvider _gameProvider;
 
         public MatchService(
             IMatchRepository matchRepository,
             ICacheService cacheService,
             IGameFactory gameFactory,
-            IMatchTimer matchTimerManager,
             IGameProvider gameProvider)
         {
             _matchRepository = matchRepository;
             _cacheService = cacheService;
             _gameFactory = gameFactory;
-            _matchTimerManager = matchTimerManager;
             _gameProvider = gameProvider;
+        }
+
+        public async Task<MatchModel> GetMatchInternalAsync(Guid matchId)
+        {
+            var match = await _matchRepository.GetMatchInternalAsync(matchId);
+            match.MaxPlayersCount = _gameProvider.GetMaxPlayersCount(match.GameType);
+
+            return match;
         }
 
         public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType)
@@ -56,52 +60,40 @@ namespace Core.Services
             return match;
         }
 
-        public async Task<PlayerModel> AddPlayerAsync(Guid matchId, Guid playerId)
+        public async Task<PlayerModel> AddPlayerAsync(MatchModel match, Guid playerId)
         {
-            var match = await _matchRepository.GetMatchInternalAsync(matchId);
-
-            if(match.MatchStatus == MatchStatus.Ongoing || match.Players.Any(p => p.Id == playerId))
+            if (match.MatchStatus == MatchStatus.Ongoing || match.Players.Any(p => p.Id == playerId))
             {
                 throw new InvalidOperationException("Cannot join an ongoing match.");
             }
 
-            var gameBoard = await _cacheService.GetItem(matchId);
+            var gameBoard = await _cacheService.GetItem(match.Id);
             var gameService = _gameFactory.GetGameService(match.GameType);
-            var addedPlayer = await _matchRepository.AddPlayerAsync(playerId, matchId);
+            var addedPlayer = await _matchRepository.AddPlayerAsync(playerId, match.Id);
 
             gameService.UpdatePlayersInBoard(gameBoard, playerId);
-            await _cacheService.AddItem(matchId, gameBoard);
+            await _cacheService.AddItem(match.Id, gameBoard);
 
-            var maxPlayersCount = _gameProvider.GetMaxPlayersCount(match.GameType);
-
-            if (maxPlayersCount == match.Players.Count + 1) 
-            { 
-                await _matchRepository.UpdateStatusAsync(matchId, MatchStatus.Ongoing);
+            if (match.MaxPlayersCount == match.Players.Count + 1)
+            {
+                await _matchRepository.UpdateMatchStatusAsync(match.Id, MatchStatus.Ongoing);
             }
 
             return addedPlayer;
         }
 
-        public async Task<bool> RemovePlayerAsync(Guid matchId, Guid playerId)
+        public async Task UpdatePlayerStatusAsync(Guid matchId, Guid playerId, PlayerStatus status)
         {
-            var isRemoved = false;
-            var match = await _matchRepository.GetMatchInternalAsync(matchId);
+            await _matchRepository.UpdatePlayerStatusAsync(matchId, playerId, status);
+        }
 
-            if (match.MatchStatus == MatchStatus.Ongoing)
-            {
-                _matchTimerManager.StartLeaverTimer(matchId, playerId);
-            }
-            else
-            {
-                isRemoved = true;
-                var gameBoard = await _cacheService.GetItem(matchId);
-                var gameService = _gameFactory.GetGameService(match.GameType);
+        public async Task RemovePlayerAsync(MatchModel match, Guid playerId)
+        {
+            var gameBoard = await _cacheService.GetItem(match.Id);
+            var gameService = _gameFactory.GetGameService(match.GameType);
 
-                gameService.UpdatePlayersInBoard(gameBoard, playerId);
-                await _matchRepository.RemovePlayerAsync(playerId, matchId);
-            }
-
-            return isRemoved;
+            gameService.UpdatePlayersInBoard(gameBoard, playerId);
+            await _matchRepository.RemovePlayerAsync(playerId, match.Id);
         }
 
         public async Task<MatchModel> GetMatchAsync(Guid matchId)
@@ -113,10 +105,9 @@ namespace Core.Services
             return match;
         }
 
-        public async Task<MoveResultModel> TryMakeMoveAsync(Guid matchId, Guid playerId, string moveJson)
+        public async Task<MoveResultModel> TryMakeMoveAsync(MatchModel match, Guid playerId, string moveJson)
         {
-            var match = await _matchRepository.GetMatchInternalAsync(matchId);
-            var gameBoard = await _cacheService.GetItem(matchId);
+            var gameBoard = await _cacheService.GetItem(match.Id);
 
             var moveData = _gameFactory.GetMakeMoveDto(match.GameType, moveJson);
             var gameService = _gameFactory.GetGameService(match.GameType);
@@ -124,23 +115,32 @@ namespace Core.Services
 
             if (!isValidMove)
             {
-                return MoveResultModel.Invalid(moveData);
+                return MoveResultModel.Invalid();
+            }
+            else if (gameService.IsWinningMove(gameBoard))
+            {
+                return MoveResultModel.Win(playerId);
             }
 
             gameService.UpdateBoard(gameBoard, moveData);
-            await _cacheService.AddItem(matchId, gameBoard);
-
-            if (gameService.IsWinningMove(gameBoard))
-            {
-                return MoveResultModel.Win(moveData, playerId);
-            }
+            await _cacheService.AddItem(match.Id, gameBoard);
 
             return MoveResultModel.Success(moveData);
         }
 
-        public async Task EndMatch(Guid matchId) 
+        public async Task<Guid> SwtichTurnAsync(MatchModel match, Guid currentPlayerId)
         {
-            await _matchRepository.UpdateStatusAsync(matchId, MatchStatus.Finished);
+            var gameService = _gameFactory.GetGameService(GameType.Chess);
+            var nextPlayerId = gameService.SwitchTurn(currentPlayerId, match.Players);
+
+            await _matchRepository.UpdatePlayerIdAsync(match.Id, nextPlayerId);
+
+            return nextPlayerId;
+        }
+
+        public async Task EndMatchAsync(Guid matchId)
+        {
+            await _matchRepository.UpdateMatchStatusAsync(matchId, MatchStatus.Finished);
         }
     }
 }

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import MatchList from './Matches/MatchList';
 import useApiRequest from '../../hooks/useApiRequest';
 import Loading from '../Loading';
-import { useHub } from '../../contexts/HubContext';
+import { useMatchHub } from '../../contexts/MatchHubContext';
 
 const Matches = ({ gameType }) => {
-    const { connection } = useHub();
+    const { newMatch } = useMatchHub();
     const apiRequest = useApiRequest();
     const [matches, setMatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -24,18 +24,10 @@ const Matches = ({ gameType }) => {
     }, []);
 
     useEffect(() => {
-        if (!connection) return;
+        if (!newMatch) return;
 
-        const handleReceiveMatch = (match) => {
-            setMatches(prev => [match, ...prev]);
-        };
-
-        connection.on("ReceiveMatch", handleReceiveMatch);
-
-        return () => {
-            connection.off("ReceiveMatch", handleReceiveMatch);
-        };
-    }, [connection]);
+        setMatches(prev => [newMatch, ...prev]);
+    }, [newMatch]);
 
     return (
         <article className="col-span-2 bg-gray-800 p-3 rounded text-gray-300 border border-gray-500 shadow-xl shadow-gray-900 space-y-6">

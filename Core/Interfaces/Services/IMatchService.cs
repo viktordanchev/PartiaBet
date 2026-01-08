@@ -6,11 +6,15 @@ namespace Core.Interfaces.Services
 {
     public interface IMatchService
     {
+        Task<MatchModel> GetMatchInternalAsync(Guid matchId);
         Task<MatchModel> CreateMatchAsync(AddMatchModel data);
-        Task<PlayerModel> AddPlayerAsync(Guid matchId, Guid playerId);
-        Task<bool> RemovePlayerAsync(Guid matchId, Guid playerId);
+        Task<PlayerModel> AddPlayerAsync(MatchModel match, Guid playerId);
+        Task UpdatePlayerStatusAsync(Guid matchId, Guid playerId, PlayerStatus status);
+        Task RemovePlayerAsync(MatchModel match, Guid playerId);
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType);
         Task<MatchModel> GetMatchAsync(Guid matchId);
-        Task<MoveResultModel> TryMakeMoveAsync(Guid matchId, Guid playerId, string moveJson);
+        Task<MoveResultModel> TryMakeMoveAsync(MatchModel match, Guid playerId, string moveJson);
+        Task EndMatchAsync(Guid matchId);
+        Task<Guid> SwtichTurnAsync(MatchModel match, Guid currentPlayerId);
     }
 }

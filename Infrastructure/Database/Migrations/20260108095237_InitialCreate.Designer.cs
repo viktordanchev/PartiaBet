@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(PartiaBetDbContext))]
-    [Migration("20260103182211_InitialCreate")]
+    [Migration("20260108095237_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -82,6 +82,9 @@ namespace Infrastructure.Database.Migrations
 
                     b.Property<decimal>("BetAmount")
                         .HasColumnType("numeric");
+
+                    b.Property<Guid>("CurrentTurnPlayerId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateAndTime")
                         .HasColumnType("timestamp with time zone");
@@ -183,13 +186,13 @@ namespace Infrastructure.Database.Migrations
                     b.Property<Guid>("MatchId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("IsLeaver")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsWinner")
-                        .HasColumnType("boolean");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TeamNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TurnOrder")
                         .HasColumnType("integer");
 
                     b.HasKey("PlayerId", "MatchId");

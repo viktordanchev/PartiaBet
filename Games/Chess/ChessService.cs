@@ -2,12 +2,20 @@
 using Core.Interfaces.Games;
 using Core.Models.Games;
 using Core.Models.Games.Chess;
+using Core.Models.Match;
 using Games.Dtos.Chess;
 
 namespace Games.Chess
 {
     public class ChessService : IGameService
     {
+        private readonly ChessGame _gameConfig;
+
+        public ChessService()
+        {
+            _gameConfig = new ChessGame();
+        }
+
         public GameBoardModel CreateGameBoard()
         {
             var chessBoard = new ChessBoardModel();
@@ -16,6 +24,23 @@ namespace Games.Chess
             InitializePieces(chessBoard, false);
 
             return chessBoard;
+        }
+
+        public Guid SwitchTurn(Guid playerId, IEnumerable<PlayerModel> players)
+        {
+            var newTurnPlayerId = Guid.Empty;
+            var currentPlayer = players.First(p => p.Id == playerId);
+
+            if (_gameConfig.MaxPlayersCount == currentPlayer.TurnOrder)
+            {
+                newTurnPlayerId = players.First(p => p.TurnOrder == 1).Id;
+            }
+            else
+            {
+                newTurnPlayerId = players.First(p => p.TurnOrder == currentPlayer.TurnOrder + 1).Id;
+            }
+
+            return newTurnPlayerId;
         }
 
         public bool IsWinningMove(GameBoardModel board)

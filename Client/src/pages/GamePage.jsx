@@ -6,12 +6,12 @@ import Matches from '../components/GamePage/Matches';
 import GameRules from '../components/GamePage/GameRules';
 import Loading from '../components/Loading';
 import useApiRequest from '../hooks/useApiRequest';
-import { useHub } from '../contexts/HubContext';
+import { useMatchHub } from '../contexts/MatchHubContext';
 
 function GamePage() {
     const { game } = useParams();
     const apiRequest = useApiRequest();
-    const { joinGame } = useHub();
+    const { joinGame } = useMatchHub();
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState({});
     

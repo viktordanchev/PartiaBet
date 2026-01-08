@@ -11,5 +11,7 @@ namespace Games
         public string ImgUrl { get; set; } = string.Empty;
 
         public int MaxPlayersCount { get; set; }
+
+        public int TeamsCount { get; set; }
     }
 }

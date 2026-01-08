@@ -11,6 +11,8 @@ namespace Core.Interfaces.Infrastructure
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType);
         Task<MatchModel> GetMatchAsync(Guid matchId);
         Task<MatchModel> GetMatchInternalAsync(Guid matchId);
-        Task UpdateStatusAsync(Guid matchId, MatchStatus matchStatus);
+        Task UpdateMatchStatusAsync(Guid matchId, MatchStatus newStatus);
+        Task UpdatePlayerStatusAsync(Guid matchId, Guid playerId, PlayerStatus newStatus);
+        Task UpdatePlayerIdAsync(Guid matchId, Guid newPlayerId);
     }
 }

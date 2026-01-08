@@ -1,4 +1,5 @@
 ﻿using Core.Models.Games;
+using Core.Models.Match;
 
 namespace Core.Interfaces.Games
 {
@@ -9,5 +10,6 @@ namespace Core.Interfaces.Games
         bool IsValidMove(GameBoardModel board, BaseMoveModel move);
         void UpdatePlayersInBoard(GameBoardModel board, Guid playerId);
         bool IsWinningMove(GameBoardModel board);
+        Guid SwitchTurn(Guid playerId, IEnumerable<PlayerModel> players);
     }
 }

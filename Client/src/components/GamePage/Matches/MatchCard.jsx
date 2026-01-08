@@ -1,26 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import { useHub } from '../../../contexts/HubContext';
+import { useMatchHub } from '../../../contexts/MatchHubContext';
 import { useLoading } from '../../../contexts/LoadingContext';
 import PlayerCard from './PlayerCard';
 
 const MatchCard = ({ match }) => {
     const navigate = useNavigate();
-    const { connection } = useHub();
+    const { connection } = useMatchHub();
     const { setIsLoading } = useLoading();
     const isMatchFull = false;
     
     const joinMatch = async () => {
-        const token = localStorage.getItem('accessToken');
-        var playerData = {
-            id: jwtDecode(token)['Id'],
-            username: jwtDecode(token)['Username'],
-            profileImageUrl: jwtDecode(token)['ProfileImageUrl'],
-        };
-        
         setIsLoading(true);
-        await connection.invoke("JoinMatch", match.id.toString(), playerData);
+        await connection.invoke("JoinMatch", match.id.toString());
         setIsLoading(false);
 
         navigate(`/games/chess/match/${match.id}`);

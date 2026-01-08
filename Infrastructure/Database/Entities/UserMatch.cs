@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Database.Entities
@@ -17,10 +18,11 @@ namespace Infrastructure.Database.Entities
         [ForeignKey(nameof(PlayerId))]
         public User Player { get; set; } = null!;
 
+        public int TurnOrder { get; set; }
+
         public int TeamNumber { get; set; }
 
-        public bool IsWinner { get; set; }
-
-        public bool IsLeaver { get; set; }
+        [Required]
+        public PlayerStatus Status { get; set; }
     }
 }

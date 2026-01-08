@@ -32,13 +32,17 @@ namespace Infrastructure.Database.Repositories
             {
                 Id = newMatch.Id,
                 BetAmount = newMatch.BetAmount,
+                GameType = newMatch.GameType,
+                MatchStatus = newMatch.MatchStatus,
                 Players = new List<PlayerModel>()
             };
         }
 
         public async Task<PlayerModel> AddPlayerAsync(Guid playerId, Guid matchId)
         {
-            var match = await _context.MatchHistory.FindAsync(matchId);
+            var match = await _context.MatchHistory
+                .Include(m => m.Players)
+                .FirstOrDefaultAsync(m => m.Id == matchId);
 
             if (match != null)
             {
@@ -46,7 +50,9 @@ namespace Infrastructure.Database.Repositories
                     new UserMatch()
                     {
                         PlayerId = playerId,
-                        MatchId = matchId
+                        MatchId = matchId,
+                        TurnOrder = match.Players.Count + 1,
+                        Status = PlayerStatus.Active,
                     });
 
                 await _context.SaveChangesAsync();
@@ -106,6 +112,7 @@ namespace Infrastructure.Database.Repositories
                 {
                     Id = m.Id,
                     BetAmount = m.BetAmount,
+                    CurrentTurnPlayerId = m.CurrentTurnPlayerId,
                     Players = m.Players
                         .Select(um => new PlayerModel()
                         {
@@ -133,7 +140,9 @@ namespace Infrastructure.Database.Repositories
                     Players = m.Players
                         .Select(um => new PlayerModel()
                         {
-                            Id = um.PlayerId
+                            Id = um.PlayerId,
+                            TurnOrder = um.TurnOrder,
+                            TeamNumber = um.TeamNumber
                         })
                         .ToList()
                 })
@@ -142,13 +151,37 @@ namespace Infrastructure.Database.Repositories
             return match;
         }
 
-        public async Task UpdateStatusAsync(Guid matchId, MatchStatus matchStatus)
+        public async Task UpdateMatchStatusAsync(Guid matchId, MatchStatus newStatus)
         {
             var match = await _context.MatchHistory.FindAsync(matchId);
 
             if (match != null)
             {
-                match.MatchStatus = matchStatus;
+                match.MatchStatus = newStatus;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdatePlayerStatusAsync(Guid matchId, Guid playerId, PlayerStatus newStatus)
+        {
+            var userMatch = await _context.UserMatch
+                .FirstOrDefaultAsync(um => um.MatchId == matchId && um.PlayerId == playerId);
+
+            if (userMatch != null)
+            {
+                userMatch.Status = newStatus;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdatePlayerIdAsync(Guid matchId, Guid newPlayerId)
+        {
+            var userMatch = await _context.MatchHistory
+                .FirstOrDefaultAsync(um => um.Id == matchId);
+
+            if (userMatch != null)
+            {
+                userMatch.CurrentTurnPlayerId = newPlayerId;
                 await _context.SaveChangesAsync();
             }
         }

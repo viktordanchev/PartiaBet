@@ -8,7 +8,7 @@ const ChessMatch = ({ data }) => {
     const userId = decodedToken['Id'];
     const loggedPlayer = data.players.find(p => p.id === userId);
     const opponent = data.players.find(p => p.id !== userId);
-   
+
     return (
         <section className="flex gap-3">
             <Board data={data.board} />

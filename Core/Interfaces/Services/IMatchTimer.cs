@@ -1,9 +1,11 @@
-﻿namespace Core.Interfaces.Services
+﻿using Core.Enums;
+
+namespace Core.Interfaces.Services
 {
     public interface IMatchTimer
     {
-        void StartLeaverTimer(Guid matchId, Guid palyerId);
-        void StopTimer(Guid matchId);
-        bool HasActiveTimer(Guid matchId);
+        double StartTurnTimer(GameType gameType, Guid matchId, Guid palyerId);
+        void StartLeaverTimer(GameType gameType, Guid matchId, Guid palyerId);
+        void PauseTurnTimer(GameType gameType, Guid playerId);
     }
 }

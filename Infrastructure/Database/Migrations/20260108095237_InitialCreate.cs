@@ -19,6 +19,7 @@ namespace Infrastructure.Database.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     BetAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     DateAndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CurrentTurnPlayerId = table.Column<Guid>(type: "uuid", nullable: false),
                     MatchStatus = table.Column<int>(type: "integer", nullable: false),
                     GameType = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -146,9 +147,9 @@ namespace Infrastructure.Database.Migrations
                 {
                     MatchId = table.Column<Guid>(type: "uuid", nullable: false),
                     PlayerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TurnOrder = table.Column<int>(type: "integer", nullable: false),
                     TeamNumber = table.Column<int>(type: "integer", nullable: false),
-                    IsWinner = table.Column<bool>(type: "boolean", nullable: false),
-                    IsLeaver = table.Column<bool>(type: "boolean", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

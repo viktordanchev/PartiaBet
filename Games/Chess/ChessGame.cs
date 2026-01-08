@@ -10,6 +10,7 @@ namespace Games.Chess
             Name = "Chess";
             ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/chess.jpg";
             MaxPlayersCount = 2;
+            TeamsCount = 2;
         }
     }
 }

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useTimer } from 'react-timer-hook';
-import { useHub } from '../../contexts/HubContext';
+import { useMatchHub } from '../../contexts/MatchHubContext';
 import StatusOutMatch from './StatusOutMatch';
 
 function Alert() {
     const [showButtons, setShowButtons] = useState(false);
-    const { connection } = useHub();
+    const { connection } = useMatchHub();
 
     const time = new Date();
     time.setSeconds(time.getSeconds() + 0);

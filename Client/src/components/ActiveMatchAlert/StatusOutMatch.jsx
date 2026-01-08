@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../../contexts/LoadingContext';
-import { useHub } from '../../contexts/HubContext';
+import { useMatchHub } from '../../contexts/MatchHubContext';
 
 function StatusOutMatch() {
     const navigate = useNavigate();
     const { setIsLoading } = useLoading();
-    const { connection } = useHub();
+    const { connection } = useMatchHub();
 
     const joinMatch = async () => {
         const matchId = localStorage.getItem('currentMatchId');

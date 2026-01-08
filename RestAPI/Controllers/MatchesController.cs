@@ -43,15 +43,6 @@ namespace RestAPI.Controllers
             return Ok(matchDto);
         }
 
-        [HttpPost("isPlayerLeaver")]
-        [Authorize]
-        public IActionResult IsPlayerLeaver([FromBody] Guid playerId)
-        {
-            var isLeaver = _matchTimerManagere.HasActiveTimer(playerId);
-
-            return Ok(isLeaver);
-        }
-
         [HttpGet("getSkins")]
         [Authorize]
         public IActionResult GetSkins()
