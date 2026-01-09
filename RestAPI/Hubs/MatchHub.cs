@@ -86,7 +86,7 @@ namespace RestAPI.Hubs
             if (match.MatchStatus == MatchStatus.Ongoing)
             {
                 _matchTimer.StartLeaverTimer(match.GameType, match.Id, playerId);
-                await _matchService.UpdatePlayerStatusAsync(matchId, playerId, PlayerStatus.Disconnected);
+                await _matchService.UpdatePlayerStatusAsync(playerId, PlayerStatus.Disconnected);
             }
             else
             {

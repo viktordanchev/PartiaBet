@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useTimer } from 'react-timer-hook';
 import { useMatchHub } from '../../contexts/MatchHubContext';
-import StatusOutMatch from './StatusOutMatch';
+import RejoinButton from './RejoinButton';
 
 function Alert() {
-    const [showButtons, setShowButtons] = useState(false);
-    const { connection } = useMatchHub();
+    const [showButton, setShowButton] = useState(false);
+    const { leaverData, rejoinedPlayer } = useMatchHub();
 
     const time = new Date();
     time.setSeconds(time.getSeconds() + 0);
@@ -20,13 +20,13 @@ function Alert() {
     });
 
     useEffect(() => {
-        const savedExpiry = localStorage.getItem('rejoinExpiry');
-        if (!savedExpiry) return;
+        const timeLeft = localStorage.getItem('rejoinTimeLeft');
+        if (!timeLeft) return;
 
-        const expiryDate = new Date(savedExpiry);
+        const expiryDate = new Date(timeLeft);
 
         if (expiryDate <= new Date()) {
-            localStorage.removeItem('rejoinExpiry');
+            localStorage.removeItem('rejoinTimeLeft');
             return;
         }
 
@@ -34,26 +34,18 @@ function Alert() {
     }, [restart]);
 
     useEffect(() => {
-        if (!connection) return;
+        if (!leaverData) return;
 
-        const handleTimeLeftToRejoin = (palyerId, secondsLeft) => {
-            const newTime = new Date();
-            newTime.setSeconds(newTime.getSeconds() + secondsLeft);
+        const newTime = new Date();
+        newTime.setSeconds(newTime.getSeconds() + leaverData.timeLeft);
 
-            localStorage.setItem('rejoinExpiry', newTime.toISOString());
+        localStorage.setItem('rejoinTimeLeft', newTime.toISOString());
 
-            restart(newTime, true);
+        restart(newTime, true);
 
-            const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
-            setShowButtons(decodedToken['Id'] === palyerId);
-        };
-
-        connection.on("TimeLeftToRejoin", handleTimeLeftToRejoin);
-
-        return () => {
-            connection.off("TimeLeftToRejoin", handleTimeLeftToRejoin);
-        };
-    }, [connection]);
+        const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
+        setShowButton(decodedToken['Id'] === leaverData.playerId);
+    }, [leaverData]);
 
     return (
         <>
@@ -63,7 +55,7 @@ function Alert() {
                         <div className="text-lg">
                             Match will end after {minutes}:{seconds.toString().padStart(2, '0')} minutes!
                         </div>
-                        {showButtons && <StatusOutMatch />}
+                        {showButton && <RejoinButton />}
                     </div>
                 </div>}
         </>

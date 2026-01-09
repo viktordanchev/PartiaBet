@@ -11,15 +11,16 @@ import { useMatchHub } from '../contexts/MatchHubContext';
 function GamePage() {
     const { game } = useParams();
     const apiRequest = useApiRequest();
-    const { joinGame } = useMatchHub();
+    const { connection, startConnection } = useMatchHub();
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState({});
     
     useEffect(() => {
-        if (!gameData?.gameType) return;
+        if (!gameData?.gameType || connection) return;
 
         const initiateConnection = async () => {
-            await joinGame(gameData.gameType);
+            var newConnection = await startConnection();
+            await newConnection.invoke("JoinGame", gameData.gameType);
         };
 
         initiateConnection();

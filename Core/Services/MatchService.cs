@@ -1,9 +1,11 @@
-﻿using Core.Enums;
+﻿using Common.Exceptions;
+using Core.Enums;
 using Core.Interfaces.Games;
 using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.Games;
 using Core.Models.Match;
+using Microsoft.AspNetCore.Http;
 
 namespace Core.Services
 {
@@ -82,9 +84,9 @@ namespace Core.Services
             return addedPlayer;
         }
 
-        public async Task UpdatePlayerStatusAsync(Guid matchId, Guid playerId, PlayerStatus status)
+        public async Task<Guid> UpdatePlayerStatusAsync(Guid playerId, PlayerStatus status)
         {
-            await _matchRepository.UpdatePlayerStatusAsync(matchId, playerId, status);
+            return await _matchRepository.UpdatePlayerStatusAsync(playerId, status);
         }
 
         public async Task RemovePlayerAsync(MatchModel match, Guid playerId)
@@ -99,6 +101,12 @@ namespace Core.Services
         public async Task<MatchModel> GetMatchAsync(Guid matchId)
         {
             var match = await _matchRepository.GetMatchAsync(matchId);
+
+            if(match == null)
+            {
+                throw new ApiException(statusCode: StatusCodes.Status404NotFound);
+            }
+
             var gameBoard = await _cacheService.GetItem(matchId);
 
             match.Board = gameBoard;

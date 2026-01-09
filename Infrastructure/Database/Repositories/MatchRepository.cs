@@ -162,16 +162,18 @@ namespace Infrastructure.Database.Repositories
             }
         }
 
-        public async Task UpdatePlayerStatusAsync(Guid matchId, Guid playerId, PlayerStatus newStatus)
+        public async Task<Guid> UpdatePlayerStatusAsync(Guid playerId, PlayerStatus newStatus)
         {
             var userMatch = await _context.UserMatch
-                .FirstOrDefaultAsync(um => um.MatchId == matchId && um.PlayerId == playerId);
+                .FirstOrDefaultAsync(um => um.PlayerId == playerId && um.Match.MatchStatus == MatchStatus.Ongoing);
 
             if (userMatch != null)
             {
                 userMatch.Status = newStatus;
                 await _context.SaveChangesAsync();
             }
+
+            return userMatch.MatchId;
         }
 
         public async Task UpdatePlayerIdAsync(Guid matchId, Guid newPlayerId)

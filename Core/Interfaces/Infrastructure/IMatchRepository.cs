@@ -12,7 +12,7 @@ namespace Core.Interfaces.Infrastructure
         Task<MatchModel> GetMatchAsync(Guid matchId);
         Task<MatchModel> GetMatchInternalAsync(Guid matchId);
         Task UpdateMatchStatusAsync(Guid matchId, MatchStatus newStatus);
-        Task UpdatePlayerStatusAsync(Guid matchId, Guid playerId, PlayerStatus newStatus);
+        Task<Guid> UpdatePlayerStatusAsync(Guid playerId, PlayerStatus newStatus);
         Task UpdatePlayerIdAsync(Guid matchId, Guid newPlayerId);
     }
 }

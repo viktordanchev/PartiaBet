@@ -9,7 +9,7 @@ namespace Core.Interfaces.Services
         Task<MatchModel> GetMatchInternalAsync(Guid matchId);
         Task<MatchModel> CreateMatchAsync(AddMatchModel data);
         Task<PlayerModel> AddPlayerAsync(MatchModel match, Guid playerId);
-        Task UpdatePlayerStatusAsync(Guid matchId, Guid playerId, PlayerStatus status);
+        Task<Guid> UpdatePlayerStatusAsync(Guid playerId, PlayerStatus status);
         Task RemovePlayerAsync(MatchModel match, Guid playerId);
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType);
         Task<MatchModel> GetMatchAsync(Guid matchId);

@@ -5,17 +5,17 @@ import Loading from '../Loading';
 import { useMatchHub } from '../../contexts/MatchHubContext';
 
 const Matches = ({ gameType }) => {
-    const { newMatch } = useMatchHub();
+    const { newMatch, newPlayer, removedPlayer } = useMatchHub();
     const apiRequest = useApiRequest();
     const [matches, setMatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const casualMatches = matches.filter(m => m.betAmount === 0);
     const betMatches = matches.filter(m => m.betAmount > 0);
-    
+
     useEffect(() => {
         const receiveData = async () => {
             const matches = await apiRequest('matches', 'getActiveMatches', 'POST', false, false, gameType);
-            
+
             setIsLoading(false);
             setMatches(matches);
         };
@@ -24,10 +24,36 @@ const Matches = ({ gameType }) => {
     }, []);
 
     useEffect(() => {
-        if (!newMatch) return;
+        if (matches.length === 0) return;
 
-        setMatches(prev => [newMatch, ...prev]);
-    }, [newMatch]);
+        if (newMatch) {
+            setMatches(prevMatches =>
+                [newMatch, ...prevMatches]
+            );
+        } else if (newPlayer) {
+            setMatches(prevMatches =>
+                prevMatches.map(match => {
+                    if (match.id !== newPlayer.matchId) return match;
+
+                    return {
+                        ...match,
+                        players: [...match.players, newPlayer]
+                    };
+                })
+            );
+        } else if (removedPlayer) {
+            setMatches(prevMatches =>
+                prevMatches.map(match => {
+                    if (!match.players.some(p => p.id === removedPlayer.id)) return match;
+
+                    return {
+                        ...match,
+                        players: match.players.filter(p => p.id !== removedPlayer.id)
+                    };
+                })
+            );
+        }
+    }, [newMatch, newPlayer, removedPlayer]);
 
     return (
         <article className="col-span-2 bg-gray-800 p-3 rounded text-gray-300 border border-gray-500 shadow-xl shadow-gray-900 space-y-6">
@@ -37,7 +63,7 @@ const Matches = ({ gameType }) => {
             {isLoading ? <Loading size={'small'} /> :
                 <section className="space-y-6">
                     <MatchList isCasualGame={false} data={betMatches} />
-                        <MatchList isCasualGame={true} data={casualMatches} />
+                    <MatchList isCasualGame={true} data={casualMatches} />
                 </section>}
         </article>
     );

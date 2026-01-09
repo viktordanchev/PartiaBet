@@ -12,9 +12,9 @@ function PlayButton({ gameType }) {
     const [showStakeOptions, setShowStakeOptions] = useState(false);
     const [betAmount, setBetAmount] = useState(0);
     const stakeAmounts = [5, 10, 20, 50, 100];
-    
+
     useClickOutside(dropdownRef, () => setShowStakeOptions(false));
-    
+
     const createMatch = async () => {
         const token = localStorage.getItem('accessToken');
 
@@ -23,13 +23,8 @@ function PlayButton({ gameType }) {
             return;
         }
 
-        var matchData = {
-            gameType,
-            betAmount
-        };
-
         setIsLoading(true);
-        var matchId = await connection.invoke("CreateMatch", matchData);
+        var matchId = await connection.invoke("CreateMatch", { gameType, betAmount });
         setIsLoading(false);
 
         navigate(`/games/chess/match/${matchId}`);

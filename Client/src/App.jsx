@@ -1,8 +1,6 @@
 import React from 'react';
 import { Route, Routes, useLocation, useMatch } from 'react-router-dom';
 
-import { MatchHubProvider } from './contexts/MatchHubContext';
-
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -25,7 +23,7 @@ function App() {
 
     return (
         <>
-            <MatchHubProvider><Alert /></MatchHubProvider>
+            <Alert />
             {!pagesNoNav && <NavigationBar />}
             <div className={`flex-grow flex flex-col ${!pagesNoNav && "ml-80"}`}>
                 <Header isLogoVis={pagesNoNav} />
@@ -34,13 +32,12 @@ function App() {
                         <Route path="/" element={<HomePage />} />
                         <Route path="/friends" element={<FriendsPage />} />
 
-                        <Route path="/games/:game" element={<MatchHubProvider><GamePage /></MatchHubProvider>} />
+                        <Route path="/games/:game" element={<GamePage />} />
                         <Route path="/games/:game/match/:matchId" element={
-                            <MatchHubProvider>
-                                <ProtectedRoute>
-                                    <MatchPage />
-                                </ProtectedRoute>
-                            </MatchHubProvider>} />
+                            <ProtectedRoute>
+                                <MatchPage />
+                            </ProtectedRoute>}
+                        />
 
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />

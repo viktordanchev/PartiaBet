@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import * as signalR from "@microsoft/signalr";
-import { useAuth } from "./AuthContext";
 
 const MatchHubContext = createContext();
 
@@ -9,34 +8,32 @@ export const MatchHubProvider = ({ children }) => {
     const [newPlayer, setNewPlayer] = useState(null);
     const [newMove, setNewMove] = useState(null);
     const [newMatch, setNewMatch] = useState(null);
-    const { isAuthenticated } = useAuth();
+    const [leaverData, setLeaverData] = useState(null);
+    const [removedPlayer, setRemovedPlayer] = useState('');
+    const [rejoinedPlayer, setRejoinedPlayer] = useState('');
 
     useEffect(() => {
         if (!connection) return;
-
+        
+        connection.on("RejoinPlayer", handleRejoinPlayer);
+        connection.on("RemovePlayer", handleRemovePlayer);
+        connection.on("RejoinCountdown", handleRejoinCountdown);
         connection.on("ReceiveMatch", handleReceiveMatch);
         connection.on("ReceiveMove", handleReceiveMove);
         connection.on("ReceiveNewPlayer", handleReceiveNewPlayer);
-
-        return () => {
-            connection.off("ReceiveMatch", handleReceiveMatch);
-            connection.off("ReceiveMove", handleReceiveMove);
-            connection.off("ReceiveNewPlayer", handleReceiveNewPlayer);
-        };
     }, [connection]);
+    
+    const handleRejoinPlayer = (playerId) => {
+        setRejoinedPlayer(playerId);
+    };
 
-    useEffect(() => {
-        const startNewConnection = async () => {
-            const newConnection = await startConnection();
-            const gameId = sessionStorage.getItem("gameId");
+    const handleRemovePlayer = (playerId) => {
+        setRemovedPlayer(playerId);
+    };
 
-            if (gameId) {
-                await newConnection.invoke("JoinGame", gameId);
-            }
-        };
-
-        startNewConnection();
-    }, [isAuthenticated]);
+    const handleRejoinCountdown = (playerId, timeLeft) => {
+        setLeaverData({ playerId, timeLeft });
+    };
 
     const handleReceiveMatch = (match) => {
         setNewMatch(match);
@@ -46,15 +43,8 @@ export const MatchHubProvider = ({ children }) => {
         setNewMove({ moveData, newPlayerId, duration });
     };
 
-    const handleReceiveNewPlayer = (player) => {
-        setNewPlayer(player);
-    };
-
-    const joinGame = async (gameId) => {
-        const newConnection = await startConnection();
-
-        sessionStorage.setItem("gameId", gameId);
-        await newConnection.invoke("JoinGame", gameId.toString());
+    const handleReceiveNewPlayer = (player, matchId) => {
+        setNewPlayer({ player, matchId });
     };
 
     const stopConnection = async () => {
@@ -63,7 +53,7 @@ export const MatchHubProvider = ({ children }) => {
             setConnection(null);
         }
     };
-
+     
     const startConnection = async () => {
         await stopConnection();
 
@@ -82,7 +72,7 @@ export const MatchHubProvider = ({ children }) => {
     };
 
     return (
-        <MatchHubContext.Provider value={{ connection, joinGame, newPlayer, newMove, newMatch }}>
+        <MatchHubContext.Provider value={{ connection, startConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer }}>
             {children}
         </MatchHubContext.Provider>
     );

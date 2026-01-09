@@ -3,19 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../../contexts/LoadingContext';
 import { useMatchHub } from '../../contexts/MatchHubContext';
 
-function StatusOutMatch() {
+function RejoinButton() {
     const navigate = useNavigate();
     const { setIsLoading } = useLoading();
     const { connection } = useMatchHub();
 
     const joinMatch = async () => {
-        const matchId = localStorage.getItem('currentMatchId');
-
         setIsLoading(true);
-        await connection.invoke("RejoinMatch", matchId);
+        var matchId = await connection.invoke("RejoinMatch");
         setIsLoading(false);
 
-        navigate(`/games/chess/match/${matchId}`);
+        if (matchId) {
+            navigate(`/games/chess/match/${matchId}`);
+        }
     };
 
     return (
@@ -26,4 +26,4 @@ function StatusOutMatch() {
     );
 }
 
-export default StatusOutMatch;
+export default RejoinButton;
