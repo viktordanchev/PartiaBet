@@ -107,9 +107,9 @@ namespace Core.Services
                 throw new ApiException(statusCode: StatusCodes.Status404NotFound);
             }
 
-            var gameBoard = await _cacheService.GetItem(matchId);
+            match.MaxPlayersCount = _gameProvider.GetMaxPlayersCount(match.GameType);
+            match.Board = await _cacheService.GetItem(matchId);
 
-            match.Board = gameBoard;
             return match;
         }
 

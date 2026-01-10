@@ -112,6 +112,7 @@ namespace Infrastructure.Database.Repositories
                 {
                     Id = m.Id,
                     BetAmount = m.BetAmount,
+                    GameType = m.GameType,
                     CurrentTurnPlayerId = m.CurrentTurnPlayerId,
                     Players = m.Players
                         .Select(um => new PlayerModel()

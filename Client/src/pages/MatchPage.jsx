@@ -33,7 +33,6 @@ const MatchPage = () => {
 
     useEffect(() => {
         const receiveData = async () => {
-            console.log(matchId);
             const matchData = await apiRequest('matches', 'getMatchData', 'POST', true, false, matchId);
             if (!matchData) return;
 
