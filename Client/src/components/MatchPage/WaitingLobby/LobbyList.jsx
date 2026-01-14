@@ -3,12 +3,12 @@ import PlayerCard from './PlayerCard';
 
 const LobbyList = ({ matchData }) => {
     return (
-        <div className="fixed inset-0 z-50 flex flex-col gap-3 items-center justify-center bg-black/70">
+        <div className="fixed inset-0 z-50 flex flex-col gap-6 items-center justify-center bg-black/70">
             <p>{matchData.players.length}/{matchData.maxPlayersCount}</p>
             <div className="flex gap-6">
-                {matchData.players.map((player) =>
+                {matchData.players.map((player, index) =>
                     <PlayerCard
-                        key={player.id}
+                        key={index}
                         data={player}
                     />
                 )}

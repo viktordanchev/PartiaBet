@@ -14,14 +14,12 @@ namespace RestAPI.Controllers
     public class MatchesController : Controller
     {
         private readonly IMatchService _matchService;
-        private readonly IMatchTimer _matchTimerManagere;
         private readonly IMapper _mapper;
 
-        public MatchesController(IMatchService matchService, IMatchTimer matchTimerManagere, IMapper mapper)
+        public MatchesController(IMatchService matchService, IMapper mapper)
         {
             _matchService = matchService;
             _mapper = mapper;
-            _matchTimerManagere = matchTimerManagere;
         }
 
         [HttpPost("getActiveMatches")]
@@ -33,9 +31,9 @@ namespace RestAPI.Controllers
             return Ok(activeMatchesDto);
         }
 
-        [HttpPost("getMatchData")]
+        [HttpPost("getMatch")]
         [Authorize]
-        public async Task<IActionResult> GetMatchData([FromBody] Guid matchId)
+        public async Task<IActionResult> GetMatch([FromBody] Guid matchId)
         {
             var match = await _matchService.GetMatchAsync(matchId);
             var matchDto = _mapper.Map<MatchDto>(match);

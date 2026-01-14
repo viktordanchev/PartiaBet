@@ -7,23 +7,23 @@ namespace Core.Models.Match
     {
         public MatchModel()
         {
-            Players = new List<PlayerModel>();
+            Players = new();
         }
 
-        public Guid Id { get; set; }
-
-        public GameType GameType { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public decimal BetAmount { get; set; }
 
-        public MatchStatus MatchStatus { get; set; }
+        public GameType GameType { get; set; }
 
         public int MaxPlayersCount { get; set; }
 
+        public MatchStatus MatchStatus { get; set; }
+
         public Guid CurrentTurnPlayerId { get; set; }
 
-        public GameBoardModel? Board { get; set; }
-
         public List<PlayerModel> Players { get; set; }
+
+        public GameBoardModel? Board { get; set; }
     }
 }

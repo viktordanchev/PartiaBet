@@ -8,8 +8,6 @@ namespace RestAPI.Mapper
     {
         public MatchProfile()
         {
-            CreateMap<AddMatchDto, AddMatchModel>();
-            CreateMap<AddPlayerDto, AddPlayerModel>();
             CreateMap<MatchModel, MatchDto>();
             CreateMap<PlayerModel, PlayerDto>();
         }

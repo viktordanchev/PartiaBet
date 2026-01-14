@@ -8,7 +8,6 @@ namespace Games.Backgammon
         {
             GameType = GameType.Backgammon;
             Name = "Backgammon";
-            ImgUrl = "https://partiabetstorage.blob.core.windows.net/game-images/backgammon.png";
             MaxPlayersCount = 2;
         }
     }

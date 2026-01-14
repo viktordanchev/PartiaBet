@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Loading from '../components/Loading';
 import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
 import Spectators from '../components/MatchPage/Spectators';
-import LobbyList from '../components/MatchPage/MatchLobby/LobbyList';
+import LobbyList from '../components/MatchPage/WaitingLobby/LobbyList';
 import useApiRequest from '../hooks/useApiRequest';
 import { useMatchHub } from '../contexts/MatchHubContext';
 
@@ -33,7 +33,7 @@ const MatchPage = () => {
 
     useEffect(() => {
         const receiveData = async () => {
-            const matchData = await apiRequest('matches', 'getMatchData', 'POST', true, false, matchId);
+            const matchData = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
             if (!matchData) return;
 
             if (matchData.maxPlayersCount === matchData.players.length) {

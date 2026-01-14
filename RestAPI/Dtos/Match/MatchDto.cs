@@ -1,6 +1,4 @@
-﻿using Core.Models.Games;
-
-namespace RestAPI.Dtos.Match
+﻿namespace RestAPI.Dtos.Match
 {
     public class MatchDto
     {
@@ -14,8 +12,6 @@ namespace RestAPI.Dtos.Match
         public decimal BetAmount { get; set; }
 
         public int MaxPlayersCount { get; set; }
-
-        public GameBoardModel? Board { get; set; }
 
         public List<PlayerDto> Players { get; set; }
     }

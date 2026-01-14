@@ -8,8 +8,6 @@ namespace Games
 
         public string Name { get; set; } = string.Empty;
 
-        public string ImgUrl { get; set; } = string.Empty;
-
         public int MaxPlayersCount { get; set; }
 
         public int TeamsCount { get; set; }

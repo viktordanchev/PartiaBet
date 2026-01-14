@@ -56,7 +56,7 @@ namespace RestAPI.Services
                     using var scope = _serviceScopeFactory.CreateScope();
                     var matchService = scope.ServiceProvider.GetRequiredService<IMatchService>();
 
-                    await matchService.EndMatchAsync(matchId);
+                   // await matchService.EndMatchAsync(matchId);
                 }
                 catch (TaskCanceledException)
                 {
@@ -112,7 +112,7 @@ namespace RestAPI.Services
                 using var scope = _serviceScopeFactory.CreateScope();
                 var matchService = scope.ServiceProvider.GetRequiredService<IMatchService>();
 
-                await matchService.EndMatchAsync(matchId);
+                //await matchService.EndMatchAsync(matchId);
             });
 
             return timer.RemainingTime.TotalSeconds;

@@ -24,7 +24,6 @@ namespace Games
             {
                 GameType = g.GameType,
                 Name = g.Name,
-                ImageUrl = g.ImgUrl,
                 MaxPlayersCount = g.MaxPlayersCount
             });
 
@@ -34,6 +33,11 @@ namespace Games
         public int GetMaxPlayersCount(GameType gameType)
         {
             return _games.FirstOrDefault(g => g.GameType == gameType).MaxPlayersCount;
+        }
+        
+        public bool IsValidGameType(GameType gameType)
+        {
+            return _games.Any(g => g.GameType == gameType);
         }
     }
 }

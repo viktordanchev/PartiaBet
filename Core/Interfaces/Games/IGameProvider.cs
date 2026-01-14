@@ -7,5 +7,6 @@ namespace Core.Interfaces.Games
     {
         IEnumerable<GameModel> GenerateAllGames();
         int GetMaxPlayersCount(GameType gameType);
+        bool IsValidGameType(GameType gameType);
     }
 }

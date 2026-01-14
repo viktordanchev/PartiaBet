@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <Folder Include="Dtos\Games\Chess\" />
+    <Folder Include="Hubs\" />
   </ItemGroup>
 
 </Project>
