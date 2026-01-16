@@ -27,6 +27,8 @@ function PlayButton({ gameType }) {
         var matchId = await connection.invoke("CreateMatch", { gameType, betAmount });
         setIsLoading(false);
 
+        sessionStorage.setItem('connection-matchId', matchId);
+
         navigate(`/games/chess/match/${matchId}`);
     };
 

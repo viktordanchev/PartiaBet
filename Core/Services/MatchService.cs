@@ -3,7 +3,6 @@ using Core.Enums;
 using Core.Interfaces.Games;
 using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
-using Core.Models.Games;
 using Core.Models.Match;
 using Microsoft.AspNetCore.Http;
 
@@ -34,7 +33,7 @@ namespace Core.Services
             {
                 BetAmount = betAmount,
                 GameType = gameType,
-                MatchStatus = MatchStatus.Created,
+                Status = MatchStatus.Created,
                 MaxPlayersCount = _gameProvider.GetMaxPlayersCount(gameType),
             };
 
@@ -43,11 +42,11 @@ namespace Core.Services
             return match;
         }
 
-        public async Task<PlayerModel> AddPlayerAsync(Guid matchId, Guid playerId)
+        public async Task<MatchStatusModel> AddPlayerAsync(Guid matchId, Guid playerId)
         {
             var match = await _cacheService.GetMatchAsync(matchId);
 
-            if (match.MatchStatus == MatchStatus.Ongoing || match.Players.Any(p => p.Id == playerId))
+            if (match.Status == MatchStatus.Ongoing || match.Players.Any(p => p.Id == playerId))
             {
                 throw new InvalidOperationException("Cannot join an ongoing match.");
             }
@@ -59,12 +58,28 @@ namespace Core.Services
             player.TurnOrder = match.Players.Count + 1;
             player.Status = PlayerStatus.Active;
             player.TeamNumber = 1;
-            
+
             match.Players.Add(player);
+
+            if (match.Players.Count == maxPlayersCount)
+            {
+                match.Status = MatchStatus.Ongoing;
+                match.Board = gameService.CreateGameBoard(match.Players);
+            }
 
             await _cacheService.SetMatchAsync(match.Id, match);
 
-            return player;
+            return MatchStatusModel.Success(player, match.GameType, match.Status == MatchStatus.Ongoing);
+        }
+
+        public async Task RemovePlayerAsync(Guid matchId, Guid playerId)
+        {
+            var match = await _cacheService.GetMatchAsync(matchId);
+
+            var player = match.Players.First(p => p.Id == playerId);
+            match.Players.Remove(player);
+
+            await _cacheService.SetMatchAsync(match.Id, match);
         }
 
         public async Task<MoveResultModel> UpdateBoardAsync(Guid matchId, Guid playerId, string moveDataJson)
@@ -94,7 +109,7 @@ namespace Core.Services
 
         public async Task<Guid> SwtichTurnAsync(Guid matchId, Guid currentPlayerId)
         {
-            var match = await _cacheService.GetMatchAsync(matchId); 
+            var match = await _cacheService.GetMatchAsync(matchId);
             var gameService = _gameFactory.GetGameService(GameType.Chess);
             var nextPlayerId = gameService.SwitchTurn(currentPlayerId, match.Players);
 

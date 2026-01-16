@@ -24,8 +24,6 @@ const Matches = ({ gameType }) => {
     }, []);
 
     useEffect(() => {
-        if (matches.length === 0) return;
-
         if (newMatch) {
             setMatches(prevMatches =>
                 [newMatch, ...prevMatches]

@@ -9,43 +9,45 @@ import { useMatchHub } from '../contexts/MatchHubContext';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-    const { newPlayer, removedPlayer } = useMatchHub();
+    const { newPlayer, removedPlayer, matchStarted } = useMatchHub();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
-    const [matchData, setMatchData] = useState(null);
+    const [match, setMatch] = useState(null);
     const [isStarted, setIsStarted] = useState(false);
+    
+    useEffect(() => {
+        if (!match) return;
+
+        setMatch(prev => ({
+            ...prev,
+            players: [...prev.players, newPlayer.player]
+        }));
+    }, [newPlayer]);
 
     useEffect(() => {
-        if (!matchData) return;
+        if (!match) return;
 
-        if (newPlayer) {
-            setMatchData(prev => ({
-                ...prev,
-                players: [...prev.players, newPlayer]
-            }));
-        } else if (removedPlayer) {
-            setMatchData(prev => ({
-                ...prev,
-                players: prev.players.filter(p => p.id !== removedPlayer.id)
-            }));
-        }
-    }, [newPlayer, removedPlayer]);
+        setMatch(prev => ({
+            ...prev,
+            players: prev.players.filter(p => p.id !== removedPlayer.playerId)
+        }));
+    }, [removedPlayer]);
 
     useEffect(() => {
         const receiveData = async () => {
-            const matchData = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
-            if (!matchData) return;
-
-            if (matchData.maxPlayersCount === matchData.players.length) {
-                setIsStarted(true);
-            }
+            const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
+            if (!data) return;
 
             setIsLoading(false);
-            setMatchData(matchData);
+            setMatch(data);
+
+            if (data.status === "Ongoing") {
+                setIsStarted(true);
+            }
         };
 
         receiveData();
-    }, []);
+    }, [matchStarted]);
 
     const renderGame = (matchData) => {
         switch (game) {
@@ -64,13 +66,13 @@ const MatchPage = () => {
         <section className="flex-1 p-6 flex justify-center gap-3">
             {isLoading ? <Loading size={'small'} /> :
                 <>
-                    {!isStarted ? <LobbyList matchData={matchData} /> :
+                    {!isStarted ? <LobbyList match={match} /> :
                         <>
                             <div className="flex flex-col items-end gap-3">
                                 <Spectators peopleCount={0} />
-                                <p className="text-2xl font-semibold text-gray-300">Bet: {matchData.betAmount}$</p>
+                                <p className="text-2xl font-semibold text-gray-300">Bet: {match.betAmount}$</p>
                             </div>
-                            {renderGame(matchData)}
+                            {renderGame(match)}
                         </>}
                 </>}
         </section>

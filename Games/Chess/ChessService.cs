@@ -16,12 +16,17 @@ namespace Games.Chess
             _gameConfig = new ChessGame();
         }
 
-        public GameBoardModel CreateGameBoard()
+        public GameBoardModel CreateGameBoard(IEnumerable<PlayerModel> players)
         {
             var chessBoard = new ChessBoardModel();
 
             InitializePieces(chessBoard, true);
             InitializePieces(chessBoard, false);
+            
+            foreach (var player in players)
+            {
+                UpdatePlayersInBoard(chessBoard, player.Id);
+            }
 
             return chessBoard;
         }

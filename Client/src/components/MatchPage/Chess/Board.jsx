@@ -13,7 +13,7 @@ const Board = ({ data }) => {
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [validSquares, setValidSquares] = useState([]);
     const isHostWhite = data.whitePlayerId === decodedToken['Id'];
-
+    
     useEffect(() => {
         if (!newMove) return;
         
@@ -28,9 +28,12 @@ const Board = ({ data }) => {
     const isClickable = (square) => {
         if (!square.type) return false;
 
-        return square.isWhite && isHostWhite ||
-            !square.isWhite && !isHostWhite ||
-            validSquares.some(vs => vs.row === square.row && vs.col === square.col);
+        const isOwnPiece = square.isWhite === isHostWhite;
+        const isValidMoveTarget = validSquares.some(
+            vs => vs.row === square.row && vs.col === square.col
+        );
+
+        return isOwnPiece || isValidMoveTarget;
     };
 
     const makeMove = async (moveData) => {
@@ -42,7 +45,11 @@ const Board = ({ data }) => {
     };
 
     const handleClickSquare = async (piece) => {
-        if (selectedPiece && validSquares.some(s => s.row === piece.row && s.col === piece.col)) {
+        const isMove =
+            selectedPiece &&
+            validSquares.some(s => s.row === piece.row && s.col === piece.col);
+
+        if (isMove) {
             setPieces(prev =>
                 prev.map(p =>
                     p.row === selectedPiece.row && p.col === selectedPiece.col
@@ -73,9 +80,9 @@ const Board = ({ data }) => {
         <article className="grid grid-cols-8 rounded border-5 border-gray-900">
             {Array.from({ length: 8 * 8 }).map((_, index) => {
                 const [row, col] = [Math.floor(index / 8), index % 8].map(v => (isHostWhite ? 7 - v : v));
-
+                
                 const square = pieces.find(p => p.row === row && p.col === col) || { row, col };
-
+                
                 const isHighlighted = validSquares.some(
                     vs => vs.row === row && vs.col === col
                 );

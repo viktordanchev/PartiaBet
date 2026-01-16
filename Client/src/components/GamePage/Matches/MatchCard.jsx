@@ -12,8 +12,10 @@ const MatchCard = ({ match }) => {
     
     const joinMatch = async () => {
         setIsLoading(true);
-        await connection.invoke("JoinMatch", match.id.toString());
+        await connection.invoke("JoinMatch", match.id);
         setIsLoading(false);
+
+        sessionStorage.setItem('connection-matchId', match.id);
 
         navigate(`/games/chess/match/${match.id}`);
     };

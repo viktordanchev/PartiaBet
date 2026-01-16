@@ -1,13 +1,9 @@
-// src/constants/figureImages.js
-
-// Импортирай всички SVG-и
 import BlackKing from '../assets/images/chess/figures/black-king.svg';
 import BlackQueen from '../assets/images/chess/figures/black-queen.svg';
 import BlackRook from '../assets/images/chess/figures/black-rook.svg';
 import BlackBishop from '../assets/images/chess/figures/black-bishop.svg';
 import BlackKnight from '../assets/images/chess/figures/black-knight.svg';
 import BlackPawn from '../assets/images/chess/figures/black-pawn.svg';
-
 import WhiteKing from '../assets/images/chess/figures/white-king.svg';
 import WhiteQueen from '../assets/images/chess/figures/white-queen.svg';
 import WhiteRook from '../assets/images/chess/figures/white-rook.svg';

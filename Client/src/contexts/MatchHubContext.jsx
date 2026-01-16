@@ -9,26 +9,50 @@ export const MatchHubProvider = ({ children }) => {
     const [newMove, setNewMove] = useState(null);
     const [newMatch, setNewMatch] = useState(null);
     const [leaverData, setLeaverData] = useState(null);
-    const [removedPlayer, setRemovedPlayer] = useState('');
+    const [removedPlayer, setRemovedPlayer] = useState(null);
     const [rejoinedPlayer, setRejoinedPlayer] = useState('');
+    const [matchStarted, setMatchStarted] = useState('');
+
+    useEffect(() => {
+        const game = sessionStorage.getItem('connection-game');
+        const matchId = sessionStorage.getItem('connection-matchId');
+
+        const createConnection = async () => {
+            const newConnection = await startConnection();
+
+            if (game && matchId) {
+                await newConnection.invoke("JoinGameGroup", game);
+                await newConnection.invoke("JoinMatchGroup", matchId);
+            }
+        };
+
+        if (game && matchId) {
+            createConnection();
+        }
+    }, []);
 
     useEffect(() => {
         if (!connection) return;
         
+        connection.on("StartMatch", handleStartMatch);
         connection.on("RejoinPlayer", handleRejoinPlayer);
         connection.on("RemovePlayer", handleRemovePlayer);
         connection.on("RejoinCountdown", handleRejoinCountdown);
         connection.on("ReceiveMatch", handleReceiveMatch);
         connection.on("ReceiveMove", handleReceiveMove);
-        connection.on("ReceiveNewPlayer", handleReceiveNewPlayer);
+        connection.on("ReceivePlayer", handleReceivePlayer);
     }, [connection]);
-    
+
+    const handleStartMatch = (matchId) => {
+        setMatchStarted(matchId);
+    };
+
     const handleRejoinPlayer = (playerId) => {
         setRejoinedPlayer(playerId);
     };
 
-    const handleRemovePlayer = (playerId) => {
-        setRemovedPlayer(playerId);
+    const handleRemovePlayer = (matchId, playerId) => {
+        setRemovedPlayer({ matchId, playerId });
     };
 
     const handleRejoinCountdown = (playerId, timeLeft) => {
@@ -43,8 +67,8 @@ export const MatchHubProvider = ({ children }) => {
         setNewMove({ moveData, newPlayerId, duration });
     };
 
-    const handleReceiveNewPlayer = (player, matchId) => {
-        setNewPlayer({ player, matchId });
+    const handleReceivePlayer = (matchId, player) => {
+        setNewPlayer({ matchId, player });
     };
 
     const stopConnection = async () => {
@@ -72,7 +96,7 @@ export const MatchHubProvider = ({ children }) => {
     };
 
     return (
-        <MatchHubContext.Provider value={{ connection, startConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer }}>
+        <MatchHubContext.Provider value={{ connection, startConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted }}>
             {children}
         </MatchHubContext.Provider>
     );

@@ -18,7 +18,7 @@ namespace Core.Models.Match
 
         public int MaxPlayersCount { get; set; }
 
-        public MatchStatus MatchStatus { get; set; }
+        public MatchStatus Status { get; set; }
 
         public Guid CurrentTurnPlayerId { get; set; }
 

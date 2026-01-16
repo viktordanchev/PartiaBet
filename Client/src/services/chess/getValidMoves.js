@@ -1,23 +1,23 @@
-﻿function getValidMoves(piece, pieces, areWhitePiecesMine) {
+﻿function getValidMoves(piece, pieces, isWhite) {
     switch (piece.type) {
-        case 'king':
-            return getKingMove(piece, pieces, areWhitePiecesMine);
-        case 'queen':
-            return getQueenMove(piece, pieces, areWhitePiecesMine);
-        case 'rook':
-            return getRookMove(piece, pieces, areWhitePiecesMine);
-        case 'pawn':
-            return getPawnMove(piece, pieces, areWhitePiecesMine);
-        case 'bishop':
-            return getBishopMove(piece, pieces, areWhitePiecesMine);
-        case 'knight':
-            return getKnightMove(piece, pieces, areWhitePiecesMine);
+        case 'King':
+            return getKingMove(piece, pieces, isWhite);
+        case 'Queen':
+            return getQueenMove(piece, pieces, isWhite);
+        case 'Rook':
+            return getRookMove(piece, pieces, isWhite);
+        case 'Pawn':
+            return getPawnMove(piece, pieces, isWhite);
+        case 'Bishop':
+            return getBishopMove(piece, pieces, isWhite);
+        case 'Knight':
+            return getKnightMove(piece, pieces, isWhite);
         default:
             return [];
     }
 }
 
-function getKingMove(piece, pieces, areWhitePiecesMine) {
+function getKingMove(piece, pieces, isWhite) {
     const directions = [
         { row: 1, col: 0 },
         { row: 1, col: 1 },
@@ -29,10 +29,10 @@ function getKingMove(piece, pieces, areWhitePiecesMine) {
         { row: 0, col: -1 }
     ];
 
-    return getSingleMoves(piece, pieces, areWhitePiecesMine, directions)
+    return getSingleMoves(piece, pieces, isWhite, directions)
 }
 
-function getQueenMove(piece, pieces, areWhitePiecesMine) {
+function getQueenMove(piece, pieces, isWhite) {
     const directions = [
         { row: 1, col: 1 },
         { row: 1, col: -1 },
@@ -44,10 +44,10 @@ function getQueenMove(piece, pieces, areWhitePiecesMine) {
         { row: 0, col: -1 }
     ];
 
-    return getLinearMoves(piece, pieces, areWhitePiecesMine, directions);
+    return getLinearMoves(piece, pieces, isWhite, directions);
 }
 
-function getRookMove(piece, pieces, areWhitePiecesMine) {
+function getRookMove(piece, pieces, isWhite) {
     const directions = [
         { row: 1, col: 0 },
         { row: -1, col: 0 },
@@ -55,19 +55,19 @@ function getRookMove(piece, pieces, areWhitePiecesMine) {
         { row: 0, col: -1 }
     ];
 
-    return getLinearMoves(piece, pieces, areWhitePiecesMine, directions);
+    return getLinearMoves(piece, pieces, isWhite, directions);
 }
 
-function getPawnMove(piece, pieces, areWhitePiecesMine) {
+function getPawnMove(piece, pieces, isWhite) {
     const validSquares = [];
     const directions = [
-        { row: areWhitePiecesMine ? 1 : -1, col: 0 },
-        { row: areWhitePiecesMine ? 1 : -1, col: 1 },
-        { row: areWhitePiecesMine ? 1 : -1, col: -1 }
+        { row: isWhite ? 1 : -1, col: 0 },
+        { row: isWhite ? 1 : -1, col: 1 },
+        { row: isWhite ? 1 : -1, col: -1 }
     ];
 
     if (piece.row === 1 || piece.row === 6) {
-        directions.push({ row: areWhitePiecesMine ? 2 : -2, col: 0 });
+        directions.push({ row: isWhite ? 2 : -2, col: 0 });
     }
 
     for (const dir of directions) {
@@ -80,7 +80,7 @@ function getPawnMove(piece, pieces, areWhitePiecesMine) {
             if ((dir.col !== 0 && piece) ||
                 (dir.col === 0 && !piece)) {
                 if (piece) {
-                    if (piece.isWhite !== areWhitePiecesMine) {
+                    if (piece.isWhite !== isWhite) {
                         validSquares.push({ row, col });
                     }
                 } else {
@@ -93,7 +93,7 @@ function getPawnMove(piece, pieces, areWhitePiecesMine) {
     return validSquares;
 }
 
-function getBishopMove(piece, pieces, areWhitePiecesMine) {
+function getBishopMove(piece, pieces, isWhite) {
     const directions = [
         { row: 1, col: 1 },
         { row: 1, col: -1 },
@@ -101,10 +101,10 @@ function getBishopMove(piece, pieces, areWhitePiecesMine) {
         { row: -1, col: 1 }
     ];
 
-    return getLinearMoves(piece, pieces, areWhitePiecesMine, directions);
+    return getLinearMoves(piece, pieces, isWhite, directions);
 }
 
-function getKnightMove(piece, pieces, areWhitePiecesMine) {
+function getKnightMove(piece, pieces, isWhite) {
     const directions = [
         { row: 2, col: 1 },
         { row: 2, col: -1 },
@@ -116,10 +116,10 @@ function getKnightMove(piece, pieces, areWhitePiecesMine) {
         { row: -1, col: -2 }
     ];
 
-    return getSingleMoves(piece, pieces, areWhitePiecesMine, directions);
+    return getSingleMoves(piece, pieces, isWhite, directions);
 }
 
-function getLinearMoves(piece, pieces, areWhitePiecesMine, directions) {
+function getLinearMoves(piece, pieces, isWhite, directions) {
     var validSquares = [];
 
     for (const dir of directions) {
@@ -127,12 +127,12 @@ function getLinearMoves(piece, pieces, areWhitePiecesMine, directions) {
             const row = piece.row + dir.row * i;
             const col = piece.col + dir.col * i;
 
-            if (row < 0 || row >= 8 || col < 0 || col >= 8) break;
+            if (row < 0 || row >= 8 || col < 0 || col >= 8) continue;
 
             const pieceInSquare = pieces.find(p => p.row === row && p.col === col);
 
             if (pieceInSquare) {
-                if (pieceInSquare.isWhite !== areWhitePiecesMine) {
+                if (pieceInSquare.isWhite !== isWhite) {
                     validSquares.push({ row, col });
                 }
 
@@ -146,19 +146,19 @@ function getLinearMoves(piece, pieces, areWhitePiecesMine, directions) {
     return validSquares;
 }
 
-function getSingleMoves(piece, pieces, areWhitePiecesMine, directions) {
+function getSingleMoves(piece, pieces, isWhite, directions) {
     const validSquares = [];
 
     for (const dir of directions) {
         const row = piece.row + dir.row;
         const col = piece.col + dir.col;
-
-        if (row < 0 || row >= 8 || col < 0 || col >= 8) break;
+        
+        if (row < 0 || row >= 8 || col < 0 || col >= 8) continue;
 
         const pieceInSquare = pieces.find(p => p.row === row && p.col === col);
-
+        
         if (pieceInSquare) {
-            if (pieceInSquare.isWhite !== areWhitePiecesMine) {
+            if (pieceInSquare.isWhite !== isWhite) {
                 validSquares.push({ row, col });
             }
         } else {

@@ -26,7 +26,7 @@ namespace Infrastructure.CacheRedis
                 json
             );
 
-            if (match.MatchStatus != MatchStatus.Finished)
+            if (match.Status != MatchStatus.Finished)
             {
                 await _redis.SetAddAsync(
                     $"{match.GameType}",

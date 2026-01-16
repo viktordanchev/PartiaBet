@@ -13,17 +13,18 @@ function GamePage() {
     const apiRequest = useApiRequest();
     const { connection, startConnection } = useMatchHub();
     const [isLoading, setIsLoading] = useState(true);
-    const [gameData, setGameData] = useState({});
+    const [gameData, setGameData] = useState(null);
     
     useEffect(() => {
-        if (!gameData?.gameType || connection) return;
+        if (!gameData || connection) return;
 
         const initiateConnection = async () => {
             var newConnection = await startConnection();
-            await newConnection.invoke("JoinGame", gameData.gameType);
+            await newConnection.invoke("JoinGameGroup", gameData.gameType);
         };
 
         initiateConnection();
+        sessionStorage.setItem('connection-game', gameData.gameType);
     }, [gameData]);
 
     useEffect(() => {
@@ -38,6 +39,8 @@ function GamePage() {
     }, []);
 
     useEffect(() => {
+        if (!gameData) return;
+
         document.title = gameData.name;
     }, [gameData]);
 

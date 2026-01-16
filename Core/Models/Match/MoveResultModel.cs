@@ -1,6 +1,7 @@
 ﻿using Core.Enums;
+using Core.Models.Games;
 
-namespace Core.Models.Games
+namespace Core.Models.Match
 {
     public class MoveResultModel
     {

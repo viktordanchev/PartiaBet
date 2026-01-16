@@ -26,12 +26,17 @@ namespace RestAPI.Hubs
             _mapper = mapper;
         }
 
-        public async Task JoinGame(GameType gameType)
+        public async Task JoinGameGroup(GameType gameType)
         {
             if (_gameProvider.IsValidGameType(gameType))
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, $"{gameType}");
             }
+        }
+
+        public async Task JoinMatchGroup(Guid matchId)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{matchId}");
         }
 
         [Authorize]
@@ -40,10 +45,10 @@ namespace RestAPI.Hubs
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
 
             var match = await _matchService.CreateMatchAsync(data.GameType, data.BetAmount);
-            var player = await _matchService.AddPlayerAsync(match.Id, playerId);
+            var matchStatus = await _matchService.AddPlayerAsync(match.Id, playerId);
 
             var matchDto = _mapper.Map<MatchDto>(match);
-            var playerDto = _mapper.Map<PlayerDto>(player);
+            var playerDto = _mapper.Map<PlayerDto>(matchStatus.AddedPlayer);
             matchDto.Players.Add(playerDto);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{match.Id}");
@@ -56,13 +61,16 @@ namespace RestAPI.Hubs
         public async Task JoinMatch(Guid matchId)
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            
-            var player = await _matchService.AddPlayerAsync(matchId, playerId);
-
-            var playerDto = _mapper.Map<PlayerDto>(player);
+            var matchStatus = await _matchService.AddPlayerAsync(matchId, playerId);
+            var playerDto = _mapper.Map<PlayerDto>(matchStatus.AddedPlayer);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{matchId}");
-            await Clients.Group($"{matchId}").SendAsync("ReceiveNewPlayer", playerDto);
+            await Clients.Group($"{matchStatus.GameType}").SendAsync("ReceivePlayer", matchId, playerDto);
+
+            if (matchStatus.IsStarted)
+            {
+                await Clients.Group($"{matchStatus.GameType}").SendAsync("StartMatch", matchId);
+            }
         }
 
         [Authorize]
@@ -78,24 +86,17 @@ namespace RestAPI.Hubs
             var nextPlayerId = await _matchService.SwtichTurnAsync(matchId, playerId);
             var duration = _matchTimer.StartTurnTimer(moveResult.GameType, matchId, nextPlayerId);
 
-            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", moveResult.MoveData, nextPlayerId, duration);
+            await Clients.Group($"{moveResult.GameType}").SendAsync("ReceiveMove", moveResult.MoveData, nextPlayerId, duration);
         }
 
-        //[Authorize]
-        //public async Task LeaveMatch(Guid matchId)
-        //{
-        //    var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
-        //    var match = await _matchService.GetMatchInternalAsync(matchId);
-        //    
-        //    if (match.MatchStatus == MatchStatus.Ongoing)
-        //    {
-        //        _matchTimer.StartLeaverTimer(match.GameType, match.Id, playerId);
-        //        await _matchService.UpdatePlayerStatusAsync(playerId, PlayerStatus.Disconnected);
-        //    }
-        //    else
-        //    {
-        //        await _matchService.RemovePlayerAsync(match, playerId);
-        //    }
-        //}
+        [Authorize]
+        public async Task LeaveMatch(Guid matchId)
+        {
+            var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
+
+            await _matchService.RemovePlayerAsync(matchId, playerId);
+
+            await Clients.Group($"{matchId}").SendAsync("RemovePlayer", matchId, playerId);
+        }
     }
 }

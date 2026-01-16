@@ -5,7 +5,7 @@ namespace Core.Interfaces.Games
 {
     public interface IGameService
     {
-        GameBoardModel CreateGameBoard();
+        GameBoardModel CreateGameBoard(IEnumerable<PlayerModel> players);
         void UpdateBoard(GameBoardModel board, BaseMoveModel move);
         bool IsValidMove(GameBoardModel board, BaseMoveModel move);
         void UpdatePlayersInBoard(GameBoardModel board, Guid playerId);
