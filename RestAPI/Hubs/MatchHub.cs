@@ -26,11 +26,6 @@ namespace RestAPI.Hubs
             _mapper = mapper;
         }
 
-        public override async Task OnConnectedAsync()
-        {
-            var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-        }
-
         public async Task JoinGameGroup(GameType gameType)
         {
             if (_gameProvider.IsValidGameType(gameType))

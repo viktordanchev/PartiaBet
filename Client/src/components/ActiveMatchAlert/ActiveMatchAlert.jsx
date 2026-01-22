@@ -1,72 +1,83 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useTimer } from 'react-timer-hook';
 import { useMatchHub } from '../../contexts/MatchHubContext';
+import { useAuth } from '../../contexts/AuthContext';
 import RejoinButton from './RejoinButton';
+import useApiRequest from '../../hooks/useApiRequest';
+
+const REJOIN_KEY = 'rejoinTimeLeft';
+
+const getExpiry = (seconds) => {
+    const date = new Date();
+    date.setSeconds(date.getSeconds() + seconds);
+    return date;
+};
 
 function ActiveMatchAlert() {
-    const [showButton, setShowButton] = useState(false);
     const { leaverData } = useMatchHub();
-
-    const time = new Date();
-    time.setSeconds(time.getSeconds() + 0);
-
-    const {
-        seconds,
-        minutes,
-        restart,
-    } = useTimer({
-        expiryTimestamp: time
+    const { isAuthenticated } = useAuth();
+    const apiRequest = useApiRequest();
+    const [showButton, setShowButton] = useState(false);
+    const { seconds, minutes, restart } = useTimer({
+        expiryTimestamp: new Date(),
+        autoStart: false
     });
 
     useEffect(() => {
-        const receiveData = async () => {
+        const fetchRejoinTime = async () => {
+            const response = await apiRequest('matches', 'getMatchCountdown', 'GET', true, false);
+            if (!response) return;
 
+            var expiry = getExpiry(response);
+
+            localStorage.setItem(REJOIN_KEY, expiry);
+            restart(expiry, true);
         };
 
-        receiveData();
+        if (isAuthenticated) {
+            fetchRejoinTime();
+        }
     }, []);
 
     useEffect(() => {
-        const timeLeft = localStorage.getItem('rejoinTimeLeft');
-        if (!timeLeft) return;
+        const stored = localStorage.getItem(REJOIN_KEY);
+        if (!stored) return;
 
-        const expiryDate = new Date(timeLeft);
+        const expiry = new Date(stored);
 
-        if (expiryDate <= new Date()) {
-            localStorage.removeItem('rejoinTimeLeft');
+        if (expiry <= new Date()) {
+            localStorage.removeItem(REJOIN_KEY);
             return;
         }
 
-        restart(expiryDate, true);
+        restart(expiry, true);
     }, [restart]);
 
     useEffect(() => {
         if (!leaverData) return;
 
-        const newTime = new Date();
-        newTime.setSeconds(newTime.getSeconds() + leaverData.timeLeft);
+        const expiry = getExpiry(leaverData.timeLeft);
 
-        localStorage.setItem('rejoinTimeLeft', newTime.toISOString());
+        localStorage.setItem(REJOIN_KEY, expiry.toISOString());
+        restart(expiry, true);
 
-        restart(newTime, true);
-
-        const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
-        setShowButton(decodedToken['Id'] === leaverData.playerId);
+        const decoded = jwtDecode(localStorage.getItem('accessToken'));
+        setShowButton(decoded['Id'] === leaverData.playerId);
     }, [leaverData]);
 
+    if (minutes === 0 && seconds === 0) return null;
+
     return (
-        <>
-            {(minutes > 0 || seconds > 0) &&
-                <div className="card-wrapper fixed z-10 top-10 right-10 w-50 h-50 p-1 flex flex-col justify-between rounded-xl">
-                    <div className="z-20 h-full w-full p-3 border border-gray-500 rounded-xl bg-gray-900 flex flex-col justify-center text-center text-white font-semibold">
-                        <div className="text-lg">
-                            Match will end after {minutes}:{seconds.toString().padStart(2, '0')} minutes!
-                        </div>
-                        {showButton && <RejoinButton />}
-                    </div>
-                </div>}
-        </>
+        <div className="card-wrapper fixed z-10 top-10 right-10 w-50 h-50 p-1 flex flex-col justify-between rounded-xl">
+            <div className="z-20 h-full w-full p-3 border border-gray-500 rounded-xl bg-gray-900 flex flex-col justify-center text-center text-white font-semibold">
+                <div className="text-lg">
+                    Match will end after {minutes}:{seconds.toString().padStart(2, '0')} minutes!
+                </div>
+
+                {showButton && <RejoinButton />}
+            </div>
+        </div>
     );
 }
 

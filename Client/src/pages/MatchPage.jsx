@@ -26,7 +26,7 @@ const MatchPage = () => {
 
     useEffect(() => {
         if (!match) return;
-
+    
         setMatch(prev => ({
             ...prev,
             players: prev.players.filter(p => p.id !== removedPlayer.playerId)
@@ -35,7 +35,6 @@ const MatchPage = () => {
 
     useEffect(() => {
         const receiveData = async () => {
-            await new Promise(resolve => setTimeout(resolve, 3000));
             const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
             if (!data) return;
 
