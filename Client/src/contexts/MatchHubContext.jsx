@@ -12,21 +12,17 @@ export const MatchHubProvider = ({ children }) => {
     const [removedPlayer, setRemovedPlayer] = useState(null);
     const [rejoinedPlayer, setRejoinedPlayer] = useState('');
     const [matchStarted, setMatchStarted] = useState('');
+    const [resumeMatch, setResumeMatch] = useState('');
 
     useEffect(() => {
-        const game = sessionStorage.getItem('connection-game');
         const matchId = sessionStorage.getItem('connection-matchId');
 
         const createConnection = async () => {
             const newConnection = await startConnection();
-
-            if (game && matchId) {
-                await newConnection.invoke("JoinGameGroup", game);
-                await newConnection.invoke("JoinMatchGroup", matchId);
-            }
+            await newConnection.invoke("JoinMatchGroup", matchId);
         };
 
-        if (game && matchId) {
+        if (matchId) {
             createConnection();
         }
     }, []);
@@ -34,6 +30,7 @@ export const MatchHubProvider = ({ children }) => {
     useEffect(() => {
         if (!connection) return;
         
+        connection.on("MatchResumed", handleMatchResumed);
         connection.on("StartMatch", handleStartMatch);
         connection.on("RejoinPlayer", handleRejoinPlayer);
         connection.on("RemovePlayer", handleRemovePlayer);
@@ -42,6 +39,10 @@ export const MatchHubProvider = ({ children }) => {
         connection.on("ReceiveMove", handleReceiveMove);
         connection.on("ReceivePlayer", handleReceivePlayer);
     }, [connection]);
+
+    const handleMatchResumed = (matchId) => {
+        setResumeMatch(matchId);
+    };
 
     const handleStartMatch = (matchId) => {
         setMatchStarted(matchId);
@@ -96,7 +97,7 @@ export const MatchHubProvider = ({ children }) => {
     };
 
     return (
-        <MatchHubContext.Provider value={{ connection, startConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted }}>
+        <MatchHubContext.Provider value={{ connection, startConnection, stopConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted, resumeMatch }}>
             {children}
         </MatchHubContext.Provider>
     );

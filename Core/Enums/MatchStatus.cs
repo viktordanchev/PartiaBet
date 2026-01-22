@@ -4,6 +4,7 @@
     {
         Created = 1,
         Ongoing,
-        Finished
+        Finished,
+        Paused
     }
 }

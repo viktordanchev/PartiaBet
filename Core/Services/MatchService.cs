@@ -4,6 +4,7 @@ using Core.Interfaces.Games;
 using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.Match;
+using Core.Results.Match;
 using Microsoft.AspNetCore.Http;
 
 namespace Core.Services
@@ -12,19 +13,25 @@ namespace Core.Services
     {
         private IMatchRepository _matchRepository;
         private ICacheService _cacheService;
+        private IRedisLockService _redisLock;
         private IGameFactory _gameFactory;
         private IGameProvider _gameProvider;
+        private IMatchTimer _matchTimer;
 
         public MatchService(
             IMatchRepository matchRepository,
+            IRedisLockService redisLock,
             ICacheService cacheService,
             IGameFactory gameFactory,
-            IGameProvider gameProvider)
+            IGameProvider gameProvider,
+            IMatchTimer matchTimer)
         {
             _matchRepository = matchRepository;
+            _redisLock = redisLock;
             _cacheService = cacheService;
             _gameFactory = gameFactory;
             _gameProvider = gameProvider;
+            _matchTimer = matchTimer;
         }
 
         public async Task<MatchModel> CreateMatchAsync(GameType gameType, decimal betAmount)
@@ -42,51 +49,100 @@ namespace Core.Services
             return match;
         }
 
-        public async Task<MatchStatusModel> AddPlayerAsync(Guid matchId, Guid playerId)
+        public async Task<AddPlayerResult> AddPlayerAsync(Guid matchId, Guid playerId)
         {
-            var match = await _cacheService.GetMatchAsync(matchId);
+            var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
 
-            if (match.Status == MatchStatus.Ongoing || match.Players.Any(p => p.Id == playerId))
+            if (lockHandle == null)
             {
-                throw new InvalidOperationException("Cannot join an ongoing match.");
+                throw new TimeoutException("Match is busy. Please try again.");
             }
 
-            var gameService = _gameFactory.GetGameService(match.GameType);
-            var maxPlayersCount = _gameProvider.GetMaxPlayersCount(match.GameType);
-
-            var player = await _matchRepository.GetPlayerDataAsync(playerId);
-            player.TurnOrder = match.Players.Count + 1;
-            player.Status = PlayerStatus.Active;
-            player.TeamNumber = 1;
-
-            match.Players.Add(player);
-
-            if (match.Players.Count == maxPlayersCount)
+            try
             {
-                match.Status = MatchStatus.Ongoing;
-                match.Board = gameService.CreateGameBoard(match.Players);
+                var match = await _cacheService.GetMatchAsync(matchId);
+
+                if (match.Status == MatchStatus.Ongoing ||
+                    match.Players.Any(p => p.Id == playerId))
+                {
+                    throw new InvalidOperationException("Cannot join an ongoing match.");
+                }
+
+                var gameService = _gameFactory.GetGameService(match.GameType);
+                var maxPlayersCount = _gameProvider.GetMaxPlayersCount(match.GameType);
+
+                if (match.Players.Count >= maxPlayersCount)
+                {
+                    throw new InvalidOperationException("Match is full.");
+                }
+
+                var player = await _matchRepository.GetPlayerDataAsync(playerId);
+                player.TurnOrder = match.Players.Count + 1;
+                player.Status = PlayerStatus.Active;
+                player.TeamNumber = 1;
+
+                match.Players.Add(player);
+                await _cacheService.SetPlayerMatchAsync(playerId, matchId);
+
+                if (match.Players.Count == maxPlayersCount)
+                {
+                    match.Status = MatchStatus.Ongoing;
+                    match.Board = gameService.CreateGameBoard(match.Players);
+                }
+
+                await _cacheService.SetMatchAsync(match.Id, match);
+
+                return AddPlayerResult.Success(
+                    player,
+                    match.GameType,
+                    match.Status == MatchStatus.Ongoing);
+            }
+            finally
+            {
+                await _redisLock.ReleaseAsync(lockHandle);
+            }
+        }
+
+        public async Task<LeaveMatchResult> LeaveMatchAsync(Guid matchId, Guid playerId)
+        {
+            var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
+
+            if (lockHandle == null)
+            {
+                throw new TimeoutException("Match is busy. Please try again.");
             }
 
-            await _cacheService.SetMatchAsync(match.Id, match);
+            try
+            {
+                var isRemoved = false;
+                double timeLeft = 0;
+                var match = await _cacheService.GetMatchAsync(matchId);
 
-            return MatchStatusModel.Success(player, match.GameType, match.Status == MatchStatus.Ongoing);
+                if (match.Status == MatchStatus.Ongoing)
+                {
+                    timeLeft = HandlePlayerLeaveDuringMatch(match, playerId);
+                }
+                else
+                {
+                    RemovePlayer(match, playerId);
+                    isRemoved = true;
+                }
+
+                await _cacheService.SetMatchAsync(match.Id, match);
+
+                return LeaveMatchResult.Success(isRemoved, match.GameType, timeLeft);
+            }
+            finally
+            {
+                await _redisLock.ReleaseAsync(lockHandle);
+            }
         }
 
-        public async Task RemovePlayerAsync(Guid matchId, Guid playerId)
+        public async Task<МакеMoveResult> UpdateBoardAsync(Guid matchId, Guid playerId, string moveDataJson)
         {
             var match = await _cacheService.GetMatchAsync(matchId);
 
-            var player = match.Players.First(p => p.Id == playerId);
-            match.Players.Remove(player);
-
-            await _cacheService.SetMatchAsync(match.Id, match);
-        }
-
-        public async Task<MoveResultModel> UpdateBoardAsync(Guid matchId, Guid playerId, string moveDataJson)
-        {
-            var match = await _cacheService.GetMatchAsync(matchId);
-
-            if (match == null) return MoveResultModel.Invalid();
+            if (match == null) return МакеMoveResult.Invalid();
 
             var gameService = _gameFactory.GetGameService(match.GameType);
             var moveDataModel = _gameFactory.GetMakeMoveDto(match.GameType, moveDataJson);
@@ -94,17 +150,17 @@ namespace Core.Services
 
             if (!isValidMove)
             {
-                return MoveResultModel.Invalid();
+                return МакеMoveResult.Invalid();
             }
             else if (gameService.IsWinningMove(match.Board))
             {
-                return MoveResultModel.Win(playerId);
+                return МакеMoveResult.Win(playerId);
             }
 
             gameService.UpdateBoard(match.Board, moveDataModel);
             await _cacheService.SetMatchAsync(match.Id, match);
 
-            return MoveResultModel.Success(moveDataModel, match.GameType);
+            return МакеMoveResult.Success(moveDataModel, match.GameType);
         }
 
         public async Task<Guid> SwtichTurnAsync(Guid matchId, Guid currentPlayerId)
@@ -133,6 +189,71 @@ namespace Core.Services
             }
 
             return match;
+        }
+
+        public async Task<RejoinMatchResult> RejoinMatchAsync(Guid matchId, Guid playerId)
+        {
+            var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
+
+            if (lockHandle == null)
+            {
+                throw new TimeoutException("Match is busy. Please try again.");
+            }
+
+            try
+            {
+                var match = await _cacheService.GetMatchAsync(matchId);
+                var player = match.Players.First(p => p.Id == playerId);
+                var hasChanged = false;
+
+                player.Status = PlayerStatus.Active;
+
+                if (match.Players.All(p => p.Status == PlayerStatus.Active))
+                {
+                    hasChanged = true;
+                    match.Status = MatchStatus.Ongoing;
+                    _matchTimer.RemoveTimer(matchId);
+                }
+
+                await _cacheService.SetMatchAsync(match.Id, match);
+
+                return RejoinMatchResult.Success(hasChanged, match.Status);
+            }
+            finally
+            {
+                await _redisLock.ReleaseAsync(lockHandle);
+            }
+        }
+
+        public async Task<double> GetPlayerRejoinTimeAsync(Guid playerId)
+        {
+            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
+
+            if (matchId == Guid.Empty)
+            {
+                return 0;
+            }
+
+            return _matchTimer.GetActiveTimer(matchId);
+        }
+
+        //private methods
+
+        private void RemovePlayer(MatchModel match, Guid playerId)
+        {
+            var player = match.Players.First(p => p.Id == playerId);
+            match.Players.Remove(player);
+        }
+
+        private double HandlePlayerLeaveDuringMatch(MatchModel match, Guid playerId)
+        {
+            var timeLeft = _matchTimer.StartMatchCountdown(match.GameType, match.Id);
+            var player = match.Players.First(p => p.Id == playerId);
+
+            match.Status = MatchStatus.Paused;
+            player.Status = PlayerStatus.Disconnected;
+
+            return timeLeft;
         }
     }
 }

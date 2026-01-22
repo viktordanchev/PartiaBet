@@ -82,6 +82,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IRedisLockService, RedisLockService>();
         }
 
         public static void AddServices(this IServiceCollection services)

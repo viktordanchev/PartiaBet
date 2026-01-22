@@ -17,13 +17,18 @@ namespace RestAPI.Hubs
 
         public MatchHub(IMatchService matchService,
             IGameProvider gameProvider,
-            IMatchTimer matchTimer, 
+            IMatchTimer matchTimer,
             IMapper mapper)
         {
             _matchService = matchService;
             _gameProvider = gameProvider;
             _matchTimer = matchTimer;
             _mapper = mapper;
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
         }
 
         public async Task JoinGameGroup(GameType gameType)
@@ -61,15 +66,15 @@ namespace RestAPI.Hubs
         public async Task JoinMatch(Guid matchId)
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            var matchStatus = await _matchService.AddPlayerAsync(matchId, playerId);
-            var playerDto = _mapper.Map<PlayerDto>(matchStatus.AddedPlayer);
+            var result = await _matchService.AddPlayerAsync(matchId, playerId);
+            var playerDto = _mapper.Map<PlayerDto>(result.AddedPlayer);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{matchId}");
-            await Clients.Group($"{matchStatus.GameType}").SendAsync("ReceivePlayer", matchId, playerDto);
+            await Clients.Group($"{result.GameType}").SendAsync("ReceivePlayer", matchId, playerDto);
 
-            if (matchStatus.IsStarted)
+            if (result.IsStarted)
             {
-                await Clients.Group($"{matchStatus.GameType}").SendAsync("StartMatch", matchId);
+                await Clients.Group($"{result.GameType}").SendAsync("StartMatch", matchId);
             }
         }
 
@@ -77,16 +82,16 @@ namespace RestAPI.Hubs
         public async Task MakeMove(Guid matchId, string jsonData)
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            var moveResult = await _matchService.UpdateBoardAsync(matchId, playerId, jsonData);
+            var result = await _matchService.UpdateBoardAsync(matchId, playerId, jsonData);
 
-            if (!moveResult.IsValid) return;
+            if (!result.IsValid) return;
 
-            _matchTimer.PauseTurnTimer(moveResult.GameType, playerId);
+            _matchTimer.PauseTurnTimer(result.GameType, playerId);
 
             var nextPlayerId = await _matchService.SwtichTurnAsync(matchId, playerId);
-            var duration = _matchTimer.StartTurnTimer(moveResult.GameType, matchId, nextPlayerId);
+            var duration = _matchTimer.StartTurnTimer(result.GameType, matchId, nextPlayerId);
 
-            await Clients.Group($"{moveResult.GameType}").SendAsync("ReceiveMove", moveResult.MoveData, nextPlayerId, duration);
+            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.MoveData, nextPlayerId, duration);
         }
 
         [Authorize]
@@ -94,9 +99,31 @@ namespace RestAPI.Hubs
         {
             var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
 
-            await _matchService.RemovePlayerAsync(matchId, playerId);
+            var result = await _matchService.LeaveMatchAsync(matchId, playerId);
 
-            await Clients.Group($"{matchId}").SendAsync("RemovePlayer", matchId, playerId);
+            if (result.IsRemoved)
+            {
+                await Clients.Group($"{result.GameType}").SendAsync("RemovePlayer", matchId, playerId);
+            }
+            else if (!result.IsRemoved)
+            {
+                await Clients.Group($"{matchId}").SendAsync("RejoinCountdown", playerId, result.TimeLeftToRejoin);
+            }
+        }
+
+        [Authorize]
+        public async Task RejoinMatch(Guid matchId)
+        {
+            var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
+
+            var result = await _matchService.RejoinMatchAsync(matchId, playerId);
+
+            await Clients.Group($"{matchId}").SendAsync("RejoinPlayer", playerId);
+
+            if (result.HasChanged)
+            {
+                await Clients.Group($"{matchId}").SendAsync("MatchResumed", matchId);
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using Core.Enums;
 using Core.Models.Games;
 
-namespace Core.Models.Match
+namespace Core.Results.Match
 {
-    public class MoveResultModel
+    public class МакеMoveResult
     {
         public bool IsValid { get; private set; }
         public bool IsWinningMove { get; private set; }
@@ -11,13 +11,13 @@ namespace Core.Models.Match
         public GameType GameType { get; private set; }
         public BaseMoveModel? MoveData { get; private set; }
 
-        public static MoveResultModel Invalid() =>
+        public static МакеMoveResult Invalid() =>
             new() { IsValid = false };
 
-        public static MoveResultModel Success(BaseMoveModel move, GameType gameType) =>
+        public static МакеMoveResult Success(BaseMoveModel move, GameType gameType) =>
             new() { IsValid = true, MoveData = move, GameType = gameType };
 
-        public static MoveResultModel Win(Guid winnerId) =>
+        public static МакеMoveResult Win(Guid winnerId) =>
             new() { IsValid = true, IsWinningMove = true, WinnerId = winnerId };
     }
 }

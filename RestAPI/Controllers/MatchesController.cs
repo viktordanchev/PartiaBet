@@ -41,6 +41,15 @@ namespace RestAPI.Controllers
             return Ok(matchDto);
         }
 
+        [HttpPost("getMatchCountdown")]
+        [Authorize]
+        public async Task<IActionResult> GetMatchCountdown([FromBody] Guid matchId)
+        {
+            var timeLeft = await _matchService.GetPlayerRejoinTimeAsync(matchId);
+
+            return Ok(timeLeft);
+        }
+
         [HttpGet("getSkins")]
         [Authorize]
         public IActionResult GetSkins()

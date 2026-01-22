@@ -1,8 +1,6 @@
 ﻿using Core.Enums;
 using Core.Interfaces.Infrastructure;
 using Core.Models.Match;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Caching.Distributed;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -10,11 +8,11 @@ namespace Infrastructure.CacheRedis
 {
     public class CacheService : ICacheService
     {
-        private readonly StackExchange.Redis.IDatabase _redis;
+        private readonly IDatabase _redis;
 
         public CacheService(IConnectionMultiplexer mux)
         {
-            _redis = mux.GetDatabase(); 
+            _redis = mux.GetDatabase();
         }
 
         public async Task SetMatchAsync(Guid matchId, MatchModel match)
@@ -26,13 +24,10 @@ namespace Infrastructure.CacheRedis
                 json
             );
 
-            if (match.Status != MatchStatus.Finished)
-            {
-                await _redis.SetAddAsync(
-                    $"{match.GameType}",
-                    matchId.ToString()
-                );
-            }
+            await _redis.SetAddAsync(
+                $"{match.GameType}",
+                matchId.ToString()
+            );
         }
 
         public async Task<MatchModel> GetMatchAsync(Guid matchId)
@@ -58,6 +53,19 @@ namespace Infrastructure.CacheRedis
                 .ToList();
 
             return matches;
+        }
+
+        public async Task SetPlayerMatchAsync(Guid playerId, Guid matchId)
+        {
+            await _redis.StringSetAsync($"{playerId}", matchId.ToString());
+        }
+
+        public async Task<Guid> GetPlayerMatchIdAsync(Guid playerId)
+        {
+            var matchIdString = await _redis.StringGetAsync($"{playerId}");
+            if (matchIdString.IsNullOrEmpty) return Guid.Empty;
+
+            return Guid.Parse(matchIdString);
         }
     }
 }

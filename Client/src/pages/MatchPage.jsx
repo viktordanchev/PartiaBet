@@ -9,12 +9,12 @@ import { useMatchHub } from '../contexts/MatchHubContext';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-    const { newPlayer, removedPlayer, matchStarted } = useMatchHub();
+    const { connection, newPlayer, removedPlayer, matchStarted } = useMatchHub();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [match, setMatch] = useState(null);
     const [isStarted, setIsStarted] = useState(false);
-    
+
     useEffect(() => {
         if (!match) return;
 
@@ -35,6 +35,7 @@ const MatchPage = () => {
 
     useEffect(() => {
         const receiveData = async () => {
+            await new Promise(resolve => setTimeout(resolve, 3000));
             const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
             if (!data) return;
 
@@ -48,6 +49,12 @@ const MatchPage = () => {
 
         receiveData();
     }, [matchStarted]);
+
+    useEffect(() => {
+        return () => {
+            connection.invoke("LeaveMatch", matchId);
+        };
+    }, []);
 
     const renderGame = (matchData) => {
         switch (game) {

@@ -4,9 +4,9 @@ import { useTimer } from 'react-timer-hook';
 import { useMatchHub } from '../../contexts/MatchHubContext';
 import RejoinButton from './RejoinButton';
 
-function Alert() {
+function ActiveMatchAlert() {
     const [showButton, setShowButton] = useState(false);
-    const { leaverData, rejoinedPlayer } = useMatchHub();
+    const { leaverData } = useMatchHub();
 
     const time = new Date();
     time.setSeconds(time.getSeconds() + 0);
@@ -18,6 +18,14 @@ function Alert() {
     } = useTimer({
         expiryTimestamp: time
     });
+
+    useEffect(() => {
+        const receiveData = async () => {
+
+        };
+
+        receiveData();
+    }, []);
 
     useEffect(() => {
         const timeLeft = localStorage.getItem('rejoinTimeLeft');
@@ -50,8 +58,8 @@ function Alert() {
     return (
         <>
             {(minutes > 0 || seconds > 0) &&
-                <div className="card-wrapper fixed z-10 top-10 right-10 w-50 h-50 p-1 flex flex-col justify-between rounded">
-                    <div className="z-20 h-full w-full p-3 border border-gray-500 rounded bg-gray-900 flex flex-col justify-center text-center text-white font-semibold">
+                <div className="card-wrapper fixed z-10 top-10 right-10 w-50 h-50 p-1 flex flex-col justify-between rounded-xl">
+                    <div className="z-20 h-full w-full p-3 border border-gray-500 rounded-xl bg-gray-900 flex flex-col justify-center text-center text-white font-semibold">
                         <div className="text-lg">
                             Match will end after {minutes}:{seconds.toString().padStart(2, '0')} minutes!
                         </div>
@@ -62,4 +70,4 @@ function Alert() {
     );
 }
 
-export default Alert;
+export default ActiveMatchAlert;

@@ -13,7 +13,7 @@ namespace RestAPI.Services
         private readonly IHubContext<MatchHub> _hubContext;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public MatchTimer(IHubContext<MatchHub> hubContext, 
+        public MatchTimer(IHubContext<MatchHub> hubContext,
             IServiceScopeFactory serviceScopeFactory)
         {
             _timers = new ConcurrentDictionary<Guid, PlayerTimer>();
@@ -56,7 +56,7 @@ namespace RestAPI.Services
                     using var scope = _serviceScopeFactory.CreateScope();
                     var matchService = scope.ServiceProvider.GetRequiredService<IMatchService>();
 
-                   // await matchService.EndMatchAsync(matchId);
+                    // await matchService.EndMatchAsync(matchId);
                 }
                 catch (TaskCanceledException)
                 {
@@ -73,7 +73,7 @@ namespace RestAPI.Services
 
             timer.Cts.Cancel();
 
-            if(gameType == GameType.Chess)
+            if (gameType == GameType.Chess)
             {
                 timer.RemainingTime = timer.DeadlineDateTime - DateTime.UtcNow;
             }
@@ -83,9 +83,9 @@ namespace RestAPI.Services
             }
         }
 
-        public double StartLeaverTimer(GameType gameType, Guid matchId, Guid playerId)
+        public double StartMatchCountdown(GameType gameType, Guid matchId)
         {
-            if(!_timers.TryGetValue(playerId, out var timer))
+            if (!_timers.TryGetValue(matchId, out var timer))
             {
                 timer = new PlayerTimer()
                 {
@@ -94,14 +94,14 @@ namespace RestAPI.Services
                     Cts = new CancellationTokenSource()
                 };
 
-                _timers[playerId] = timer;
+                _timers[matchId] = timer;
             }
 
             _ = Task.Run(async () =>
             {
                 await Task.Delay(timer.RemainingTime, timer.Cts.Token);
 
-                _timers.TryRemove(playerId, out _);
+                _timers.TryRemove(matchId, out _);
 
                 await _hubContext.Clients.Group($"{gameType}")
                     .SendAsync("RemoveMatch", matchId);
@@ -118,9 +118,21 @@ namespace RestAPI.Services
             return timer.RemainingTime.TotalSeconds;
         }
 
-        public bool HasActiveTimer(Guid playerId)
+        public void RemoveTimer(Guid matchId)
         {
-            return _timers.ContainsKey(playerId);
+            _timers.TryRemove(matchId, out _);
+        }
+
+        public double GetActiveTimer(Guid key)
+        {
+            double timeLeft = 0;
+
+            if (_timers.TryGetValue(key, out var time))
+            {
+                timeLeft = time.RemainingTime.TotalSeconds;
+            }
+
+            return timeLeft;
         }
 
         private TimeSpan GetTurnDuration(GameType gameType)

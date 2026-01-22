@@ -8,5 +8,7 @@ namespace Core.Interfaces.Infrastructure
         Task SetMatchAsync(Guid matchId, MatchModel match);
         Task<MatchModel> GetMatchAsync(Guid matchId);
         Task<IEnumerable<MatchModel>> GetAllMatchesAsync(GameType gameType);
+        Task SetPlayerMatchAsync(Guid playerId, Guid matchId);
+        Task<Guid> GetPlayerMatchIdAsync(Guid playerId);
     }
 }
