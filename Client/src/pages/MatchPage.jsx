@@ -51,9 +51,11 @@ const MatchPage = () => {
 
     useEffect(() => {
         return () => {
-            connection.invoke("LeaveMatch", matchId);
+            if (connection) {
+                connection.invoke("LeaveMatch", matchId);
+            }
         };
-    }, []);
+    }, [connection]);
 
     const renderGame = (matchData) => {
         switch (game) {
