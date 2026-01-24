@@ -13,7 +13,6 @@ const MatchPage = () => {
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [match, setMatch] = useState(null);
-    const [isStarted, setIsStarted] = useState(false);
 
     useEffect(() => {
         if (!match) return;
@@ -26,7 +25,7 @@ const MatchPage = () => {
 
     useEffect(() => {
         if (!match) return;
-    
+
         setMatch(prev => ({
             ...prev,
             players: prev.players.filter(p => p.id !== removedPlayer.playerId)
@@ -40,10 +39,6 @@ const MatchPage = () => {
 
             setIsLoading(false);
             setMatch(data);
-
-            if (data.status === "Ongoing") {
-                setIsStarted(true);
-            }
         };
 
         receiveData();
@@ -72,16 +67,15 @@ const MatchPage = () => {
 
     return (
         <section className="flex-1 p-6 flex justify-center gap-3">
-            {isLoading ? <Loading size={'small'} /> :
+            {match?.status !== "Ongoing" && <LobbyList />}
+
+            {isLoading && match?.status === "Ongoing" ? <Loading size={'small'} /> :
                 <>
-                    {!isStarted ? <LobbyList match={match} /> :
-                        <>
-                            <div className="flex flex-col items-end gap-3">
-                                <Spectators peopleCount={0} />
-                                <p className="text-2xl font-semibold text-gray-300">Bet: {match.betAmount}$</p>
-                            </div>
-                            {renderGame(match)}
-                        </>}
+                    <div className="flex flex-col items-end gap-3">
+                        <Spectators peopleCount={0} />
+                        <p className="text-2xl font-semibold text-gray-300">Bet: {match.betAmount}$</p>
+                    </div>
+                    {renderGame(match)}
                 </>}
         </section>
     );

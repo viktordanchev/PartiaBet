@@ -16,10 +16,12 @@ export const MatchHubProvider = ({ children }) => {
 
     useEffect(() => {
         const matchId = sessionStorage.getItem('connection-matchId');
-
+        
         const createConnection = async () => {
             const newConnection = await startConnection();
             await newConnection.invoke("JoinMatchGroup", matchId);
+
+            setConnection(newConnection);
         };
 
         if (matchId) {
@@ -45,6 +47,7 @@ export const MatchHubProvider = ({ children }) => {
     };
 
     const handleStartMatch = (matchId) => {
+        console.log('da');
         setMatchStarted(matchId);
     };
 
