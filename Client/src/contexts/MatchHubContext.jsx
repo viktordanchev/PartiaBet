@@ -16,15 +16,23 @@ export const MatchHubProvider = ({ children }) => {
 
     useEffect(() => {
         const matchId = sessionStorage.getItem('connection-matchId');
+        const gameType = sessionStorage.getItem('connection-gameType');
         
         const createConnection = async () => {
             const newConnection = await startConnection();
-            await newConnection.invoke("JoinMatchGroup", matchId);
+
+            if (matchId) {
+                await newConnection.invoke("JoinMatchGroup", matchId);
+            }
+
+            if (gameType) {
+                await newConnection.invoke("JoinGameGroup", gameType);
+            }
 
             setConnection(newConnection);
         };
 
-        if (matchId) {
+        if (matchId || gameType) {
             createConnection();
         }
     }, []);
@@ -47,7 +55,6 @@ export const MatchHubProvider = ({ children }) => {
     };
 
     const handleStartMatch = (matchId) => {
-        console.log('da');
         setMatchStarted(matchId);
     };
 

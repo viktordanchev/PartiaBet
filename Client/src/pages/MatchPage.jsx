@@ -67,15 +67,31 @@ const MatchPage = () => {
 
     return (
         <section className="flex-1 p-6 flex justify-center gap-3">
-            {match?.status !== "Ongoing" && <LobbyList />}
-
-            {isLoading && match?.status === "Ongoing" ? <Loading size={'small'} /> :
+            {isLoading ? <Loading size={'small'} /> :
                 <>
-                    <div className="flex flex-col items-end gap-3">
-                        <Spectators peopleCount={0} />
-                        <p className="text-2xl font-semibold text-gray-300">Bet: {match.betAmount}$</p>
-                    </div>
-                    {renderGame(match)}
+                    {match?.status === "Created" && <LobbyList match={match} />}
+
+                    {match?.status === "Paused" && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+                            <div className="bg-gray-900 p-6 rounded-xl text-center">
+                                <p className="text-xl font-semibold text-white">
+                                    Match is paused
+                                </p>
+                                <p className="text-gray-400 mt-2">
+                                    Waiting for players to rejoin...
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {match?.status === "Ongoing" &&
+                        <>
+                            <div className="flex flex-col items-end gap-3">
+                                <Spectators peopleCount={0} />
+                                <p className="text-2xl font-semibold text-gray-300">Bet: {match.betAmount}$</p>
+                            </div>
+                            {renderGame(match)}
+                        </>}
                 </>}
         </section>
     );

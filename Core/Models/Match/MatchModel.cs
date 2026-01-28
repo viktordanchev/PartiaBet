@@ -16,11 +16,11 @@ namespace Core.Models.Match
 
         public GameType GameType { get; set; }
 
+        public DateTime? RejoinDeadline { get; set; }
+
         public int MaxPlayersCount { get; set; }
 
         public MatchStatus Status { get; set; }
-
-        public Guid CurrentTurnPlayerId { get; set; }
 
         public List<PlayerModel> Players { get; set; }
 

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import React, { useEffect } from 'react';
+import { useMatch } from 'react-router-dom';
 import { useTimer } from 'react-timer-hook';
 import { useMatchHub } from '../../contexts/MatchHubContext';
 import { useAuth } from '../../contexts/AuthContext';
 import RejoinButton from './RejoinButton';
 import useApiRequest from '../../hooks/useApiRequest';
 
-const REJOIN_KEY = 'rejoinTimeLeft';
+const COUNTDOWN_KEY = 'matchEndCountdown';
 
 const getExpiry = (seconds) => {
     const date = new Date();
@@ -18,11 +18,11 @@ function ActiveMatchAlert() {
     const { leaverData } = useMatchHub();
     const { isAuthenticated } = useAuth();
     const apiRequest = useApiRequest();
-    const [showButton, setShowButton] = useState(false);
     const { seconds, minutes, restart } = useTimer({
         expiryTimestamp: new Date(),
         autoStart: false
     });
+    const inMatch = !!useMatch('/games/:game/match/:matchId');
 
     useEffect(() => {
         const fetchRejoinTime = async () => {
@@ -31,7 +31,7 @@ function ActiveMatchAlert() {
 
             var expiry = getExpiry(response);
 
-            localStorage.setItem(REJOIN_KEY, expiry);
+            localStorage.setItem(COUNTDOWN_KEY, expiry);
             restart(expiry, true);
         };
 
@@ -41,13 +41,13 @@ function ActiveMatchAlert() {
     }, []);
 
     useEffect(() => {
-        const stored = localStorage.getItem(REJOIN_KEY);
+        const stored = localStorage.getItem(COUNTDOWN_KEY);
         if (!stored) return;
 
         const expiry = new Date(stored);
 
         if (expiry <= new Date()) {
-            localStorage.removeItem(REJOIN_KEY);
+            localStorage.removeItem(COUNTDOWN_KEY);
             return;
         }
 
@@ -59,23 +59,19 @@ function ActiveMatchAlert() {
 
         const expiry = getExpiry(leaverData.timeLeft);
 
-        localStorage.setItem(REJOIN_KEY, expiry.toISOString());
+        localStorage.setItem(COUNTDOWN_KEY, expiry.toISOString());
         restart(expiry, true);
-
-        const decoded = jwtDecode(localStorage.getItem('accessToken'));
-        setShowButton(decoded['Id'] === leaverData.playerId);
     }, [leaverData]);
 
-    if (minutes === 0 && seconds === 0) return null;
+    if ((minutes === 0 && seconds === 0) || inMatch) return null;
 
     return (
         <div className="card-wrapper fixed z-10 top-10 right-10 w-50 h-50 p-1 flex flex-col justify-between rounded-xl">
-            <div className="z-20 h-full w-full p-3 border border-gray-500 rounded-xl bg-gray-900 flex flex-col justify-center text-center text-white font-semibold">
-                <div className="text-lg">
+            <div className="z-20 h-full w-full p-3 border border-gray-500 rounded-xl bg-gray-900 flex flex-col text-center text-white font-semibold">
+                <div className="flex-1 flex items-center justify-center text-lg">
                     Match will end after {minutes}:{seconds.toString().padStart(2, '0')} minutes!
                 </div>
-
-                {showButton && <RejoinButton />}
+                <RejoinButton />
             </div>
         </div>
     );

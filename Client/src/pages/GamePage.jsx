@@ -22,6 +22,8 @@ function GamePage() {
             var newConnection = await startConnection();
             await newConnection.invoke("JoinGameGroup", gameData.gameType);
 
+            sessionStorage.setItem('connection-gameType', gameData.gameType);
+
             setIsLoading(false);
             setGameData(gameData);
         };

@@ -22,10 +22,15 @@ namespace Games.Chess
 
             InitializePieces(chessBoard, true);
             InitializePieces(chessBoard, false);
-            
+
             foreach (var player in players)
             {
                 UpdatePlayersInBoard(chessBoard, player.Id);
+
+                if (player.Id == chessBoard.WhitePlayerId)
+                {
+                    player.IsMyTurn = true;
+                }
             }
 
             return chessBoard;
@@ -68,27 +73,6 @@ namespace Games.Chess
             piece.Col = chessMove.NewCol;
         }
 
-        public void UpdatePlayersInBoard(GameBoardModel board, Guid playerId)
-        {
-            var chessBoard = board as ChessBoardModel;
-
-            if (chessBoard.WhitePlayerId != Guid.Empty)
-            {
-                chessBoard.BlackPlayerId = playerId;
-            }
-            else if (chessBoard.BlackPlayerId != Guid.Empty)
-            {
-                chessBoard.WhitePlayerId = playerId;
-            }
-            else 
-            {
-                if (new Random().Next(0, 2) == 0)
-                {
-                    chessBoard.WhitePlayerId = playerId;
-                }
-            }
-        }
-
         public bool IsValidMove(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
@@ -125,6 +109,8 @@ namespace Games.Chess
 
             return isValidMove;
         }
+
+        //private methods
 
         private bool IsValidKingMove(ChessBoardModel board, ChessMoveDto move)
         {
@@ -228,6 +214,37 @@ namespace Games.Chess
             }
 
             return isValidMove;
+        }
+
+        private void UpdatePlayersInBoard(ChessBoardModel board, Guid playerId)
+        {
+            if (board.WhitePlayerId == Guid.Empty && board.BlackPlayerId == Guid.Empty)
+            {
+                bool isWhite = Random.Shared.Next(0, 2) == 0;
+
+                if (isWhite)
+                {
+                    board.WhitePlayerId = playerId;
+                }
+                else
+                {
+                    board.BlackPlayerId = playerId;
+                }
+
+                return;
+            }
+
+            if (board.WhitePlayerId != Guid.Empty && board.BlackPlayerId == Guid.Empty)
+            {
+                board.BlackPlayerId = playerId;
+                return;
+            }
+
+            if (board.BlackPlayerId != Guid.Empty && board.WhitePlayerId == Guid.Empty)
+            {
+                board.WhitePlayerId = playerId;
+                return;
+            }
         }
 
         private void InitializePieces(ChessBoardModel board, bool isWhite)

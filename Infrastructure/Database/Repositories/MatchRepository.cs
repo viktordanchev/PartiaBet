@@ -24,7 +24,7 @@ namespace Infrastructure.Database.Repositories
             return new PlayerModel
             {
                 Id = playerEntity.Id,
-                ImageUrl = playerEntity.ImageUrl,
+                ProfileImageUrl = playerEntity.ImageUrl,
                 Username = playerEntity.Username,
                 Rating = 1000
             };

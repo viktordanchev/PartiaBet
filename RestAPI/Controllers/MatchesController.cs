@@ -48,7 +48,7 @@ namespace RestAPI.Controllers
         {
             var playerId = User.FindFirstValue("Id");
 
-            var timeLeft = await _matchService.GetPlayerRejoinTimeAsync(Guid.Parse(playerId));
+            var timeLeft = await _matchService.GetMatchAutoEndTimeRemainingAsync(Guid.Parse(playerId));
 
             return Ok(timeLeft);
         }

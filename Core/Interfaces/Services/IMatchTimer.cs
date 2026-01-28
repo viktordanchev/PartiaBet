@@ -1,13 +1,12 @@
 ﻿using Core.Enums;
+using Core.Models.Match;
 
 namespace Core.Interfaces.Services
 {
     public interface IMatchTimer
     {
-        double StartTurnTimer(GameType gameType, Guid matchId, Guid playerId);
-        double StartMatchCountdown(GameType gameType, Guid matchId);
-        void PauseTurnTimer(GameType gameType, Guid playerId);
-        double GetActiveTimer(Guid key);
-        void RemoveTimer(Guid matchId);
+        void StartTurnTimer(PlayerModel player);
+        void StartMatchCountdown(GameType gameType, Guid matchId, TimeSpan countdown);
+        void RemoveTimer(Guid key);
     }
 }

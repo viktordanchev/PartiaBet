@@ -49,7 +49,7 @@ namespace Core.Services
             return match;
         }
 
-        public async Task<AddPlayerResult> AddPlayerAsync(Guid matchId, Guid playerId)
+        public async Task<JoinMatchResult> JoinMatchAsync(Guid matchId, Guid playerId)
         {
             var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
 
@@ -61,39 +61,26 @@ namespace Core.Services
             try
             {
                 var match = await _cacheService.GetMatchAsync(matchId);
-
-                if (match.Status == MatchStatus.Ongoing ||
-                    match.Players.Any(p => p.Id == playerId))
-                {
-                    throw new InvalidOperationException("Cannot join an ongoing match.");
-                }
-
-                var gameService = _gameFactory.GetGameService(match.GameType);
                 var maxPlayersCount = _gameProvider.GetMaxPlayersCount(match.GameType);
 
-                if (match.Players.Count >= maxPlayersCount)
+                if (match.Status == MatchStatus.Ongoing ||
+                    match.Players.Any(p => p.Id == playerId) ||
+                    match.Players.Count >= maxPlayersCount)
                 {
-                    throw new InvalidOperationException("Match is full.");
+                    return JoinMatchResult.Invalid();
                 }
 
-                var player = await _matchRepository.GetPlayerDataAsync(playerId);
-                player.TurnOrder = match.Players.Count + 1;
-                player.Status = PlayerStatus.Active;
-                player.TeamNumber = 1;
-
-                match.Players.Add(player);
-                await _cacheService.SetPlayerMatchAsync(playerId, matchId);
+                var addedPlayer = await AddPlayerAsync(match, playerId);
 
                 if (match.Players.Count == maxPlayersCount)
                 {
-                    match.Status = MatchStatus.Ongoing;
-                    match.Board = gameService.CreateGameBoard(match.Players);
+                    StartMatch(match);
                 }
 
                 await _cacheService.SetMatchAsync(match.Id, match);
 
-                return AddPlayerResult.Success(
-                    player,
+                return JoinMatchResult.Success(
+                    addedPlayer,
                     match.GameType,
                     match.Status == MatchStatus.Ongoing);
             }
@@ -138,40 +125,6 @@ namespace Core.Services
             }
         }
 
-        public async Task<МакеMoveResult> UpdateBoardAsync(Guid matchId, Guid playerId, string moveDataJson)
-        {
-            var match = await _cacheService.GetMatchAsync(matchId);
-
-            if (match == null) return МакеMoveResult.Invalid();
-
-            var gameService = _gameFactory.GetGameService(match.GameType);
-            var moveDataModel = _gameFactory.GetMakeMoveDto(match.GameType, moveDataJson);
-            var isValidMove = gameService.IsValidMove(match.Board, moveDataModel);
-
-            if (!isValidMove)
-            {
-                return МакеMoveResult.Invalid();
-            }
-            else if (gameService.IsWinningMove(match.Board))
-            {
-                return МакеMoveResult.Win(playerId);
-            }
-
-            gameService.UpdateBoard(match.Board, moveDataModel);
-            await _cacheService.SetMatchAsync(match.Id, match);
-
-            return МакеMoveResult.Success(moveDataModel, match.GameType);
-        }
-
-        public async Task<Guid> SwtichTurnAsync(Guid matchId, Guid currentPlayerId)
-        {
-            var match = await _cacheService.GetMatchAsync(matchId);
-            var gameService = _gameFactory.GetGameService(GameType.Chess);
-            var nextPlayerId = gameService.SwitchTurn(currentPlayerId, match.Players);
-
-            return nextPlayerId;
-        }
-
         public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType)
         {
             var matches = await _cacheService.GetAllMatchesAsync(gameType);
@@ -187,6 +140,7 @@ namespace Core.Services
             {
                 throw new ApiException(statusCode: StatusCodes.Status404NotFound);
             }
+
 
             return match;
         }
@@ -211,7 +165,10 @@ namespace Core.Services
                 if (match.Players.All(p => p.Status == PlayerStatus.Active))
                 {
                     hasChanged = true;
+
                     match.Status = MatchStatus.Ongoing;
+                    match.RejoinDeadline = null;
+
                     _matchTimer.RemoveTimer(matchId);
                 }
 
@@ -225,7 +182,7 @@ namespace Core.Services
             }
         }
 
-        public async Task<double> GetPlayerRejoinTimeAsync(Guid playerId)
+        public async Task<double> GetMatchAutoEndTimeRemainingAsync(Guid playerId)
         {
             var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
 
@@ -234,10 +191,90 @@ namespace Core.Services
                 return 0;
             }
 
-            return _matchTimer.GetActiveTimer(matchId);
+            var match = await _cacheService.GetMatchAsync(matchId);
+            var timeLeft = match.RejoinDeadline - DateTime.UtcNow;
+
+            return timeLeft.Value.TotalSeconds;
+        }
+
+        public async Task<МакеMoveResult> MakeMoveAsync(Guid matchId, Guid playerId, string moveDataJson)
+        {
+            var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
+
+            if (lockHandle == null)
+            {
+                throw new TimeoutException("Match is busy. Please try again.");
+            }
+
+            try
+            {
+                var match = await _cacheService.GetMatchAsync(matchId);
+                var matchResult = UpdateBoardAsync(match, playerId, moveDataJson);
+
+                if (matchResult.IsValid)
+                {
+                    _matchTimer.RemoveTimer(playerId);
+                    var player = match.Players.First(p => p.Id == playerId);
+                    player.Timer.TimeLeft = player.Timer.TurnExpiresAt - DateTime.UtcNow;
+
+                    var timeLeft = player.Timer.TimeLeft;
+                    if (match.GameType != GameType.Chess) 
+                    {
+                        timeLeft = TimeSpan.FromMinutes(1);
+                    }
+
+                    var nextId = SwtichTurnAsync(match, playerId);
+                    var nextPlayer = match.Players.First(p => p.Id == nextId);
+                    nextPlayer.Timer.TurnExpiresAt = DateTime.UtcNow.AddMinutes(timeLeft.TotalSeconds);
+
+                    _matchTimer.StartTurnTimer(nextPlayer);
+
+                    await _cacheService.SetMatchAsync(match.Id, match);
+                }
+
+                return matchResult;
+            }
+            finally
+            {
+                await _redisLock.ReleaseAsync(lockHandle);
+            }
         }
 
         //private methods
+
+        private async Task<PlayerModel> AddPlayerAsync(MatchModel match, Guid playerId)
+        {
+            var player = await _matchRepository.GetPlayerDataAsync(playerId);
+
+            player.TurnOrder = match.Players.Count + 1;
+            player.Status = PlayerStatus.Active;
+            player.TeamNumber = 1;
+
+            if (match.GameType == GameType.Chess)
+            {
+                player.Timer.TimeLeft = TimeSpan.FromMinutes(10);
+            }
+            else
+            {
+                player.Timer.TimeLeft = TimeSpan.FromMinutes(1);
+            }
+
+            match.Players.Add(player);
+            await _cacheService.SetPlayerMatchAsync(playerId, match.Id);
+
+            return player;
+        }
+
+        private void StartMatch(MatchModel match)
+        {
+            match.Status = MatchStatus.Ongoing;
+
+            var gameService = _gameFactory.GetGameService(match.GameType);
+            match.Board = gameService.CreateGameBoard(match.Players);
+
+            var playerInTurn = match.Players.First(p => p.IsMyTurn);
+            _matchTimer.StartTurnTimer(playerInTurn);
+        }
 
         private void RemovePlayer(MatchModel match, Guid playerId)
         {
@@ -247,13 +284,54 @@ namespace Core.Services
 
         private double HandlePlayerLeaveDuringMatch(MatchModel match, Guid playerId)
         {
-            var timeLeft = _matchTimer.StartMatchCountdown(match.GameType, match.Id);
+            var rejoinDeadline = DateTime.UtcNow.AddMinutes(5);
+            var rejoinWindow = TimeSpan.FromMinutes(5);
+
+            match.RejoinDeadline = rejoinDeadline;
+
+            _matchTimer.StartMatchCountdown(
+                match.GameType,
+                match.Id,
+                rejoinWindow
+            );
+
             var player = match.Players.First(p => p.Id == playerId);
 
             match.Status = MatchStatus.Paused;
             player.Status = PlayerStatus.Disconnected;
 
-            return timeLeft;
+            return rejoinWindow.TotalSeconds;
+        }
+
+        private МакеMoveResult UpdateBoardAsync(MatchModel match, Guid playerId, string moveDataJson)
+        {
+            var gameService = _gameFactory.GetGameService(match.GameType);
+            var moveDataModel = _gameFactory.GetMakeMoveDto(match.GameType, moveDataJson);
+            var isValidMove = gameService.IsValidMove(match.Board, moveDataModel);
+
+            if (!isValidMove)
+            {
+                return МакеMoveResult.Invalid();
+            }
+            else if (gameService.IsWinningMove(match.Board))
+            {
+                return МакеMoveResult.Win(playerId);
+            }
+
+            gameService.UpdateBoard(match.Board, moveDataModel);
+
+            return МакеMoveResult.Success(moveDataModel, match.GameType);
+        }
+
+        private Guid SwtichTurnAsync(MatchModel match, Guid currentPlayerId)
+        {
+            var gameService = _gameFactory.GetGameService(GameType.Chess);
+            var nextPlayerId = gameService.SwitchTurn(currentPlayerId, match.Players);
+
+            var player = match.Players.First(p => p.Id == nextPlayerId);
+            player.IsMyTurn = true;
+
+            return nextPlayerId;
         }
     }
 }

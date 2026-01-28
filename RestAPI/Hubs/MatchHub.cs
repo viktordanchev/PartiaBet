@@ -12,17 +12,14 @@ namespace RestAPI.Hubs
     {
         private readonly IMatchService _matchService;
         private readonly IGameProvider _gameProvider;
-        private readonly IMatchTimer _matchTimer;
         private readonly IMapper _mapper;
 
         public MatchHub(IMatchService matchService,
             IGameProvider gameProvider,
-            IMatchTimer matchTimer,
             IMapper mapper)
         {
             _matchService = matchService;
             _gameProvider = gameProvider;
-            _matchTimer = matchTimer;
             _mapper = mapper;
         }
 
@@ -45,7 +42,7 @@ namespace RestAPI.Hubs
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
 
             var match = await _matchService.CreateMatchAsync(data.GameType, data.BetAmount);
-            var matchStatus = await _matchService.AddPlayerAsync(match.Id, playerId);
+            var matchStatus = await _matchService.JoinMatchAsync(match.Id, playerId);
 
             var matchDto = _mapper.Map<MatchDto>(match);
             var playerDto = _mapper.Map<PlayerDto>(matchStatus.AddedPlayer);
@@ -61,7 +58,10 @@ namespace RestAPI.Hubs
         public async Task JoinMatch(Guid matchId)
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            var result = await _matchService.AddPlayerAsync(matchId, playerId);
+            var result = await _matchService.JoinMatchAsync(matchId, playerId);
+
+            if (!result.IsValid) return;
+
             var playerDto = _mapper.Map<PlayerDto>(result.AddedPlayer);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{matchId}");
@@ -77,16 +77,11 @@ namespace RestAPI.Hubs
         public async Task MakeMove(Guid matchId, string jsonData)
         {
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            var result = await _matchService.UpdateBoardAsync(matchId, playerId, jsonData);
+            var result = await _matchService.MakeMoveAsync(matchId, playerId, jsonData);
 
             if (!result.IsValid) return;
 
-            _matchTimer.PauseTurnTimer(result.GameType, playerId);
-
-            var nextPlayerId = await _matchService.SwtichTurnAsync(matchId, playerId);
-            var duration = _matchTimer.StartTurnTimer(result.GameType, matchId, nextPlayerId);
-
-            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.MoveData, nextPlayerId, duration);
+            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.MoveData, result.NextId, result.Duration);
         }
 
         [Authorize]

@@ -9,5 +9,9 @@
         public string Username { get; set; } = string.Empty;
 
         public int Rating { get; set; }
+
+        public double TurnTimeLeft { get; set; }
+
+        public bool IsMyTurn { get; set; }
     }
 }

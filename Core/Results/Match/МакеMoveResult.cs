@@ -8,6 +8,8 @@ namespace Core.Results.Match
         public bool IsValid { get; private set; }
         public bool IsWinningMove { get; private set; }
         public Guid? WinnerId { get; private set; }
+        public Guid NextId { get; set; }
+        public double Duration { get; set; }
         public GameType GameType { get; private set; }
         public BaseMoveModel? MoveData { get; private set; }
 

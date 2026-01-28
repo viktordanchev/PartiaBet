@@ -2,8 +2,8 @@
 {
     public class PlayerTimer
     {
-        public DateTime DeadlineDateTime { get; set; }
-        public TimeSpan RemainingTime { get; set; }
-        public CancellationTokenSource? Cts { get; set; }
+        public DateTime TurnExpiresAt { get; set; }
+
+        public TimeSpan TimeLeft { get; set; }
     }
 }

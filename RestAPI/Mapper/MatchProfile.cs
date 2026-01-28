@@ -9,7 +9,11 @@ namespace RestAPI.Mapper
         public MatchProfile()
         {
             CreateMap<MatchModel, MatchDto>();
-            CreateMap<PlayerModel, PlayerDto>();
+            CreateMap<PlayerModel, PlayerDto>()
+                .ForMember(
+                    dest => dest.TurnTimeLeft,
+                    opt => opt.MapFrom(src => src.Timer.TimeLeft.TotalSeconds)
+                );
         }
     }
 }
