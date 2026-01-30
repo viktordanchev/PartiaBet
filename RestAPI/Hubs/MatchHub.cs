@@ -60,7 +60,7 @@ namespace RestAPI.Hubs
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
             var result = await _matchService.JoinMatchAsync(matchId, playerId);
 
-            if (!result.IsValid) return;
+            if (result.IsInvalid) return;
 
             var playerDto = _mapper.Map<PlayerDto>(result.AddedPlayer);
 

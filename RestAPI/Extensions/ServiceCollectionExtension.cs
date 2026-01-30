@@ -20,7 +20,6 @@ using RestAPI.Mapper;
 using RestAPI.Services;
 using StackExchange.Redis;
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace RestAPI.Extensions
@@ -96,6 +95,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IMatchService, MatchService>();
             services.AddScoped<IGameFactory, GameFactory>();
+            services.AddScoped<IMatchTurnService, MatchTurnService>();
 
             services.AddSingleton<IGameProvider, GameProvider>();
             services.AddSingleton<IMatchTimer, MatchTimer>();

@@ -16,7 +16,7 @@ const MatchPage = () => {
 
     useEffect(() => {
         if (!match) return;
-
+        
         setMatch(prev => ({
             ...prev,
             players: [...prev.players, newPlayer.player]

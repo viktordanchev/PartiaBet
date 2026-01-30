@@ -11,7 +11,7 @@ import { useMatchHub } from '../contexts/MatchHubContext';
 function GamePage() {
     const { game } = useParams();
     const apiRequest = useApiRequest();
-    const { startConnection } = useMatchHub();
+    const { ensureConnection } = useMatchHub();
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState(null);
 
@@ -19,8 +19,8 @@ function GamePage() {
         const receiveData = async () => {
             const gameData = await apiRequest('games', 'getGameData', 'POST', false, false, game);
 
-            var newConnection = await startConnection();
-            await newConnection.invoke("JoinGameGroup", gameData.gameType);
+            const conn = await ensureConnection();
+            await conn.invoke("JoinGameGroup", gameData.gameType);
 
             sessionStorage.setItem('connection-gameType', gameData.gameType);
 

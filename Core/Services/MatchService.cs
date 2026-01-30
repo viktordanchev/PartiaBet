@@ -17,6 +17,7 @@ namespace Core.Services
         private IGameFactory _gameFactory;
         private IGameProvider _gameProvider;
         private IMatchTimer _matchTimer;
+        private IMatchTurnService _matchTurnService;
 
         public MatchService(
             IMatchRepository matchRepository,
@@ -24,7 +25,8 @@ namespace Core.Services
             ICacheService cacheService,
             IGameFactory gameFactory,
             IGameProvider gameProvider,
-            IMatchTimer matchTimer)
+            IMatchTimer matchTimer,
+            IMatchTurnService matchTurnService)
         {
             _matchRepository = matchRepository;
             _redisLock = redisLock;
@@ -32,6 +34,7 @@ namespace Core.Services
             _gameFactory = gameFactory;
             _gameProvider = gameProvider;
             _matchTimer = matchTimer;
+            _matchTurnService = matchTurnService;
         }
 
         public async Task<MatchModel> CreateMatchAsync(GameType gameType, decimal betAmount)
@@ -192,9 +195,14 @@ namespace Core.Services
             }
 
             var match = await _cacheService.GetMatchAsync(matchId);
-            var timeLeft = match.RejoinDeadline - DateTime.UtcNow;
+            double timeLeft = 0;
 
-            return timeLeft.Value.TotalSeconds;
+            if (match.RejoinDeadline != null)
+            {
+                timeLeft = (match.RejoinDeadline.Value - DateTime.UtcNow).TotalSeconds;
+            }
+
+            return timeLeft;
         }
 
         public async Task<МакеMoveResult> MakeMoveAsync(Guid matchId, Guid playerId, string moveDataJson)
@@ -213,21 +221,12 @@ namespace Core.Services
 
                 if (matchResult.IsValid)
                 {
-                    _matchTimer.RemoveTimer(playerId);
                     var player = match.Players.First(p => p.Id == playerId);
-                    player.Timer.TimeLeft = player.Timer.TurnExpiresAt - DateTime.UtcNow;
-
-                    var timeLeft = player.Timer.TimeLeft;
-                    if (match.GameType != GameType.Chess) 
-                    {
-                        timeLeft = TimeSpan.FromMinutes(1);
-                    }
+                    _matchTurnService.EndTurn(match, player);
 
                     var nextId = SwtichTurnAsync(match, playerId);
                     var nextPlayer = match.Players.First(p => p.Id == nextId);
-                    nextPlayer.Timer.TurnExpiresAt = DateTime.UtcNow.AddMinutes(timeLeft.TotalSeconds);
-
-                    _matchTimer.StartTurnTimer(nextPlayer);
+                    _matchTurnService.StartTurn(match, nextPlayer);
 
                     await _cacheService.SetMatchAsync(match.Id, match);
                 }
@@ -250,15 +249,6 @@ namespace Core.Services
             player.Status = PlayerStatus.Active;
             player.TeamNumber = 1;
 
-            if (match.GameType == GameType.Chess)
-            {
-                player.Timer.TimeLeft = TimeSpan.FromMinutes(10);
-            }
-            else
-            {
-                player.Timer.TimeLeft = TimeSpan.FromMinutes(1);
-            }
-
             match.Players.Add(player);
             await _cacheService.SetPlayerMatchAsync(playerId, match.Id);
 
@@ -273,7 +263,7 @@ namespace Core.Services
             match.Board = gameService.CreateGameBoard(match.Players);
 
             var playerInTurn = match.Players.First(p => p.IsMyTurn);
-            _matchTimer.StartTurnTimer(playerInTurn);
+            _matchTurnService.StartTurn(match, playerInTurn);
         }
 
         private void RemovePlayer(MatchModel match, Guid playerId)

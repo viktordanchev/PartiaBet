@@ -13,7 +13,7 @@ export const MatchHubProvider = ({ children }) => {
     const [rejoinedPlayer, setRejoinedPlayer] = useState('');
     const [matchStarted, setMatchStarted] = useState('');
     const [resumeMatch, setResumeMatch] = useState('');
-
+    
     useEffect(() => {
         const matchId = sessionStorage.getItem('connection-matchId');
         const gameType = sessionStorage.getItem('connection-gameType');
@@ -106,8 +106,13 @@ export const MatchHubProvider = ({ children }) => {
         return newConnection;
     };
 
+    const ensureConnection = async () => {
+        if (connection) return connection;
+        return await startConnection();
+    };
+
     return (
-        <MatchHubContext.Provider value={{ connection, startConnection, stopConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted, resumeMatch }}>
+        <MatchHubContext.Provider value={{ connection, ensureConnection, stopConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted, resumeMatch }}>
             {children}
         </MatchHubContext.Provider>
     );
