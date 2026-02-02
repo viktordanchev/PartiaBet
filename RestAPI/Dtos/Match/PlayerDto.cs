@@ -12,6 +12,6 @@
 
         public double TurnTimeLeft { get; set; }
 
-        public bool IsMyTurn { get; set; }
+        public bool IsOnTurn { get; set; }
     }
 }

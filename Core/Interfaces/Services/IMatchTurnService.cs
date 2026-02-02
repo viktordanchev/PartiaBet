@@ -1,4 +1,5 @@
-﻿using Core.Models.Match;
+﻿using Core.Enums;
+using Core.Models.Match;
 
 namespace Core.Interfaces.Services
 {
@@ -6,5 +7,6 @@ namespace Core.Interfaces.Services
     {
         void StartTurn(MatchModel match, PlayerModel player);
         void EndTurn(MatchModel match, PlayerModel player);
+        void SetTimeLeft(GameType gameType, PlayerModel player);
     }
 }

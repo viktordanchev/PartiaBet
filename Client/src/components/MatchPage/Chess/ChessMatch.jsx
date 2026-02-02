@@ -1,27 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Board from './Board';
 import PlayerCard from '../PlayerCard';
 import TurnTimer from './TurnTimer';
+import { useMatchHub } from '../../../contexts/MatchHubContext';
 
 const ChessMatch = ({ data }) => {
+    console.log(data);
+    const { newMove } = useMatchHub();
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const userId = decodedToken['Id'];
-    const loggedPlayer = data.players.find(p => p.id === userId);
-    const opponent = data.players.find(p => p.id !== userId);
-    const playerInTurn = data.players.find(p => p.isMyTurn).id;
+    const [opponent, setOpponent] = useState(data.players.find(p => p.id !== userId));
+    const [loggedPlayer, setLoggedPlayer] = useState(data.players.find(p => p.id === userId));
+    const [board, setBoard] = useState(data.board);
+    const [playerInTurn, setPlayerInTurn] = useState(data.players.find(p => p.isOnTurn)?.id);
+    
+    useEffect(() => {
+        if (!newMove) return;
+
+        const { moveData, newPlayerId, duration } = newMove;
+        const { oldRow, oldCol, newRow, newCol } = moveData;
+
+        setBoard(prev => ({
+            ...prev,
+            pieces: prev.pieces.map(p =>
+                p.row === oldRow && p.col === oldCol
+                    ? { ...p, row: newRow, col: newCol }
+                    : p
+            )
+        }));
+
+        if (newPlayerId === loggedPlayer.id) {
+            setLoggedPlayer(prev => ({
+                ...prev,
+                turnTimeLeft: duration
+            }));
+        } else {
+            setOpponent(prev => ({
+                ...prev,
+                turnTimeLeft: duration
+            }));
+        }
+
+        setPlayerInTurn(newPlayerId);
+    }, [newMove]);
 
     return (
         <section className="flex gap-3">
-            <Board data={data.board} />
+            <Board data={board} />
             <article className="flex flex-col justify-between text-gray-300">
                 <div className="space-y-3">
                     <PlayerCard data={opponent} />
-                    <TurnTimer timeLeft={opponent.turnTimeLeft} start={playerInTurn === opponent.id} />
+                    <TurnTimer
+                        timeLeft={opponent.turnTimeLeft}
+                        isActive={playerInTurn === opponent.id}
+                    />
                 </div>
                 <div className="space-y-3">
                     <PlayerCard data={loggedPlayer} />
-                    <TurnTimer timeLeft={loggedPlayer.turnTimeLeft} start={playerInTurn === loggedPlayer.id} />
+                    <TurnTimer
+                        timeLeft={loggedPlayer.turnTimeLeft}
+                        isActive={playerInTurn === loggedPlayer.id}
+                    />
                 </div>
             </article>
         </section>

@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import * as signalR from "@microsoft/signalr";
+import { useAuth } from './AuthContext';
 
 const MatchHubContext = createContext();
 
 export const MatchHubProvider = ({ children }) => {
+    const { isAuthenticated } = useAuth();
     const [connection, setConnection] = useState(null);
     const [newPlayer, setNewPlayer] = useState(null);
     const [newMove, setNewMove] = useState(null);
@@ -35,7 +37,7 @@ export const MatchHubProvider = ({ children }) => {
         if (matchId || gameType) {
             createConnection();
         }
-    }, []);
+    }, [isAuthenticated]);
 
     useEffect(() => {
         if (!connection) return;
@@ -91,7 +93,7 @@ export const MatchHubProvider = ({ children }) => {
      
     const startConnection = async () => {
         await stopConnection();
-
+        
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl('https://localhost:7182/match', {
                 accessTokenFactory: () => localStorage.getItem('accessToken')

@@ -6,9 +6,9 @@ namespace Core.Services
 {
     public class MatchTurnService : IMatchTurnService
     {
+        private const int FixedTurnMinutes = 1;
+        private const int ChessTurnMinutes = 10;
         private readonly IMatchTimer _matchTimer;
-        private const int FixedTurnSeconds = 60;
-        private const int ChessInitialMinutes = 10;
 
         public MatchTurnService(IMatchTimer matchTimer)
         {
@@ -43,30 +43,35 @@ namespace Core.Services
             _matchTimer.RemoveTimer(player.Id);
         }
 
+        public void SetTimeLeft(GameType gameType, PlayerModel player)
+        {
+            var timeLeft = TimeSpan.Zero;
+
+            if (gameType == GameType.Chess)
+            {
+                player.Timer.TimeLeft = TimeSpan.FromMinutes(ChessTurnMinutes);
+            }
+            else
+            {
+                player.Timer.TimeLeft = TimeSpan.FromMinutes(FixedTurnMinutes);
+            }
+        }
+
         //private methods
 
         private void StartFixedTurn(PlayerModel player)
         {
-            player.Timer = new PlayerTimer
-            {
-                TurnExpiresAt = DateTime.UtcNow.AddSeconds(FixedTurnSeconds),
-                TimeLeft = TimeSpan.Zero
-            };
+            player.Timer.TurnExpiresAt = DateTime.UtcNow.AddMinutes(FixedTurnMinutes);
         }
 
         private void StartChessTurn(PlayerModel player)
         {
-            player.Timer ??= new PlayerTimer
-            {
-                TimeLeft = TimeSpan.FromMinutes(ChessInitialMinutes)
-            };
-
             player.Timer.TurnExpiresAt = DateTime.UtcNow.Add(player.Timer.TimeLeft);
         }
 
         private void EndChessTurn(PlayerModel player)
         {
-            if (player.Timer == null)
+            if (player.Timer.TimeLeft == TimeSpan.Zero)
                 return;
 
             var remaining = player.Timer.TurnExpiresAt - DateTime.UtcNow;

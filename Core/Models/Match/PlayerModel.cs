@@ -19,7 +19,7 @@ namespace Core.Models.Match
 
         public PlayerTimer Timer { get; set; }
 
-        public bool IsMyTurn { get; set; }
+        public bool IsOnTurn { get; set; }
 
         public PlayerStatus Status { get; set; }
 

@@ -29,7 +29,7 @@ namespace Games.Chess
 
                 if (player.Id == chessBoard.WhitePlayerId)
                 {
-                    player.IsMyTurn = true;
+                    player.IsOnTurn = true;
                 }
             }
 

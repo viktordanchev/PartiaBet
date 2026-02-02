@@ -221,12 +221,10 @@ namespace Core.Services
 
                 if (matchResult.IsValid)
                 {
-                    var player = match.Players.First(p => p.Id == playerId);
-                    _matchTurnService.EndTurn(match, player);
+                    var (nextPlayer, timeLeft) = SwtichTurnAsync(match, playerId);
 
-                    var nextId = SwtichTurnAsync(match, playerId);
-                    var nextPlayer = match.Players.First(p => p.Id == nextId);
-                    _matchTurnService.StartTurn(match, nextPlayer);
+                    matchResult.NextId = nextPlayer;
+                    matchResult.Duration = timeLeft;
 
                     await _cacheService.SetMatchAsync(match.Id, match);
                 }
@@ -245,6 +243,7 @@ namespace Core.Services
         {
             var player = await _matchRepository.GetPlayerDataAsync(playerId);
 
+            _matchTurnService.SetTimeLeft(match.GameType, player);
             player.TurnOrder = match.Players.Count + 1;
             player.Status = PlayerStatus.Active;
             player.TeamNumber = 1;
@@ -262,7 +261,7 @@ namespace Core.Services
             var gameService = _gameFactory.GetGameService(match.GameType);
             match.Board = gameService.CreateGameBoard(match.Players);
 
-            var playerInTurn = match.Players.First(p => p.IsMyTurn);
+            var playerInTurn = match.Players.First(p => p.IsOnTurn);
             _matchTurnService.StartTurn(match, playerInTurn);
         }
 
@@ -313,15 +312,21 @@ namespace Core.Services
             return МакеMoveResult.Success(moveDataModel, match.GameType);
         }
 
-        private Guid SwtichTurnAsync(MatchModel match, Guid currentPlayerId)
+        private (Guid, double) SwtichTurnAsync(MatchModel match, Guid currentPlayerId)
         {
             var gameService = _gameFactory.GetGameService(GameType.Chess);
+
+            var currPlayer = match.Players.First(p => p.Id == currentPlayerId);
+            _matchTurnService.EndTurn(match, currPlayer);
+
             var nextPlayerId = gameService.SwitchTurn(currentPlayerId, match.Players);
 
-            var player = match.Players.First(p => p.Id == nextPlayerId);
-            player.IsMyTurn = true;
+            var nextPlayer = match.Players.First(p => p.Id == nextPlayerId);
+            _matchTurnService.StartTurn(match, nextPlayer);
 
-            return nextPlayerId;
+            nextPlayer.IsOnTurn = true;
+
+            return (nextPlayerId, nextPlayer.Timer.TimeLeft.TotalSeconds);
         }
     }
 }

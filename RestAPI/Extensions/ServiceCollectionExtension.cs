@@ -149,7 +149,9 @@ namespace RestAPI.Extensions
         {
             services.AddAutoMapper(cfg => { },
                 typeof(UserProfile),
-                typeof(GameProfile));
+                typeof(GameProfile),
+                typeof(MatchProfile),
+                typeof(PlayerProfile));
         }
     }
 }

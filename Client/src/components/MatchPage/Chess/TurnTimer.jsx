@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useTimer } from 'react-timer-hook';
-import { useMatchHub } from '../../../contexts/MatchHubContext';
 
 const getExpiry = (seconds) => {
     const date = new Date();
@@ -8,18 +7,19 @@ const getExpiry = (seconds) => {
     return date;
 };
 
-const TurnTumer = ({ timeLeft, start }) => {
-    const { seconds, minutes, restart } = useTimer({
+const TurnTimer = ({ timeLeft, isActive }) => {
+    const { seconds, minutes, restart, pause } = useTimer({
         expiryTimestamp: getExpiry(timeLeft),
-        autoStart: start
+        autoStart: false
     });
-    const { newMove } = useMatchHub();
 
     useEffect(() => {
-        if (!newMove) return;
-
-        restart(getExpiry(newMove.duration), true);
-    }, [newMove]);
+        if (isActive) {
+            restart(getExpiry(timeLeft), true);
+        } else {
+            pause();
+        }
+    }, [isActive, timeLeft]);
 
     return (
         <article className="h-fit w-fit bg-gray-300 px-2 text-2xl text-center font-semibold rounded shadow-xl shadow-gray-900">
@@ -31,4 +31,4 @@ const TurnTumer = ({ timeLeft, start }) => {
     );
 };
 
-export default TurnTumer;
+export default TurnTimer;

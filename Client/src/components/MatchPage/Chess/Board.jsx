@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import Square from './Square';
@@ -8,22 +8,10 @@ import { useMatchHub } from '../../../contexts/MatchHubContext';
 const Board = ({ data }) => {
     const { matchId } = useParams();
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
-    const { connection, newMove } = useMatchHub();
-    const [pieces, setPieces] = useState(data.pieces);
+    const { connection } = useMatchHub();
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [validSquares, setValidSquares] = useState([]);
     const isHostWhite = data.whitePlayerId === decodedToken['Id'];
-    
-    useEffect(() => {
-        if (!newMove) return;
-        
-        const { oldRow, oldCol, newRow, newCol } = newMove.moveData;
-
-        setPieces(prev =>
-            prev.map(p => p.row === oldRow && p.col === oldCol ?
-                { ...p, row: newRow, col: newCol } : p)
-        );
-    }, [newMove]);
 
     const isClickable = (square) => {
         if (!square.type) return false;
@@ -50,13 +38,6 @@ const Board = ({ data }) => {
             validSquares.some(s => s.row === piece.row && s.col === piece.col);
 
         if (isMove) {
-            setPieces(prev =>
-                prev.map(p =>
-                    p.row === selectedPiece.row && p.col === selectedPiece.col
-                        ? { ...p, row: piece.row, col: piece.col }
-                        : p
-                )
-            );
             setSelectedPiece(null);
             setValidSquares([]);
 
@@ -69,7 +50,7 @@ const Board = ({ data }) => {
                     pieceType:selectedPiece.type
                 });
         } else {
-            var validMoves = getValidMoves(piece, pieces, isHostWhite);
+            var validMoves = getValidMoves(piece, data.pieces, isHostWhite);
 
             setSelectedPiece(piece);
             setValidSquares(validMoves);
@@ -81,7 +62,7 @@ const Board = ({ data }) => {
             {Array.from({ length: 8 * 8 }).map((_, index) => {
                 const [row, col] = [Math.floor(index / 8), index % 8].map(v => (isHostWhite ? 7 - v : v));
                 
-                const square = pieces.find(p => p.row === row && p.col === col) || { row, col };
+                const square = data.pieces.find(p => p.row === row && p.col === col) || { row, col };
                 
                 const isHighlighted = validSquares.some(
                     vs => vs.row === row && vs.col === col
