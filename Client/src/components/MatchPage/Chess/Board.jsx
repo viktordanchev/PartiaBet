@@ -5,7 +5,7 @@ import Square from './Square';
 import getValidMoves from '../../../services/chess/getValidMoves';
 import { useMatchHub } from '../../../contexts/MatchHubContext';
 
-const Board = ({ data }) => {
+const Board = ({ data, isMyTurn }) => {
     const { matchId } = useParams();
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const { connection } = useMatchHub();
@@ -33,6 +33,8 @@ const Board = ({ data }) => {
     };
 
     const handleClickSquare = async (piece) => {
+        if (!isMyTurn) return;
+
         const isMove =
             selectedPiece &&
             validSquares.some(s => s.row === piece.row && s.col === piece.col);
@@ -58,7 +60,8 @@ const Board = ({ data }) => {
     };
     
     return (
-        <article className="grid grid-cols-8 rounded border-5 border-gray-900">
+        <article className={`grid grid-cols-8 rounded border-5 border-gray-900
+        ${!isMyTurn && 'pointer-events-none'}`}>
             {Array.from({ length: 8 * 8 }).map((_, index) => {
                 const [row, col] = [Math.floor(index / 8), index % 8].map(v => (isHostWhite ? 7 - v : v));
                 

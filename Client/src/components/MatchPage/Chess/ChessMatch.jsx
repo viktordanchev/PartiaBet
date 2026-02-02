@@ -6,7 +6,6 @@ import TurnTimer from './TurnTimer';
 import { useMatchHub } from '../../../contexts/MatchHubContext';
 
 const ChessMatch = ({ data }) => {
-    console.log(data);
     const { newMove } = useMatchHub();
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const userId = decodedToken['Id'];
@@ -47,7 +46,10 @@ const ChessMatch = ({ data }) => {
 
     return (
         <section className="flex gap-3">
-            <Board data={board} />
+            <Board
+                data={board}
+                isMyTurn={playerInTurn === loggedPlayer.id}
+            />
             <article className="flex flex-col justify-between text-gray-300">
                 <div className="space-y-3">
                     <PlayerCard data={opponent} />
