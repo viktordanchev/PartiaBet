@@ -6,6 +6,7 @@ using Core.Interfaces.Services;
 using Core.Models.Match;
 using Core.Results.Match;
 using Microsoft.AspNetCore.Http;
+using System.Security.AccessControl;
 
 namespace Core.Services
 {
@@ -116,6 +117,12 @@ namespace Core.Services
                 {
                     RemovePlayer(match, playerId);
                     isRemoved = true;
+
+                    if (match.Players.Count == 0)
+                    {
+                        await _cacheService.RemoveMatchAsync(match.Id, match.GameType);
+                        return LeaveMatchResult.Success(isRemoved, match.GameType, timeLeft);
+                    }
                 }
 
                 await _cacheService.SetMatchAsync(match.Id, match);

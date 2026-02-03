@@ -3,6 +3,7 @@ using Core.Enums;
 using Core.Interfaces.Games;
 using Core.Models.Games;
 using Games.Chess;
+using Games.Chess.Services;
 using Games.Dtos.Chess;
 using System.Text.Json;
 using System.Text.Json.Serialization;

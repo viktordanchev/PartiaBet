@@ -67,5 +67,17 @@ namespace Infrastructure.CacheRedis
 
             return Guid.Parse(matchIdString);
         }
+
+        public async Task RemoveMatchAsync(Guid matchId, GameType gameType)
+        {
+            // 1. Махаш самия мач
+            await _redis.KeyDeleteAsync(matchId.ToString());
+
+            // 2. Махаш го от сета по тип игра
+            await _redis.SetRemoveAsync(
+                gameType.ToString(),
+                matchId.ToString()
+            );
+        }
     }
 }

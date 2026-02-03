@@ -1,9 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PlayerCard from './PlayerCard';
+import { useMatchHub } from '../../../contexts/MatchHubContext';
 
 const LobbyList = ({ match }) => {
     const navigate = useNavigate();
+    const { connection } = useMatchHub();
+    
+    const handleCancel = async () => {
+        if (connection) {
+            connection.invoke("LeaveMatch", match.id);
+        }
+
+        navigate('/');
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex flex-col gap-6 items-center justify-center bg-black/70 text-white">
@@ -25,7 +35,7 @@ const LobbyList = ({ match }) => {
                 ))}
             </div>
             <button className="p-2 rounded-xl bg-red-600 text-xl font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
-                onClick={() => navigate('/')}>
+                onClick={handleCancel}>
                 Cancel
             </button>
         </div>

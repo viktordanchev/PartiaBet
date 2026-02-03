@@ -6,20 +6,20 @@ const TopPlayers = () => {
             <h2 className="text-3xl font-semibold text-center">
                 Top 3 Players
             </h2>
-            <div className="h-full flex justify-center items-end gap-4">
-                <div className="h-5/6 bg-gray-500/40 p-4 rounded-t-lg text-center text-sm flex flex-col items-center">
-                    <img src="" className="h-13 w-13 rounded-lg border border-gray-500" />
-                    <span className="text-lg font-semibold">1234567890123456</span>
+            <div className="h-full flex justify-center items-end gap-4 text-xs">
+                <div className="h-5/6 bg-gray-500/40 p-4 rounded-t-lg text-center flex flex-col items-center">
+                    <img src="" className="h-10 w-10 rounded-lg border border-gray-500" />
+                    <span className="font-semibold">1234567890123456</span>
                     <span>Rating: 2756</span>
                 </div>
-                <div className="h-full bg-yellow-300/40 p-4 rounded-t-lg text-center text-sm flex flex-col items-center">
-                    <img src="" className="h-13 w-13 rounded-lg border border-gray-500" />
-                    <span className="text-lg font-semibold">1234567890123456</span>
+                <div className="h-full bg-yellow-300/40 p-4 rounded-t-lg text-center flex flex-col items-center">
+                    <img src="" className="h-10 w-10 rounded-lg border border-gray-500" />
+                    <span className="font-semibold">1234567890123456</span>
                     <span>Rating: 2756</span>
                 </div>
-                <div className="h-4/6 bg-yellow-900/40 p-4 rounded-t-lg text-center text-sm flex flex-col items-center">
-                    <img src="" className="h-13 w-13 rounded-lg border border-gray-500" />
-                    <span className="text-lg font-semibold">12345678901234</span>
+                <div className="h-4/6 bg-yellow-900/40 p-4 rounded-t-lg text-center flex flex-col items-center">
+                    <img src="" className="h-10 w-10 rounded-lg border border-gray-500" />
+                    <span className="font-semibold">12345678901234</span>
                     <span>Rating: 2756</span>
                 </div>
             </div>
