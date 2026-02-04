@@ -85,6 +85,14 @@ namespace Games.Chess.Services
 
         //private methods
 
+        private void CheckKing(ChessBoardModel board, ChessMoveModel move, bool isWhite)
+        {
+             var kingPosition = board.Pieces.First(p => p.Type == PieceType.King && p.IsWhite == isWhite);
+
+
+
+        }
+
         private void UpdatePlayersInBoard(ChessBoardModel board, Guid playerId)
         {
             if (board.WhitePlayerId == Guid.Empty && board.BlackPlayerId == Guid.Empty)
