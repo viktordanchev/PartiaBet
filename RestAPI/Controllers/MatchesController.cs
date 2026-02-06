@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Core.DTOs.Responses;
 using Core.Enums;
-using Core.Games.Enums;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

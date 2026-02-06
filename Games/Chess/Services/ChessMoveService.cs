@@ -1,14 +1,18 @@
 ﻿using Core.Games.Enums;
 using Core.Models.Games.Chess;
-using Games.Dtos.Chess;
 
 namespace Games.Chess.Services
 {
     public class ChessMoveService
     {
-        public static bool IsValidMove(ChessBoardModel board, ChessMoveDto move)
+        public static bool IsValidMove(ChessBoardModel board, ChessMoveModel move)
         {
             if (move.NewRow < 0 || move.NewRow > 7 || move.NewCol < 0 || move.NewCol > 7)
+            {
+                return false;
+            }
+
+            if (IsPieceRemoved(board, move))
             {
                 return false;
             }
@@ -47,7 +51,23 @@ namespace Games.Chess.Services
 
         //private methods
 
-        private static bool IsValidKingMove(ChessBoardModel board, ChessMoveDto move)
+        private static bool IsPieceRemoved(ChessBoardModel board, ChessMoveModel move)
+        {
+            var newPositionPiece = board.Pieces.FirstOrDefault(p => p.Col == move.NewCol && p.Row == move.NewRow);
+            var currPositionPiece = board.Pieces.FirstOrDefault(p => p.Col == move.OldCol && p.Row == move.OldRow);
+
+            if (currPositionPiece != null && newPositionPiece != null)
+            {
+                if (currPositionPiece.IsWhite != newPositionPiece.IsWhite)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsValidKingMove(ChessBoardModel board, ChessMoveModel move)
         {
             var directions = new List<(int Row, int Col)>
             {
@@ -64,7 +84,7 @@ namespace Games.Chess.Services
             return GetSingleMoves(move, directions);
         }
 
-        private static bool IsValidQueenMove(ChessBoardModel board, ChessMoveDto move)
+        private static bool IsValidQueenMove(ChessBoardModel board, ChessMoveModel move)
         {
             var directions = new List<(int Row, int Col)>
             {
@@ -81,7 +101,7 @@ namespace Games.Chess.Services
             return GetLinearMoves(board, move, directions);
         }
 
-        private static bool IsValidRookMove(ChessBoardModel board, ChessMoveDto move)
+        private static bool IsValidRookMove(ChessBoardModel board, ChessMoveModel move)
         {
             var directions = new List<(int Row, int Col)>
             {
@@ -94,7 +114,7 @@ namespace Games.Chess.Services
             return GetLinearMoves(board, move, directions);
         }
 
-        private static bool IsValidKnightMove(ChessBoardModel board, ChessMoveDto move)
+        private static bool IsValidKnightMove(ChessBoardModel board, ChessMoveModel move)
         {
             var directions = new List<(int Row, int Col)>
             {
@@ -111,7 +131,7 @@ namespace Games.Chess.Services
             return GetSingleMoves(move, directions);
         }
 
-        private static bool IsValidBishopMove(ChessBoardModel board, ChessMoveDto move)
+        private static bool IsValidBishopMove(ChessBoardModel board, ChessMoveModel move)
         {
             var directions = new List<(int Row, int Col)>
             {
@@ -124,7 +144,7 @@ namespace Games.Chess.Services
             return GetLinearMoves(board, move, directions);
         }
 
-        private static bool IsValidPawnMove(ChessBoardModel board, ChessMoveDto move, bool isWhite)
+        private static bool IsValidPawnMove(ChessBoardModel board, ChessMoveModel move, bool isWhite)
         {
             var directions = new List<(int row, int col)>
             {
@@ -133,7 +153,7 @@ namespace Games.Chess.Services
                 (isWhite ? 1 : -1, -1)
             };
 
-            if ((isWhite && move.NewRow == 1) || (!isWhite && move.NewRow == 6))
+            if ((isWhite && move.OldRow == 1) || (!isWhite && move.OldRow == 6))
             {
                 directions.Add((isWhite ? 2 : -2, 0));
             }
@@ -141,7 +161,7 @@ namespace Games.Chess.Services
             return GetSingleMoves(move, directions);
         }
 
-        private static bool GetLinearMoves(ChessBoardModel board, ChessMoveDto move, List<(int Row, int Col)> directions)
+        private static bool GetLinearMoves(ChessBoardModel board, ChessMoveModel move, List<(int Row, int Col)> directions)
         {
             foreach (var dir in directions)
             {
@@ -161,7 +181,7 @@ namespace Games.Chess.Services
             return false;
         }
 
-        private static bool GetSingleMoves(ChessMoveDto move, List<(int Row, int Col)> directions)
+        private static bool GetSingleMoves(ChessMoveModel move, List<(int Row, int Col)> directions)
         {
             var isValidMove = false;
 
@@ -170,7 +190,7 @@ namespace Games.Chess.Services
                 var row = move.OldRow + dir.Row;
                 var col = move.OldCol + dir.Col;
 
-                if (row < 0 || row >= 8 || col < 0 || col >= 8) break;
+                if (row < 0 || row >= 8 || col < 0 || col >= 8) continue;
 
                 if (row == move.NewRow && col == move.NewCol)
                 {

@@ -3,7 +3,6 @@ using Core.Interfaces.Games;
 using Core.Models.Games;
 using Core.Models.Games.Chess;
 using Core.Models.Match;
-using Games.Dtos.Chess;
 using System.ComponentModel;
 using System.IO.Pipelines;
 
@@ -68,30 +67,24 @@ namespace Games.Chess.Services
         public void UpdateBoard(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
-            var chessMove = move as ChessMoveDto;
+            var chessMove = move as ChessMoveModel;
             var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
 
             piece.Row = chessMove.NewRow;
             piece.Col = chessMove.NewCol;
+
+            chessBoard.Pieces.Remove(piece);
         }
 
         public bool IsValidMove(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
-            var chessMove = move as ChessMoveDto;
+            var chessMove = move as ChessMoveModel;
 
             return ChessMoveService.IsValidMove(chessBoard, chessMove);
         }
 
         //private methods
-
-        private void CheckKing(ChessBoardModel board, ChessMoveModel move, bool isWhite)
-        {
-             var kingPosition = board.Pieces.First(p => p.Type == PieceType.King && p.IsWhite == isWhite);
-
-
-
-        }
 
         private void UpdatePlayersInBoard(ChessBoardModel board, Guid playerId)
         {

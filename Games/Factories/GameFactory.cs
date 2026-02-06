@@ -2,9 +2,9 @@
 using Core.Enums;
 using Core.Interfaces.Games;
 using Core.Models.Games;
+using Core.Models.Games.Chess;
 using Games.Chess;
 using Games.Chess.Services;
-using Games.Dtos.Chess;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Common.Constants.ErrorMessages;
@@ -32,7 +32,7 @@ namespace Games.Factories
 
             return game switch
             {
-                GameType.Chess => JsonSerializer.Deserialize<ChessMoveDto>(jsonData, options),
+                GameType.Chess => JsonSerializer.Deserialize<ChessMoveModel>(jsonData, options),
                 _ => throw new ApiException(InvalidRequest)
             };
         }
