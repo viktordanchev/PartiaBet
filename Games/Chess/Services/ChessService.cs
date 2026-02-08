@@ -69,11 +69,15 @@ namespace Games.Chess.Services
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveModel;
             var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
+            var newPosition = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
+
+            if (newPosition != null)
+            {
+                chessBoard.Pieces.Remove(newPosition);
+            }
 
             piece.Row = chessMove.NewRow;
             piece.Col = chessMove.NewCol;
-
-            chessBoard.Pieces.Remove(piece);
         }
 
         public bool IsValidMove(GameBoardModel board, BaseMoveModel move)

@@ -12,7 +12,7 @@ namespace Games.Chess.Services
                 return false;
             }
 
-            if (IsPieceRemoved(board, move))
+            if (!IsPieceRemoved(board, move))
             {
                 return false;
             }
@@ -58,13 +58,13 @@ namespace Games.Chess.Services
 
             if (currPositionPiece != null && newPositionPiece != null)
             {
-                if (currPositionPiece.IsWhite != newPositionPiece.IsWhite)
+                if (currPositionPiece.IsWhite == newPositionPiece.IsWhite)
                 {
-                    return true;
+                    return false;
                 }
             }
 
-            return false;
+            return true;
         }
 
         private static bool IsValidKingMove(ChessBoardModel board, ChessMoveModel move)
