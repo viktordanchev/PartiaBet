@@ -48,8 +48,7 @@ const Board = ({ data, isMyTurn }) => {
                     oldRow: selectedPiece.row,
                     oldCol: selectedPiece.col,
                     newRow: piece.row,
-                    newCol: piece.col,
-                    pieceType:selectedPiece.type
+                    newCol: piece.col
                 });
         } else {
             var validMoves = getValidMoves(piece, data.pieces, isHostWhite);

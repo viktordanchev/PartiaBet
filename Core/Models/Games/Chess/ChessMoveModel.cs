@@ -1,6 +1,4 @@
-﻿using Core.Games.Enums;
-
-namespace Core.Models.Games.Chess
+﻿namespace Core.Models.Games.Chess
 {
     public class ChessMoveModel : BaseMoveModel
     {
@@ -11,7 +9,5 @@ namespace Core.Models.Games.Chess
         public int NewRow { get; set; }
 
         public int NewCol { get; set; }
-
-        public PieceType PieceType { get; set; }
     }
 }

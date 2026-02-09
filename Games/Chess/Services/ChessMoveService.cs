@@ -12,15 +12,19 @@ namespace Games.Chess.Services
                 return false;
             }
 
-            if (!IsPieceRemoved(board, move))
+            var piece = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
+            if (piece == null)
             {
                 return false;
             }
 
-            var piece = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
+            if (IsMoveBlockedByOwnPiece(board, move))
+            {
+                return false;
+            }
 
             bool isValidMove;
-            switch (move.PieceType)
+            switch (piece.Type)
             {
                 case PieceType.King:
                     isValidMove = IsValidKingMove(board, move);
@@ -51,20 +55,20 @@ namespace Games.Chess.Services
 
         //private methods
 
-        private static bool IsPieceRemoved(ChessBoardModel board, ChessMoveModel move)
+        private static bool IsMoveBlockedByOwnPiece(ChessBoardModel board, ChessMoveModel move)
         {
+            var currPiece = board.Pieces.FirstOrDefault(p => p.Col == move.OldCol && p.Row == move.OldRow);
             var newPositionPiece = board.Pieces.FirstOrDefault(p => p.Col == move.NewCol && p.Row == move.NewRow);
-            var currPositionPiece = board.Pieces.FirstOrDefault(p => p.Col == move.OldCol && p.Row == move.OldRow);
 
-            if (currPositionPiece != null && newPositionPiece != null)
+            if (currPiece != null && newPositionPiece != null)
             {
-                if (currPositionPiece.IsWhite == newPositionPiece.IsWhite)
+                if (currPiece.IsWhite == newPositionPiece.IsWhite)
                 {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }
 
         private static bool IsValidKingMove(ChessBoardModel board, ChessMoveModel move)
