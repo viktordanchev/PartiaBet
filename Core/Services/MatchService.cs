@@ -309,12 +309,13 @@ namespace Core.Services
             {
                 return МакеMoveResult.Invalid();
             }
-            else if (gameService.IsWinningMove(match.Board))
+
+            gameService.UpdateBoard(match.Board, moveDataModel);
+
+            if (gameService.IsWinningMove(match.Board))
             {
                 return МакеMoveResult.Win(playerId);
             }
-
-            gameService.UpdateBoard(match.Board, moveDataModel);
 
             return МакеMoveResult.Success(moveDataModel, match.GameType);
         }

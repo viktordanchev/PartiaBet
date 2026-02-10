@@ -57,27 +57,25 @@ namespace Games.Chess.Services
         public bool IsWinningMove(GameBoardModel board)
         {
             var chessBoard = board as ChessBoardModel;
+            var kingsCount = chessBoard.Pieces.Count(p => p.Type == PieceType.King);
 
-            var whiteKing = chessBoard.Pieces.FirstOrDefault(p => p.Type == PieceType.King && p.IsWhite);
-            var blackKing = chessBoard.Pieces.FirstOrDefault(p => p.Type == PieceType.King && !p.IsWhite);
-
-            return whiteKing == null || blackKing == null;
+            return kingsCount < 2;
         }
 
         public void UpdateBoard(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveModel;
-            var piece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
-            var newPosition = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
+            var currPiece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
+            var targetPiece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
 
-            if (newPosition != null)
+            if (targetPiece != null)
             {
-                chessBoard.Pieces.Remove(newPosition);
+                chessBoard.Pieces.Remove(targetPiece);
             }
 
-            piece.Row = chessMove.NewRow;
-            piece.Col = chessMove.NewCol;
+            currPiece.Row = chessMove.NewRow;
+            currPiece.Col = chessMove.NewCol;
         }
 
         public bool IsValidMove(GameBoardModel board, BaseMoveModel move)

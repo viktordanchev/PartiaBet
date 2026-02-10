@@ -7,24 +7,26 @@ namespace Games.Chess.Services
     {
         public static bool IsValidMove(ChessBoardModel board, ChessMoveModel move)
         {
-            if (move.NewRow < 0 || move.NewRow > 7 || move.NewCol < 0 || move.NewCol > 7)
+            var currPiece = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
+            var targetPiece = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
+
+            if (targetPiece.Row < 0 || targetPiece.Row > 7 || targetPiece.Col < 0 || targetPiece.Col > 7)
             {
                 return false;
             }
 
-            var piece = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
-            if (piece == null)
+            if (currPiece == null)
             {
                 return false;
             }
 
-            if (IsMoveBlockedByOwnPiece(board, move))
+            if (IsMoveBlockedByOwnPiece(board, currPiece, targetPiece))
             {
                 return false;
             }
 
             bool isValidMove;
-            switch (piece.Type)
+            switch (currPiece.Type)
             {
                 case PieceType.King:
                     isValidMove = IsValidKingMove(board, move);
@@ -55,14 +57,11 @@ namespace Games.Chess.Services
 
         //private methods
 
-        private static bool IsMoveBlockedByOwnPiece(ChessBoardModel board, ChessMoveModel move)
+        private static bool IsMoveBlockedByOwnPiece(ChessBoardModel board, FigureModel currPiece, FigureModel targetPiece)
         {
-            var currPiece = board.Pieces.FirstOrDefault(p => p.Col == move.OldCol && p.Row == move.OldRow);
-            var newPositionPiece = board.Pieces.FirstOrDefault(p => p.Col == move.NewCol && p.Row == move.NewRow);
-
-            if (currPiece != null && newPositionPiece != null)
+            if (currPiece != null && targetPiece != null)
             {
-                if (currPiece.IsWhite == newPositionPiece.IsWhite)
+                if (currPiece.IsWhite == targetPiece.IsWhite)
                 {
                     return true;
                 }
