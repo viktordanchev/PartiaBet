@@ -6,7 +6,6 @@ using Core.Interfaces.Services;
 using Core.Models.Match;
 using Core.Results.Match;
 using Microsoft.AspNetCore.Http;
-using System.Security.AccessControl;
 
 namespace Core.Services
 {

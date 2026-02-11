@@ -54,14 +54,6 @@ namespace Games.Chess.Services
             return newTurnPlayerId;
         }
 
-        public bool IsWinningMove(GameBoardModel board)
-        {
-            var chessBoard = board as ChessBoardModel;
-            var kingsCount = chessBoard.Pieces.Count(p => p.Type == PieceType.King);
-
-            return kingsCount < 2;
-        }
-
         public void UpdateBoard(GameBoardModel board, BaseMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
@@ -74,8 +66,22 @@ namespace Games.Chess.Services
                 chessBoard.Pieces.Remove(targetPiece);
             }
 
+            ChessMoveService.UpdateCastlingRights(chessBoard, currPiece, chessMove);
+
+            if (currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook)
+            {
+                ChessMoveService.PerformCastle(chessBoard, currPiece.IsWhite, chessMove.NewCol == 6);
+            }
+
             currPiece.Row = chessMove.NewRow;
             currPiece.Col = chessMove.NewCol;
+        }
+
+        public bool IsWinningMove(GameBoardModel board)
+        {
+            var chessBoard = board as ChessBoardModel;
+
+            return ChessMoveService.IsWinningMove(chessBoard);
         }
 
         public bool IsValidMove(GameBoardModel board, BaseMoveModel move)

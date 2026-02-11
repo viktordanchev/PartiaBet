@@ -1,4 +1,5 @@
 ﻿using Core.Games.Enums;
+using Core.Models.Games;
 using Core.Models.Games.Chess;
 
 namespace Games.Chess.Services
@@ -53,6 +54,84 @@ namespace Games.Chess.Services
             }
 
             return isValidMove;
+        }
+
+        public static bool IsWinningMove(ChessBoardModel board)
+        {
+            var kingsCount = board.Pieces.Count(p => p.Type == PieceType.King);
+
+            return kingsCount < 2;
+        }
+
+        public static void UpdateCastlingRights(ChessBoardModel board, FigureModel piece, ChessMoveModel move)
+        {
+            if (piece.Type == PieceType.King)
+            {
+                if (piece.IsWhite)
+                {
+                    board.CanWhiteSmallCastle = false;
+                    board.CanWhiteBigCastle = false;
+                }
+                else
+                {
+                    board.CanBlackSmallCastle = false;
+                    board.CanBlackBigCastle = false;
+                }
+            }
+
+            if (piece.Type == PieceType.Rook)
+            {
+                if (piece.IsWhite && move.OldRow == 7)
+                {
+                    if (move.OldCol == 0)
+                        board.CanWhiteBigCastle = false;
+
+                    if (move.OldCol == 7)
+                        board.CanWhiteSmallCastle = false;
+                }
+
+                if (!piece.IsWhite && move.OldRow == 0)
+                {
+                    if (move.OldCol == 0)
+                        board.CanBlackBigCastle = false;
+
+                    if (move.OldCol == 7)
+                        board.CanBlackSmallCastle = false;
+                }
+            }
+        }
+
+        public static void PerformCastle(ChessBoardModel board, bool isWhite, bool isKingSide)
+        {
+            int backRank = isWhite ? 0 : 7;  // твоят борд: white на ред 0
+            FigureModel king = board.Pieces.First(p => p.Type == PieceType.King && p.IsWhite == isWhite);
+
+            // Определяме rook
+            FigureModel rook;
+            if (isKingSide)
+                rook = board.Pieces.First(p => p.Type == PieceType.Rook && p.IsWhite == isWhite && p.Col == 7);
+            else
+                rook = board.Pieces.First(p => p.Type == PieceType.Rook && p.IsWhite == isWhite && p.Col == 0);
+
+            // 1️⃣ Местим царя
+            king.Col = isKingSide ? 5 : 3;  // king-side -> колона 5, queen-side -> колона 3
+            king.Row = backRank;
+
+            // 2️⃣ Местим топа
+            rook.Col = isKingSide ? 4 : 2;  // king-side -> колона 4, queen-side -> колона 2
+            rook.Row = backRank;
+
+            // 3️⃣ Изключваме рокадата
+            if (isWhite)
+            {
+                board.CanWhiteSmallCastle = false;
+                board.CanWhiteBigCastle = false;
+            }
+            else
+            {
+                board.CanBlackSmallCastle = false;
+                board.CanBlackBigCastle = false;
+            }
         }
 
         //private methods
