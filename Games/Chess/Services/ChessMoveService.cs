@@ -134,13 +134,47 @@ namespace Games.Chess.Services
             }
         }
 
+        public static bool CanPerformCastle(ChessBoardModel board, ChessMoveModel move)
+        {
+            var king = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
+            var rook = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
+
+            if (king.IsWhite)
+            {
+                if (!board.CanWhiteSmallCastle && !board.CanWhiteBigCastle)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!board.CanBlackSmallCastle && !board.CanBlackBigCastle)
+                {
+                    return false;
+                }
+            }
+
+            int startCol = king.Col;
+            int endCol = rook.Col;
+
+            for (int c = startCol; c <= endCol; c++)
+            {
+                if (board.Pieces.Any(p => p.Row == king.Row && p.Col == c))
+                    return false;
+            }
+
+            return true;
+        }
+
         //private methods
 
         private static bool IsMoveBlockedByOwnPiece(ChessBoardModel board, FigureModel currPiece, FigureModel targetPiece)
         {
             if (currPiece != null && targetPiece != null)
             {
-                if (currPiece.IsWhite == targetPiece.IsWhite)
+                var isKingOrRook = currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook;
+
+                if (currPiece.IsWhite == targetPiece.IsWhite && !isKingOrRook)
                 {
                     return true;
                 }

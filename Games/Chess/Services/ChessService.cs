@@ -66,8 +66,6 @@ namespace Games.Chess.Services
                 chessBoard.Pieces.Remove(targetPiece);
             }
 
-            ChessMoveService.UpdateCastlingRights(chessBoard, currPiece, chessMove);
-
             if (currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook)
             {
                 ChessMoveService.PerformCastle(chessBoard, currPiece.IsWhite, chessMove.NewCol == 6);
@@ -88,8 +86,22 @@ namespace Games.Chess.Services
         {
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveModel;
+            var isValid = false;
+            var currPiece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
+            var targetPiece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
 
-            return ChessMoveService.IsValidMove(chessBoard, chessMove);
+
+            if (ChessMoveService.IsValidMove(chessBoard, chessMove))
+            {
+                isValid = true;
+            }
+
+            if (currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook && currPiece.IsWhite == targetPiece.IsWhite)
+            {
+                var iso = ChessMoveService.CanPerformCastle(chessBoard, chessMove);
+            }
+
+            return false;
         }
 
         //private methods
