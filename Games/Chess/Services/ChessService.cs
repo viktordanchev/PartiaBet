@@ -3,6 +3,7 @@ using Core.Interfaces.Games;
 using Core.Models.Games;
 using Core.Models.Games.Chess;
 using Core.Models.Match;
+using Games.Chess.Models;
 using System.ComponentModel;
 using System.IO.Pipelines;
 
@@ -54,21 +55,22 @@ namespace Games.Chess.Services
             return newTurnPlayerId;
         }
 
-        public void UpdateBoard(GameBoardModel board, BaseMoveModel move)
+        public void UpdateBoard(GameBoardModel board, GameMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveModel;
             var currPiece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
             var targetPiece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
 
+            if (ChessMoveService.IsCastleMove(chessBoard, currPiece, targetPiece))
+            {
+                ChessMoveService.PerformCastle(chessBoard, currPiece, targetPiece);
+                return;
+            }
+
             if (targetPiece != null)
             {
                 chessBoard.Pieces.Remove(targetPiece);
-            }
-
-            if (currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook)
-            {
-                ChessMoveService.PerformCastle(chessBoard, currPiece.IsWhite, chessMove.NewCol == 6);
             }
 
             currPiece.Row = chessMove.NewRow;
@@ -82,26 +84,12 @@ namespace Games.Chess.Services
             return ChessMoveService.IsWinningMove(chessBoard);
         }
 
-        public bool IsValidMove(GameBoardModel board, BaseMoveModel move)
+        public bool IsValidMove(GameBoardModel board, GameMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
             var chessMove = move as ChessMoveModel;
-            var isValid = false;
-            var currPiece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.OldRow && p.Col == chessMove.OldCol);
-            var targetPiece = chessBoard.Pieces.FirstOrDefault(p => p.Row == chessMove.NewRow && p.Col == chessMove.NewCol);
 
-
-            if (ChessMoveService.IsValidMove(chessBoard, chessMove))
-            {
-                isValid = true;
-            }
-
-            if (currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook && currPiece.IsWhite == targetPiece.IsWhite)
-            {
-                var iso = ChessMoveService.CanPerformCastle(chessBoard, chessMove);
-            }
-
-            return false;
+            return ChessMoveService.IsValidMove(chessBoard, chessMove);
         }
 
         //private methods

@@ -1,6 +1,7 @@
 ﻿using Core.Enums;
+using Games.Models;
 
-namespace Games.Chess
+namespace Games.Chess.Models
 {
     public class ChessGame : Game
     {

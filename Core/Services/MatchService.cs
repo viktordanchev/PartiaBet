@@ -302,9 +302,8 @@ namespace Core.Services
         {
             var gameService = _gameFactory.GetGameService(match.GameType);
             var moveDataModel = _gameFactory.GetMakeMoveDto(match.GameType, moveDataJson);
-            var isValidMove = gameService.IsValidMove(match.Board, moveDataModel);
 
-            if (!isValidMove)
+            if (!gameService.IsValidMove(match.Board, moveDataModel))
             {
                 return МакеMoveResult.Invalid();
             }

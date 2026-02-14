@@ -29,7 +29,45 @@ function getKingMove(piece, pieces, isWhite) {
         { row: 0, col: -1 }
     ];
 
-    return getSingleMoves(piece, pieces, isWhite, directions)
+    const validSquares = getSingleMoves(piece, pieces, isWhite, directions);
+    const backRank = isWhite ? 0 : 7;
+
+    if (piece.row === backRank && piece.col === 4) {
+        const rookKingSide = pieces.find(
+            p => p.type === 'Rook' &&
+                p.row === backRank &&
+                p.col === 7 &&
+                p.isWhite === isWhite
+        );
+
+        if (rookKingSide) {
+            const square5 = pieces.find(p => p.row === backRank && p.col === 5);
+            const square6 = pieces.find(p => p.row === backRank && p.col === 6);
+
+            if (!square5 && !square6) {
+                validSquares.push({ row: backRank, col: 6 });
+            }
+        }
+
+        const rookQueenSide = pieces.find(
+            p => p.type === 'Rook' &&
+                p.row === backRank &&
+                p.col === 0 &&
+                p.isWhite === isWhite
+        );
+
+        if (rookQueenSide) {
+            const square1 = pieces.find(p => p.row === backRank && p.col === 1);
+            const square2 = pieces.find(p => p.row === backRank && p.col === 2);
+            const square3 = pieces.find(p => p.row === backRank && p.col === 3);
+
+            if (!square1 && !square2 && !square3) {
+                validSquares.push({ row: backRank, col: 2 });
+            }
+        }
+    }
+
+    return validSquares;
 }
 
 function getQueenMove(piece, pieces, isWhite) {
@@ -67,27 +105,22 @@ function getPawnMove(piece, pieces, isWhite) {
     ];
 
     if (piece.row === 1 || piece.row === 6) {
-        directions.push({ row: isWhite ? 2 : -2, col: 0 });
+        directions.unshift({ row: isWhite ? 2 : -2, col: 0 });
     }
-
+    
     for (const dir of directions) {
         const row = piece.row + dir.row;
         const col = piece.col + dir.col;
+        
+        if (row < 0 || row > 7 || col < 0 || col > 7) continue;
+        
+        const square = pieces.find(p => p.row === row && p.col === col);
+        
+        if (square && dir.col === 0) continue;
+        
+        if (dir.col !== 0 && (!square || (square && square.isWhite === piece.isWhite))) continue;
 
-        if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-            const piece = pieces.find(p => p.row === row && p.col === col);
-
-            if ((dir.col !== 0 && piece) ||
-                (dir.col === 0 && !piece)) {
-                if (piece) {
-                    if (piece.isWhite !== isWhite) {
-                        validSquares.push({ row, col });
-                    }
-                } else {
-                    validSquares.push({ row, col });
-                }
-            }
-        }
+        validSquares.push({ row, col });
     }
 
     return validSquares;

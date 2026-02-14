@@ -22,7 +22,7 @@ namespace Games.Factories
             };
         }
 
-        public BaseMoveModel GetMakeMoveDto(GameType game, string jsonData)
+        public GameMoveModel GetMakeMoveDto(GameType game, string jsonData)
         {
             var options = new JsonSerializerOptions
             {

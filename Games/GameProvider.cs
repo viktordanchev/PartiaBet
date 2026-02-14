@@ -3,7 +3,8 @@ using Core.Interfaces.Games;
 using Core.Models.Games;
 using Games.Backgammon;
 using Games.Belote;
-using Games.Chess;
+using Games.Chess.Models;
+using Games.Models;
 using Games.SixtySix;
 
 namespace Games

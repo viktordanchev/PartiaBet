@@ -6,6 +6,6 @@ namespace Core.Interfaces.Games
     public interface IGameFactory
     {
         IGameService GetGameService(GameType game);
-        BaseMoveModel GetMakeMoveDto(GameType game, string jsonData);
+        GameMoveModel GetMakeMoveDto(GameType game, string jsonData);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Core.Models.Games.Chess
 {
-    public class ChessMoveModel : BaseMoveModel
+    public class ChessMoveModel : GameMoveModel
     {
         public int OldRow { get; set; }
 

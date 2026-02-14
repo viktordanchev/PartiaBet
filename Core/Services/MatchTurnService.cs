@@ -7,7 +7,7 @@ namespace Core.Services
     public class MatchTurnService : IMatchTurnService
     {
         private const int FixedTurnMinutes = 1;
-        private const int ChessTurnMinutes = 10;
+        private const int ChessTurnMinutes = 100;
         private readonly IMatchTimer _matchTimer;
 
         public MatchTurnService(IMatchTimer matchTimer)

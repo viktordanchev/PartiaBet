@@ -8,22 +8,30 @@ namespace Games.Chess.Services
     {
         public static bool IsValidMove(ChessBoardModel board, ChessMoveModel move)
         {
-            var currPiece = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
-            var targetPiece = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
-
-            if (targetPiece.Row < 0 || targetPiece.Row > 7 || targetPiece.Col < 0 || targetPiece.Col > 7)
+            if (move.NewRow < 0 || move.NewRow > 7 ||
+                move.NewCol < 0 || move.NewCol > 7)
             {
                 return false;
             }
+
+            var currPiece = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
+            var targetPiece = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
 
             if (currPiece == null)
             {
                 return false;
             }
 
-            if (IsMoveBlockedByOwnPiece(board, currPiece, targetPiece))
+            if (currPiece != null && targetPiece != null)
             {
-                return false;
+                if (IsCastleMove(board, currPiece, targetPiece))
+                {
+                    return CanPerformCastle(board, move);
+                }
+                else if (IsMoveBlockedByOwnPiece(board, currPiece, targetPiece))
+                {
+                    return false;
+                }
             }
 
             bool isValidMove;
@@ -45,7 +53,7 @@ namespace Games.Chess.Services
                     isValidMove = IsValidBishopMove(board, move);
                     break;
                 case PieceType.Pawn:
-                    var isWhite = move.NewRow > move.OldRow;
+                    var isWhite = currPiece.IsWhite;
                     isValidMove = IsValidPawnMove(board, move, isWhite);
                     break;
                 default:
@@ -101,27 +109,24 @@ namespace Games.Chess.Services
             }
         }
 
-        public static void PerformCastle(ChessBoardModel board, bool isWhite, bool isKingSide)
+        public static void PerformCastle(ChessBoardModel board, FigureModel king, FigureModel rook)
         {
-            int backRank = isWhite ? 0 : 7;  // твоят борд: white на ред 0
-            FigureModel king = board.Pieces.First(p => p.Type == PieceType.King && p.IsWhite == isWhite);
+            var isWhite = king.IsWhite;
+            var isBigCastle = rook.Col == 0;
+            var canSmallCastle = isWhite ? board.CanWhiteSmallCastle : board.CanBlackSmallCastle;
+            var canBigCastle = isWhite ? board.CanWhiteBigCastle : board.CanBlackBigCastle;
 
-            // Определяме rook
-            FigureModel rook;
-            if (isKingSide)
-                rook = board.Pieces.First(p => p.Type == PieceType.Rook && p.IsWhite == isWhite && p.Col == 7);
-            else
-                rook = board.Pieces.First(p => p.Type == PieceType.Rook && p.IsWhite == isWhite && p.Col == 0);
+            if (canBigCastle && isBigCastle)
+            {
+                king.Col = 2;
+                rook.Col = 3;
+            }
+            else if (canSmallCastle && !isBigCastle)
+            {
+                king.Col = 6;
+                rook.Col = 5;
+            }
 
-            // 1️⃣ Местим царя
-            king.Col = isKingSide ? 5 : 3;  // king-side -> колона 5, queen-side -> колона 3
-            king.Row = backRank;
-
-            // 2️⃣ Местим топа
-            rook.Col = isKingSide ? 4 : 2;  // king-side -> колона 4, queen-side -> колона 2
-            rook.Row = backRank;
-
-            // 3️⃣ Изключваме рокадата
             if (isWhite)
             {
                 board.CanWhiteSmallCastle = false;
@@ -134,10 +139,19 @@ namespace Games.Chess.Services
             }
         }
 
-        public static bool CanPerformCastle(ChessBoardModel board, ChessMoveModel move)
+        public static bool IsCastleMove(ChessBoardModel board, FigureModel currPiece, FigureModel targetPiece)
         {
-            var king = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
-            var rook = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
+            return currPiece != null && targetPiece != null &&
+                currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook && 
+                currPiece.IsWhite == targetPiece.IsWhite;
+        }
+
+        //private methods
+
+        private static bool CanPerformCastle(ChessBoardModel board, ChessMoveModel move)
+        {
+            var king = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol && p.Type == PieceType.King);
+            var rook = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol && p.Type == PieceType.Rook);
 
             if (king.IsWhite)
             {
@@ -166,18 +180,11 @@ namespace Games.Chess.Services
             return true;
         }
 
-        //private methods
-
         private static bool IsMoveBlockedByOwnPiece(ChessBoardModel board, FigureModel currPiece, FigureModel targetPiece)
         {
-            if (currPiece != null && targetPiece != null)
+            if (currPiece.IsWhite == targetPiece.IsWhite)
             {
-                var isKingOrRook = currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook;
-
-                if (currPiece.IsWhite == targetPiece.IsWhite && !isKingOrRook)
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;

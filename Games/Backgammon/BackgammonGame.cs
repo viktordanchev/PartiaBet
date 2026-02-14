@@ -1,4 +1,5 @@
 ﻿using Core.Enums;
+using Games.Models;
 
 namespace Games.Backgammon
 {

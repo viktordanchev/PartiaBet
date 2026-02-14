@@ -1,6 +1,6 @@
 ﻿using Core.Enums;
 
-namespace Games
+namespace Games.Models
 {
     public abstract class Game
     {
