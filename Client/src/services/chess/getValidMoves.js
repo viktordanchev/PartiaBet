@@ -1,23 +1,23 @@
-﻿function getValidMoves(piece, pieces, isWhite) {
+﻿function getValidMoves(board, piece, pieces) {
     switch (piece.type) {
         case 'King':
-            return getKingMove(piece, pieces, isWhite);
+            return getKingMove(board, piece, pieces);
         case 'Queen':
-            return getQueenMove(piece, pieces, isWhite);
+            return getQueenMove(piece, pieces);
         case 'Rook':
-            return getRookMove(piece, pieces, isWhite);
+            return getRookMove(piece, pieces);
         case 'Pawn':
-            return getPawnMove(piece, pieces, isWhite);
+            return getPawnMove(piece, pieces);
         case 'Bishop':
-            return getBishopMove(piece, pieces, isWhite);
+            return getBishopMove(piece, pieces);
         case 'Knight':
-            return getKnightMove(piece, pieces, isWhite);
+            return getKnightMove(piece, pieces);
         default:
             return [];
     }
 }
 
-function getKingMove(piece, pieces, isWhite) {
+function getKingMove(board, piece, pieces) {
     const directions = [
         { row: 1, col: 0 },
         { row: 1, col: 1 },
@@ -29,15 +29,16 @@ function getKingMove(piece, pieces, isWhite) {
         { row: 0, col: -1 }
     ];
 
-    const validSquares = getSingleMoves(piece, pieces, isWhite, directions);
-    const backRank = isWhite ? 0 : 7;
+    const validSquares = getSingleMoves(piece, pieces, directions);
+    const smallCastleType = piece.isWhite ? board.canWhiteSmallCastle : board.canBlackSmallCastle;
+    const bigCastleType = piece.isWhite ? board.canWhiteBigCastle : board.canBlackBigCastle;
 
-    if (piece.row === backRank && piece.col === 4) {
+    if (smallCastleType) {
         const rookKingSide = pieces.find(
             p => p.type === 'Rook' &&
                 p.row === backRank &&
                 p.col === 7 &&
-                p.isWhite === isWhite
+                p.isWhite === piece.isWhite
         );
 
         if (rookKingSide) {
@@ -53,7 +54,7 @@ function getKingMove(piece, pieces, isWhite) {
             p => p.type === 'Rook' &&
                 p.row === backRank &&
                 p.col === 0 &&
-                p.isWhite === isWhite
+                p.isWhite === piece.isWhite
         );
 
         if (rookQueenSide) {
@@ -70,7 +71,7 @@ function getKingMove(piece, pieces, isWhite) {
     return validSquares;
 }
 
-function getQueenMove(piece, pieces, isWhite) {
+function getQueenMove(piece, pieces) {
     const directions = [
         { row: 1, col: 1 },
         { row: 1, col: -1 },
@@ -82,10 +83,10 @@ function getQueenMove(piece, pieces, isWhite) {
         { row: 0, col: -1 }
     ];
 
-    return getLinearMoves(piece, pieces, isWhite, directions);
+    return getLinearMoves(piece, pieces, directions);
 }
 
-function getRookMove(piece, pieces, isWhite) {
+function getRookMove(piece, pieces) {
     const directions = [
         { row: 1, col: 0 },
         { row: -1, col: 0 },
@@ -93,19 +94,19 @@ function getRookMove(piece, pieces, isWhite) {
         { row: 0, col: -1 }
     ];
 
-    return getLinearMoves(piece, pieces, isWhite, directions);
+    return getLinearMoves(piece, pieces, directions);
 }
 
-function getPawnMove(piece, pieces, isWhite) {
+function getPawnMove(piece, pieces) {
     const validSquares = [];
     const directions = [
-        { row: isWhite ? 1 : -1, col: 0 },
-        { row: isWhite ? 1 : -1, col: 1 },
-        { row: isWhite ? 1 : -1, col: -1 }
+        { row: piece.isWhite ? 1 : -1, col: 0 },
+        { row: piece.isWhite ? 1 : -1, col: 1 },
+        { row: piece.isWhite ? 1 : -1, col: -1 }
     ];
 
     if (piece.row === 1 || piece.row === 6) {
-        directions.unshift({ row: isWhite ? 2 : -2, col: 0 });
+        directions.unshift({ row: piece.isWhite ? 2 : -2, col: 0 });
     }
     
     for (const dir of directions) {
@@ -126,7 +127,7 @@ function getPawnMove(piece, pieces, isWhite) {
     return validSquares;
 }
 
-function getBishopMove(piece, pieces, isWhite) {
+function getBishopMove(piece, pieces) {
     const directions = [
         { row: 1, col: 1 },
         { row: 1, col: -1 },
@@ -134,10 +135,10 @@ function getBishopMove(piece, pieces, isWhite) {
         { row: -1, col: 1 }
     ];
 
-    return getLinearMoves(piece, pieces, isWhite, directions);
+    return getLinearMoves(piece, pieces, directions);
 }
 
-function getKnightMove(piece, pieces, isWhite) {
+function getKnightMove(piece, pieces) {
     const directions = [
         { row: 2, col: 1 },
         { row: 2, col: -1 },
@@ -149,10 +150,10 @@ function getKnightMove(piece, pieces, isWhite) {
         { row: -1, col: -2 }
     ];
 
-    return getSingleMoves(piece, pieces, isWhite, directions);
+    return getSingleMoves(piece, pieces, directions);
 }
 
-function getLinearMoves(piece, pieces, isWhite, directions) {
+function getLinearMoves(piece, pieces, directions) {
     var validSquares = [];
 
     for (const dir of directions) {
@@ -165,7 +166,7 @@ function getLinearMoves(piece, pieces, isWhite, directions) {
             const pieceInSquare = pieces.find(p => p.row === row && p.col === col);
 
             if (pieceInSquare) {
-                if (pieceInSquare.isWhite !== isWhite) {
+                if (pieceInSquare.isWhite !== piece.isWhite) {
                     validSquares.push({ row, col });
                 }
 
@@ -179,7 +180,7 @@ function getLinearMoves(piece, pieces, isWhite, directions) {
     return validSquares;
 }
 
-function getSingleMoves(piece, pieces, isWhite, directions) {
+function getSingleMoves(piece, pieces, directions) {
     const validSquares = [];
 
     for (const dir of directions) {
@@ -191,7 +192,7 @@ function getSingleMoves(piece, pieces, isWhite, directions) {
         const pieceInSquare = pieces.find(p => p.row === row && p.col === col);
         
         if (pieceInSquare) {
-            if (pieceInSquare.isWhite !== isWhite) {
+            if (pieceInSquare.isWhite !== piece.isWhite) {
                 validSquares.push({ row, col });
             }
         } else {
