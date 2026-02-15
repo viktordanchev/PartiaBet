@@ -11,13 +11,13 @@ namespace Core.Results.Match
         public Guid NextId { get; set; }
         public double Duration { get; set; }
         public GameType GameType { get; private set; }
-        public GameMoveModel? MoveData { get; private set; }
+        public GameBoardModel? GameBoard { get; private set; }
 
         public static МакеMoveResult Invalid() =>
             new() { IsValid = false };
 
-        public static МакеMoveResult Success(GameMoveModel move, GameType gameType) =>
-            new() { IsValid = true, MoveData = move, GameType = gameType };
+        public static МакеMoveResult Success(GameBoardModel board, GameType gameType) =>
+            new() { IsValid = true, GameBoard = board, GameType = gameType };
 
         public static МакеMoveResult Win(Guid winnerId) =>
             new() { IsValid = true, IsWinningMove = true, WinnerId = winnerId };

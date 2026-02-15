@@ -17,8 +17,8 @@ const ChessMatch = ({ data }) => {
     useEffect(() => {
         if (!newMove) return;
 
-        const { moveData, newPlayerId, duration } = newMove;
-        const { oldRow, oldCol, newRow, newCol } = moveData;
+        const { gameBoard, newPlayerId, duration } = newMove;
+        const { oldRow, oldCol, newRow, newCol } = gameBoard;
 
         setBoard(prev => ({
             ...prev,

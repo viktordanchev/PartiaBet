@@ -76,8 +76,8 @@ export const MatchHubProvider = ({ children }) => {
         setNewMatch(match);
     };
 
-    const handleReceiveMove = (moveData, newPlayerId, duration) => {
-        setNewMove({ moveData, newPlayerId, duration });
+    const handleReceiveMove = (gameBoard, newPlayerId, duration) => {
+        setNewMove({ gameBoard, newPlayerId, duration });
     };
 
     const handleReceivePlayer = (matchId, player) => {

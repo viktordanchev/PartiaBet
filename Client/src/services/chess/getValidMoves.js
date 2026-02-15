@@ -30,42 +30,21 @@ function getKingMove(board, piece, pieces) {
     ];
 
     const validSquares = getSingleMoves(piece, pieces, directions);
-    const smallCastleType = piece.isWhite ? board.canWhiteSmallCastle : board.canBlackSmallCastle;
-    const bigCastleType = piece.isWhite ? board.canWhiteBigCastle : board.canBlackBigCastle;
+
+    const smallCastleType = piece.isWhite
+        ? board.canWhiteSmallCastle
+        : board.canBlackSmallCastle;
+
+    const bigCastleType = piece.isWhite
+        ? board.canWhiteBigCastle
+        : board.canBlackBigCastle;
 
     if (smallCastleType) {
-        const rookKingSide = pieces.find(
-            p => p.type === 'Rook' &&
-                p.row === backRank &&
-                p.col === 7 &&
-                p.isWhite === piece.isWhite
-        );
+        addCastleMove(piece, pieces, validSquares, -1);
+    }
 
-        if (rookKingSide) {
-            const square5 = pieces.find(p => p.row === backRank && p.col === 5);
-            const square6 = pieces.find(p => p.row === backRank && p.col === 6);
-
-            if (!square5 && !square6) {
-                validSquares.push({ row: backRank, col: 6 });
-            }
-        }
-
-        const rookQueenSide = pieces.find(
-            p => p.type === 'Rook' &&
-                p.row === backRank &&
-                p.col === 0 &&
-                p.isWhite === piece.isWhite
-        );
-
-        if (rookQueenSide) {
-            const square1 = pieces.find(p => p.row === backRank && p.col === 1);
-            const square2 = pieces.find(p => p.row === backRank && p.col === 2);
-            const square3 = pieces.find(p => p.row === backRank && p.col === 3);
-
-            if (!square1 && !square2 && !square3) {
-                validSquares.push({ row: backRank, col: 2 });
-            }
-        }
+    if (bigCastleType) {
+        addCastleMove(piece, pieces, validSquares, 1);
     }
 
     return validSquares;
@@ -108,17 +87,17 @@ function getPawnMove(piece, pieces) {
     if (piece.row === 1 || piece.row === 6) {
         directions.unshift({ row: piece.isWhite ? 2 : -2, col: 0 });
     }
-    
+
     for (const dir of directions) {
         const row = piece.row + dir.row;
         const col = piece.col + dir.col;
-        
+
         if (row < 0 || row > 7 || col < 0 || col > 7) continue;
-        
+
         const square = pieces.find(p => p.row === row && p.col === col);
-        
+
         if (square && dir.col === 0) continue;
-        
+
         if (dir.col !== 0 && (!square || (square && square.isWhite === piece.isWhite))) continue;
 
         validSquares.push({ row, col });
@@ -186,11 +165,11 @@ function getSingleMoves(piece, pieces, directions) {
     for (const dir of directions) {
         const row = piece.row + dir.row;
         const col = piece.col + dir.col;
-        
+
         if (row < 0 || row >= 8 || col < 0 || col >= 8) continue;
 
         const pieceInSquare = pieces.find(p => p.row === row && p.col === col);
-        
+
         if (pieceInSquare) {
             if (pieceInSquare.isWhite !== piece.isWhite) {
                 validSquares.push({ row, col });
@@ -203,5 +182,22 @@ function getSingleMoves(piece, pieces, directions) {
     return validSquares;
 }
 
+function addCastleMove(piece, pieces, validSquares, direction) {
+    const start = piece.col + direction;
+    const end = direction === -1 ? 0 : 7;
+
+    for (let i = start; direction === -1 ? i >= end : i <= end; i += direction) {
+        const pieceOnSquare = pieces.find(
+            p => p.row === piece.row && p.col === i
+        );
+
+        if (pieceOnSquare && pieceOnSquare.type === 'Rook' && piece.isWhite === pieceOnSquare.isWhite) {
+            validSquares.push({ row: piece.row, col: i });
+            break;
+        } else if (pieceOnSquare) {
+            break;
+        }
+    }
+}
 
 export default getValidMoves;

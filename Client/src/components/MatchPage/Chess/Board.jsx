@@ -51,7 +51,7 @@ const Board = ({ data, isMyTurn }) => {
                     newCol: piece.col
                 });
         } else {
-            var validMoves = getValidMoves(piece, data.pieces, isHostWhite);
+            var validMoves = getValidMoves(data, piece, data.pieces);
 
             setSelectedPiece(piece);
             setValidSquares(validMoves);

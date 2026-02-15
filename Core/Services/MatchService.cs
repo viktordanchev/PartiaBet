@@ -315,7 +315,7 @@ namespace Core.Services
                 return МакеMoveResult.Win(playerId);
             }
 
-            return МакеMoveResult.Success(moveDataModel, match.GameType);
+            return МакеMoveResult.Success(match.Board, match.GameType);
         }
 
         private (Guid, double) SwtichTurnAsync(MatchModel match, Guid currentPlayerId)

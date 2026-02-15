@@ -81,7 +81,7 @@ namespace RestAPI.Hubs
 
             if (!result.IsValid) return;
 
-            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.MoveData, result.NextId, result.Duration);
+            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.GameBoard, result.NextId, result.Duration);
         }
 
         [Authorize]

@@ -35,6 +35,11 @@ namespace Games.Chess.Services
                 }
             }
 
+            chessBoard.CanBlackBigCastle= true;
+            chessBoard.CanBlackSmallCastle= true;
+            chessBoard.CanWhiteBigCastle= true;
+            chessBoard.CanWhiteSmallCastle= true;
+
             return chessBoard;
         }
 
