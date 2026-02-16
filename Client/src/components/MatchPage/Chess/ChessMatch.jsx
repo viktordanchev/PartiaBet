@@ -18,16 +18,8 @@ const ChessMatch = ({ data }) => {
         if (!newMove) return;
 
         const { gameBoard, newPlayerId, duration } = newMove;
-        const { oldRow, oldCol, newRow, newCol } = gameBoard;
 
-        setBoard(prev => ({
-            ...prev,
-            pieces: prev.pieces.map(p =>
-                p.row === oldRow && p.col === oldCol
-                    ? { ...p, row: newRow, col: newCol }
-                    : p
-            )
-        }));
+        setBoard(gameBoard);
 
         if (newPlayerId === loggedPlayer.id) {
             setLoggedPlayer(prev => ({
