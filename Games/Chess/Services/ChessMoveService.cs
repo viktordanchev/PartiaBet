@@ -1,5 +1,4 @@
 ﻿using Core.Games.Enums;
-using Core.Models.Games;
 using Core.Models.Games.Chess;
 
 namespace Games.Chess.Services
@@ -71,11 +70,11 @@ namespace Games.Chess.Services
             return kingsCount < 2;
         }
 
-        public static void UpdateCastlingRights(ChessBoardModel board, FigureModel piece, ChessMoveModel move)
+        public static void UpdateCastlingRights(ChessBoardModel board, FigureModel currPiece)
         {
-            if (piece.Type == PieceType.King)
+            if (currPiece.Type == PieceType.King)
             {
-                if (piece.IsWhite)
+                if (currPiece.IsWhite)
                 {
                     board.CanWhiteSmallCastle = false;
                     board.CanWhiteBigCastle = false;
@@ -87,23 +86,23 @@ namespace Games.Chess.Services
                 }
             }
 
-            if (piece.Type == PieceType.Rook)
+            if (currPiece.Type == PieceType.Rook)
             {
-                if (piece.IsWhite && move.OldRow == 7)
+                if (currPiece.IsWhite && currPiece.Row == 0)
                 {
-                    if (move.OldCol == 0)
+                    if (currPiece.Col == 7)
                         board.CanWhiteBigCastle = false;
 
-                    if (move.OldCol == 7)
+                    if (currPiece.Col == 0)
                         board.CanWhiteSmallCastle = false;
                 }
 
-                if (!piece.IsWhite && move.OldRow == 0)
+                if (!currPiece.IsWhite && currPiece.Row == 7)
                 {
-                    if (move.OldCol == 0)
+                    if (currPiece.Col == 7)
                         board.CanBlackBigCastle = false;
 
-                    if (move.OldCol == 7)
+                    if (currPiece.Col == 0)
                         board.CanBlackSmallCastle = false;
                 }
             }
@@ -112,16 +111,16 @@ namespace Games.Chess.Services
         public static void PerformCastle(ChessBoardModel board, FigureModel king, FigureModel rook)
         {
             var isWhite = king.IsWhite;
-            var isBigCastle = rook.Col == 0;
+            var isBigCastle = rook.Col == 7;
             var canSmallCastle = isWhite ? board.CanWhiteSmallCastle : board.CanBlackSmallCastle;
             var canBigCastle = isWhite ? board.CanWhiteBigCastle : board.CanBlackBigCastle;
 
-            if (canBigCastle && isBigCastle)
+            if (canSmallCastle && !isBigCastle)
             {
-                king.Col = 2;
-                rook.Col = 3;
+                king.Col = 1;
+                rook.Col = 2;
             }
-            else if (canSmallCastle && !isBigCastle)
+            else if (canBigCastle && isBigCastle)
             {
                 king.Col = 6;
                 rook.Col = 5;
@@ -142,7 +141,7 @@ namespace Games.Chess.Services
         public static bool IsCastleMove(ChessBoardModel board, FigureModel currPiece, FigureModel targetPiece)
         {
             return currPiece != null && targetPiece != null &&
-                currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook && 
+                currPiece.Type == PieceType.King && targetPiece.Type == PieceType.Rook &&
                 currPiece.IsWhite == targetPiece.IsWhite;
         }
 
@@ -269,11 +268,11 @@ namespace Games.Chess.Services
 
         private static bool IsValidPawnMove(ChessBoardModel board, ChessMoveModel move, bool isWhite)
         {
-            var directions = new List<(int row, int col)>
+            var directions = new List<(int Row, int Col)>
             {
-                (isWhite ? 1 : -1, 0),
                 (isWhite ? 1 : -1, 1),
-                (isWhite ? 1 : -1, -1)
+                (isWhite ? 1 : -1, -1),
+                (isWhite ? 1 : -1, 0)
             };
 
             if ((isWhite && move.OldRow == 1) || (!isWhite && move.OldRow == 6))
@@ -281,7 +280,33 @@ namespace Games.Chess.Services
                 directions.Add((isWhite ? 2 : -2, 0));
             }
 
-            return GetSingleMoves(move, directions);
+            var validSquares = new List<(int Row, int Col)>();
+            foreach (var dir in directions)
+            {
+                var row = move.OldRow + dir.Row;
+                var col = move.OldCol + dir.Col;
+
+                if (row < 0 || row > 7 || col < 0 || col > 7) continue;
+
+                var square = board.Pieces.FirstOrDefault(p => p.Row == row && p.Col == col);
+
+                if (square != null)
+                {
+                    if (dir.Col != 0 && square.IsWhite == isWhite)
+                        continue;
+                    else if (dir.Col == 0)
+                        break;
+                }
+                else
+                {
+                    if (dir.Col != 0)
+                        continue;
+                }
+
+                validSquares.Add((row, col));
+            }
+
+            return validSquares.Any(s => s.Row == move.NewRow && s.Col == move.NewCol);
         }
 
         private static bool GetLinearMoves(ChessBoardModel board, ChessMoveModel move, List<(int Row, int Col)> directions)

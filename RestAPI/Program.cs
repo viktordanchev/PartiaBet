@@ -22,7 +22,7 @@ builder.Services.AddSignalR()
     .AddJsonProtocol(options =>
     {
         options.PayloadSerializerOptions.Converters.Add(
-            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+            new JsonStringEnumConverter()
         );
     });
 builder.Services.AddStackExchangeRedisCache(options =>

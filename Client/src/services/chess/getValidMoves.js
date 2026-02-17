@@ -79,13 +79,13 @@ function getRookMove(piece, pieces) {
 function getPawnMove(piece, pieces) {
     const validSquares = [];
     const directions = [
-        { row: piece.isWhite ? 1 : -1, col: 0 },
         { row: piece.isWhite ? 1 : -1, col: 1 },
-        { row: piece.isWhite ? 1 : -1, col: -1 }
+        { row: piece.isWhite ? 1 : -1, col: -1 },
+        { row: piece.isWhite ? 1 : -1, col: 0 }
     ];
 
     if (piece.row === 1 || piece.row === 6) {
-        directions.unshift({ row: piece.isWhite ? 2 : -2, col: 0 });
+        directions.push({ row: piece.isWhite ? 2 : -2, col: 0 });
     }
 
     for (const dir of directions) {
@@ -96,9 +96,17 @@ function getPawnMove(piece, pieces) {
 
         const square = pieces.find(p => p.row === row && p.col === col);
 
-        if (square && dir.col === 0) continue;
-
-        if (dir.col !== 0 && (!square || (square && square.isWhite === piece.isWhite))) continue;
+        if (square) {
+            if (dir.col !== 0 && square.isWhite === piece.isWhite) {
+                continue;
+            } else if (dir.col === 0) {
+                break
+            }
+        } else {
+            if (dir.col !== 0) {
+                continue;
+            }
+        }
 
         validSquares.push({ row, col });
     }

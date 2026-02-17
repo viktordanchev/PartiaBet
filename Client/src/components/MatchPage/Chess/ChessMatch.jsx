@@ -18,7 +18,7 @@ const ChessMatch = ({ data }) => {
         if (!newMove) return;
 
         const { gameBoard, newPlayerId, duration } = newMove;
-
+        
         setBoard(gameBoard);
 
         if (newPlayerId === loggedPlayer.id) {

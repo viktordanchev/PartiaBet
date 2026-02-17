@@ -12,7 +12,7 @@ const Board = ({ data, isMyTurn }) => {
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [validSquares, setValidSquares] = useState([]);
     const isHostWhite = data.whitePlayerId === decodedToken['Id'];
-
+    
     const isClickable = (square) => {
         if (!square.type) return false;
 

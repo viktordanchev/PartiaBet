@@ -73,6 +73,11 @@ namespace Games.Chess.Services
                 return;
             }
 
+            if(currPiece.Type == PieceType.King || currPiece.Type == PieceType.Rook)
+            {
+                ChessMoveService.UpdateCastlingRights(chessBoard, currPiece);
+            }
+
             if (targetPiece != null)
             {
                 chessBoard.Pieces.Remove(targetPiece);

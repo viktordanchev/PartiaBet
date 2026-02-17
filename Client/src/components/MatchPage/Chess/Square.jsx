@@ -3,7 +3,7 @@ import getFigureImage from '../../../constants/chessFigureImages';
 
 const Square = ({ square, isClickable, isHighlighted, isSelected, onSelect }) => {
     const isEmpty = !square.type;
-
+    
     return (
         <div className={`relative w-20 h-20 flex items-center justify-center
         ${isClickable && 'hover:bg-yellow-100 hover:cursor-pointer'}
