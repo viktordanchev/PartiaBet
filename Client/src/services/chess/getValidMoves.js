@@ -29,7 +29,7 @@ function getKingMove(board, piece, pieces) {
         { row: 0, col: -1 }
     ];
 
-    const validSquares = getSingleMoves(piece, pieces, directions);
+    let validSquares = getSingleMoves(piece, pieces, directions);
 
     const smallCastleType = piece.isWhite
         ? board.canWhiteSmallCastle
@@ -46,6 +46,8 @@ function getKingMove(board, piece, pieces) {
     if (bigCastleType) {
         addCastleMove(piece, pieces, validSquares, 1);
     }
+
+    validSquares = getAttackedSquares(validSquares, board, piece.isWhite);
 
     return validSquares;
 }
@@ -206,6 +208,77 @@ function addCastleMove(piece, pieces, validSquares, direction) {
             break;
         }
     }
+}
+
+function getAttackedSquares(validSquares, board, isWhite) {
+
+    const enemyPieces = board.pieces.filter(p => p.isWhite !== isWhite);
+    let attackedSquares = [];
+
+    for (const piece of enemyPieces) {
+
+        let attackMoves = [];
+
+        switch (piece.type) {
+
+            case 'Queen':
+                attackMoves = getQueenMove(piece, board.pieces);
+                break;
+
+            case 'Rook':
+                attackMoves = getRookMove(piece, board.pieces);
+                break;
+
+            case 'Bishop':
+                attackMoves = getBishopMove(piece, board.pieces);
+                break;
+
+            case 'Knight':
+                attackMoves = getKnightMove(piece, board.pieces);
+                break;
+
+            case 'Pawn':
+                attackMoves = [
+                    {
+                        row: piece.row + (piece.isWhite ? 1 : -1),
+                        col: piece.col + 1
+                    },
+                    {
+                        row: piece.row + (piece.isWhite ? 1 : -1),
+                        col: piece.col - 1
+                    }
+                ].filter(s =>
+                    s.row >= 0 && s.row < 8 &&
+                    s.col >= 0 && s.col < 8
+                );
+                break;
+
+            case 'King':
+                attackMoves = getSingleMoves(piece, board.pieces, [
+                    { row: 1, col: 0 },
+                    { row: 1, col: 1 },
+                    { row: 1, col: -1 },
+                    { row: -1, col: 0 },
+                    { row: -1, col: 1 },
+                    { row: -1, col: -1 },
+                    { row: 0, col: 1 },
+                    { row: 0, col: -1 }
+                ]);
+                break;
+
+            default:
+                attackMoves = [];
+        }
+
+        attackedSquares.push(...attackMoves);
+    }
+
+    return validSquares.filter(square =>
+        !attackedSquares.some(attacked =>
+            attacked.row === square.row &&
+            attacked.col === square.col
+        )
+    );
 }
 
 export default getValidMoves;
