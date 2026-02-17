@@ -1,4 +1,9 @@
 ﻿function getValidMoves(board, piece, pieces) {
+
+    if (!canPieceMove(piece, board)) {
+        return [];
+    }
+
     switch (piece.type) {
         case 'King':
             return getKingMove(board, piece, pieces);
@@ -280,5 +285,52 @@ function getAttackedSquares(validSquares, board, isWhite) {
         )
     );
 }
+
+function canPieceMove(piece, board) {
+    // Вземаме валидните ходове за фигурата
+    const validMoves = getValidMoves(board, piece, board.pieces);
+
+    // Ако няма ходове → няма как да се премести
+    if (validMoves.length === 0) return false;
+
+    // Царят на същия цвят
+    const king = board.pieces.find(
+        p => p.type === 'King' && p.isWhite === piece.isWhite
+    );
+
+    // Проверяваме дали поне един ход не оставя царя в шах
+    for (const move of validMoves) {
+        // Симулираме хода временно
+        const newPieces = board.pieces.map(p => ({ ...p }));
+
+        // Намираме същата фигура в копието и местим
+        const movingPiece = newPieces.find(
+            p => p.row === piece.row && p.col === piece.col
+        );
+        movingPiece.row = move.row;
+        movingPiece.col = move.col;
+
+        // Проверяваме дали царят е атакуван след този ход
+        const kingSafeSquares = getSingleMoves(king, newPieces, [
+            { row: 1, col: 0 },
+            { row: 1, col: 1 },
+            { row: 1, col: -1 },
+            { row: -1, col: 0 },
+            { row: -1, col: 1 },
+            { row: -1, col: -1 },
+            { row: 0, col: 1 },
+            { row: 0, col: -1 }
+        ]);
+
+        const safeMoves = getAttackedSquares(kingSafeSquares, { ...board, pieces: newPieces }, king.isWhite);
+
+        // Ако има поне един безопасен квадрат → можеш да местиш фигурата
+        if (safeMoves.length > 0) return true;
+    }
+
+    // Ако всички ходове водят до шах → не може
+    return false;
+}
+
 
 export default getValidMoves;
