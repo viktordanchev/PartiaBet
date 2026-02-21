@@ -14,7 +14,7 @@ export const MatchHubProvider = ({ children }) => {
     const [removedPlayer, setRemovedPlayer] = useState(null);
     const [rejoinedPlayer, setRejoinedPlayer] = useState('');
     const [matchStarted, setMatchStarted] = useState('');
-    const [resumeMatch, setResumeMatch] = useState('');
+    const [resumeMatch, setResumeMatch] = useState(false);
     
     useEffect(() => {
         const matchId = sessionStorage.getItem('connection-matchId');
@@ -52,8 +52,8 @@ export const MatchHubProvider = ({ children }) => {
         connection.on("ReceivePlayer", handleReceivePlayer);
     }, [connection]);
 
-    const handleMatchResumed = (matchId) => {
-        setResumeMatch(matchId);
+    const handleMatchResumed = () => {
+        setResumeMatch(!resumeMatch);
     };
 
     const handleStartMatch = (matchId) => {

@@ -9,58 +9,29 @@ namespace Games.Chess.Services
         {
             if (move.NewRow < 0 || move.NewRow > 7 ||
                 move.NewCol < 0 || move.NewCol > 7)
-            {
                 return false;
-            }
 
-            var currPiece = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
-            var targetPiece = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
+            var currPiece = board.Pieces
+                .FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
 
             if (currPiece == null)
-            {
                 return false;
-            }
 
-            if (currPiece != null && targetPiece != null)
+            var targetPiece = board.Pieces
+                .FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
+
+            if (targetPiece != null)
             {
                 if (IsCastleMove(board, currPiece, targetPiece))
-                {
                     return CanPerformCastle(board, move);
-                }
-                else if (IsMoveBlockedByOwnPiece(board, currPiece, targetPiece))
-                {
+
+                if (IsMoveBlockedByOwnPiece(board, currPiece, targetPiece))
                     return false;
-                }
             }
 
-            bool isValidMove;
-            switch (currPiece.Type)
-            {
-                case PieceType.King:
-                    isValidMove = IsValidKingMove(board, move);
-                    break;
-                case PieceType.Queen:
-                    isValidMove = IsValidQueenMove(board, move);
-                    break;
-                case PieceType.Rook:
-                    isValidMove = IsValidRookMove(board, move);
-                    break;
-                case PieceType.Knight:
-                    isValidMove = IsValidKnightMove(board, move);
-                    break;
-                case PieceType.Bishop:
-                    isValidMove = IsValidBishopMove(board, move);
-                    break;
-                case PieceType.Pawn:
-                    var isWhite = currPiece.IsWhite;
-                    isValidMove = IsValidPawnMove(board, move, isWhite);
-                    break;
-                default:
-                    isValidMove = false;
-                    break;
-            }
+            var validator = PieceMoveValidator.GetValidator(currPiece.Type);
 
-            return isValidMove;
+            return validator.IsValidMove(board, move);
         }
 
         public static bool IsWinningMove(ChessBoardModel board)
@@ -187,167 +158,6 @@ namespace Games.Chess.Services
             }
 
             return false;
-        }
-
-        private static bool IsValidKingMove(ChessBoardModel board, ChessMoveModel move)
-        {
-            var directions = new List<(int Row, int Col)>
-            {
-                (1, 0),
-                (1, 1),
-                (1, -1),
-                (-1, 0),
-                (-1, 1),
-                (-1, -1),
-                (0, 1),
-                (0, -1)
-            };
-
-            return GetSingleMoves(move, directions);
-        }
-
-        private static bool IsValidQueenMove(ChessBoardModel board, ChessMoveModel move)
-        {
-            var directions = new List<(int Row, int Col)>
-            {
-                (1, 1),
-                (1, -1),
-                (-1, -1),
-                (-1, 1),
-                (1, 0),
-                (-1, 0),
-                (0, 1),
-                (0, -1)
-            };
-
-            return GetLinearMoves(board, move, directions);
-        }
-
-        private static bool IsValidRookMove(ChessBoardModel board, ChessMoveModel move)
-        {
-            var directions = new List<(int Row, int Col)>
-            {
-                (1, 0),
-                (-1, 0),
-                (0, 1),
-                (0, -1)
-            };
-
-            return GetLinearMoves(board, move, directions);
-        }
-
-        private static bool IsValidKnightMove(ChessBoardModel board, ChessMoveModel move)
-        {
-            var directions = new List<(int Row, int Col)>
-            {
-                (2, 1),
-                (2, -1),
-                (-2, 1),
-                (-2, -1),
-                (1, 2),
-                (-1, 2),
-                (1, -2),
-                (-1, -2)
-            };
-
-            return GetSingleMoves(move, directions);
-        }
-
-        private static bool IsValidBishopMove(ChessBoardModel board, ChessMoveModel move)
-        {
-            var directions = new List<(int Row, int Col)>
-            {
-                (1, 1),
-                (1, -1),
-                (-1, -1),
-                (-1, 1)
-            };
-
-            return GetLinearMoves(board, move, directions);
-        }
-
-        private static bool IsValidPawnMove(ChessBoardModel board, ChessMoveModel move, bool isWhite)
-        {
-            var directions = new List<(int Row, int Col)>
-            {
-                (isWhite ? 1 : -1, 1),
-                (isWhite ? 1 : -1, -1),
-                (isWhite ? 1 : -1, 0)
-            };
-
-            if ((isWhite && move.OldRow == 1) || (!isWhite && move.OldRow == 6))
-            {
-                directions.Add((isWhite ? 2 : -2, 0));
-            }
-
-            var validSquares = new List<(int Row, int Col)>();
-            foreach (var dir in directions)
-            {
-                var row = move.OldRow + dir.Row;
-                var col = move.OldCol + dir.Col;
-
-                if (row < 0 || row > 7 || col < 0 || col > 7) continue;
-
-                var square = board.Pieces.FirstOrDefault(p => p.Row == row && p.Col == col);
-
-                if (square != null)
-                {
-                    if (dir.Col != 0 && square.IsWhite == isWhite)
-                        continue;
-                    else if (dir.Col == 0)
-                        break;
-                }
-                else
-                {
-                    if (dir.Col != 0)
-                        continue;
-                }
-
-                validSquares.Add((row, col));
-            }
-
-            return validSquares.Any(s => s.Row == move.NewRow && s.Col == move.NewCol);
-        }
-
-        private static bool GetLinearMoves(ChessBoardModel board, ChessMoveModel move, List<(int Row, int Col)> directions)
-        {
-            foreach (var dir in directions)
-            {
-                for (var i = 1; i < 8; i++)
-                {
-                    var row = move.OldRow + dir.Row * i;
-                    var col = move.OldCol + dir.Col * i;
-
-                    if (row < 0 || row >= 8 || col < 0 || col >= 8) break;
-
-                    if (row == move.NewRow && col == move.NewCol) return true;
-
-                    if (board.Pieces.Any(p => p.Row == row && p.Col == col)) break;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool GetSingleMoves(ChessMoveModel move, List<(int Row, int Col)> directions)
-        {
-            var isValidMove = false;
-
-            foreach (var dir in directions)
-            {
-                var row = move.OldRow + dir.Row;
-                var col = move.OldCol + dir.Col;
-
-                if (row < 0 || row >= 8 || col < 0 || col >= 8) continue;
-
-                if (row == move.NewRow && col == move.NewCol)
-                {
-                    isValidMove = true;
-                    break;
-                }
-            }
-
-            return isValidMove;
         }
     }
 }

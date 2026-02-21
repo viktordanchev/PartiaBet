@@ -43,6 +43,13 @@ namespace Core.Services
             _matchTimer.RemoveTimer(player.Id);
         }
 
+        public void PauseTurn(PlayerModel player)
+        {
+            player.Timer.TimeLeft = player.Timer.TurnExpiresAt - DateTime.UtcNow;
+
+            _matchTimer.PauseTurnTimer(player);
+        }
+
         public void SetTimeLeft(GameType gameType, PlayerModel player)
         {
             var timeLeft = TimeSpan.Zero;

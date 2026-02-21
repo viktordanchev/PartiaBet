@@ -2,6 +2,7 @@
 using Core.Enums;
 using Core.Interfaces.Games;
 using Core.Interfaces.Services;
+using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using RestAPI.Dtos.Match;
@@ -12,15 +13,40 @@ namespace RestAPI.Hubs
     {
         private readonly IMatchService _matchService;
         private readonly IGameProvider _gameProvider;
+        private readonly IMatchPlayersManager _matchPlayersManager;
         private readonly IMapper _mapper;
 
         public MatchHub(IMatchService matchService,
             IGameProvider gameProvider,
+            IMatchPlayersManager matchPlayersManager,
             IMapper mapper)
         {
             _matchService = matchService;
             _gameProvider = gameProvider;
+            _matchPlayersManager = matchPlayersManager;
             _mapper = mapper;
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            MarkPlayerAsDisconnected(Context.UserIdentifier);
+
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(15000);
+
+                if (IsStillDisconnected(Context.UserIdentifier))
+                {
+                    RemovePlayerFromMatch();
+                }
+            });
+            var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
+
+            var result = await _matchService.HandlePlayerDisconnectAsync(playerId);
+
+            await Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", playerId, result.TimeLeftToRejoin);
+
+            await base.OnDisconnectedAsync(exception);
         }
 
         public async Task JoinGameGroup(GameType gameType)
@@ -81,39 +107,42 @@ namespace RestAPI.Hubs
 
             if (!result.IsValid) return;
 
+            if (result.IsWinningMove)
+            {
+                await _matchService.EndMatchAsync(matchId);
+            }
+
             await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.GameBoard, result.NextId, result.Duration);
         }
 
         [Authorize]
-        public async Task LeaveMatch(Guid matchId)
+        public async Task LeaveMatchQueue()
         {
             var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
 
-            var result = await _matchService.LeaveMatchAsync(matchId, playerId);
+            var result = await _matchService.LeaveMatchQueueAsync(playerId);
 
             if (result.IsRemoved)
             {
-                await Clients.Group($"{result.GameType}").SendAsync("RemovePlayer", matchId, playerId);
-            }
-            else if (!result.IsRemoved)
-            {
-                await Clients.Group($"{matchId}").SendAsync("RejoinCountdown", playerId, result.TimeLeftToRejoin);
+                await Clients.Group($"{result.GameType}").SendAsync("RemovePlayer", result.MatchId, playerId);
             }
         }
 
         [Authorize]
-        public async Task RejoinMatch(Guid matchId)
+        public async Task<Guid> RejoinMatch()
         {
             var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
 
-            var result = await _matchService.RejoinMatchAsync(matchId, playerId);
+            var result = await _matchService.PlayerRejoinMatchAsync(playerId);
 
-            await Clients.Group($"{matchId}").SendAsync("RejoinPlayer", playerId);
+            await Clients.Group($"{result.MatchId}").SendAsync("RejoinPlayer", playerId);
 
-            if (result.HasChanged)
+            if (result.MatchStatus == MatchStatus.Ongoing)
             {
-                await Clients.Group($"{matchId}").SendAsync("MatchResumed", matchId);
+                await Clients.Group($"{result.MatchId}").SendAsync("MatchResumed");
             }
+
+            return result.MatchId;
         }
     }
 }

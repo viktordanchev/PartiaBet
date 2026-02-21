@@ -21,7 +21,7 @@ namespace Core.Models.Match
 
         public bool IsOnTurn { get; set; }
 
-        public PlayerStatus Status { get; set; }
+        public PlayerState Status { get; set; }
 
         public int TurnOrder { get; set; }
 

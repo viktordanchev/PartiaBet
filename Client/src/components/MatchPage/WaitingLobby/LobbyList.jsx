@@ -9,7 +9,7 @@ const LobbyList = ({ match }) => {
     
     const handleCancel = async () => {
         if (connection) {
-            connection.invoke("LeaveMatch", match.id);
+            await connection.invoke('LeaveMatchQueue');
         }
 
         navigate('/');

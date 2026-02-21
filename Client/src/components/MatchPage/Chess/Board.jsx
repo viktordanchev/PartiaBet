@@ -32,12 +32,12 @@ const Board = ({ data, isMyTurn }) => {
         }
     };
 
-    const handleClickSquare = async (piece) => {
+    const handleClickSquare = async (movedPiece) => {
         if (!isMyTurn) return;
 
         const isMove =
             selectedPiece &&
-            validSquares.some(s => s.row === piece.row && s.col === piece.col);
+            validSquares.some(s => s.row === movedPiece.row && s.col === movedPiece.col);
 
         if (isMove) {
             setSelectedPiece(null);
@@ -47,13 +47,13 @@ const Board = ({ data, isMyTurn }) => {
                 {
                     oldRow: selectedPiece.row,
                     oldCol: selectedPiece.col,
-                    newRow: piece.row,
-                    newCol: piece.col
+                    newRow: movedPiece.row,
+                    newCol: movedPiece.col
                 });
         } else {
-            var validMoves = getValidMoves(data, piece, data.pieces);
+            var validMoves = getValidMoves(data, movedPiece);
 
-            setSelectedPiece(piece);
+            setSelectedPiece(movedPiece);
             setValidSquares(validMoves);
         }
     };

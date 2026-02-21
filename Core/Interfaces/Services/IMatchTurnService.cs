@@ -7,6 +7,7 @@ namespace Core.Interfaces.Services
     {
         void StartTurn(MatchModel match, PlayerModel player);
         void EndTurn(MatchModel match, PlayerModel player);
+        void PauseTurn(PlayerModel player);
         void SetTimeLeft(GameType gameType, PlayerModel player);
     }
 }

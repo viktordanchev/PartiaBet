@@ -8,11 +8,13 @@ namespace Core.Interfaces.Services
     {
         Task<MatchModel> CreateMatchAsync(GameType gameType, decimal betAmount);
         Task<JoinMatchResult> JoinMatchAsync(Guid matchId, Guid playerId);
-        Task<LeaveMatchResult> LeaveMatchAsync(Guid matchId, Guid playerId);
+        Task<LeaveMatchQueueResult> LeaveMatchQueueAsync(Guid playerId);
         Task<МакеMoveResult> MakeMoveAsync(Guid matchId, Guid playerId, string moveDataJson);
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType);
         Task<MatchModel> GetMatchAsync(Guid matchId);
-        Task<RejoinMatchResult> RejoinMatchAsync(Guid matchId, Guid playerId);
-        Task<double> GetMatchAutoEndTimeRemainingAsync(Guid playerId);
+        Task<PlayerRejoinMatchResult> PlayerRejoinMatchAsync(Guid playerId);
+        Task<double> GetMatchCountdownAsync(Guid playerId);
+        Task EndMatchAsync(Guid matchId);
+        Task<HandlePlayerDisconnectResult> HandlePlayerDisconnectAsync(Guid playerId);
     }
 }

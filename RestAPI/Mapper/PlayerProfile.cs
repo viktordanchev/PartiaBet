@@ -10,11 +10,7 @@ namespace RestAPI.Mapper
         {
             CreateMap<PlayerModel, PlayerDto>()
             .ForMember(dest => dest.TurnTimeLeft, opt =>
-                opt.MapFrom(src =>
-                    src.IsOnTurn
-                        ? (src.Timer.TurnExpiresAt - DateTime.UtcNow).TotalSeconds
-                        : src.Timer.TimeLeft.TotalSeconds
-                ));
+                opt.MapFrom(src => src.Timer.TimeLeft.TotalSeconds));
         }
     }
 }

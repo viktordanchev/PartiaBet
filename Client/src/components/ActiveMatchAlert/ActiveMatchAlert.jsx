@@ -32,6 +32,7 @@ function ActiveMatchAlert() {
             var expiry = getExpiry(response);
 
             localStorage.setItem(COUNTDOWN_KEY, expiry);
+            
             restart(expiry, true);
         };
 

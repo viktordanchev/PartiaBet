@@ -1,40 +1,36 @@
-﻿function getValidMoves(board, piece, pieces) {
-
-    if (!canPieceMove(piece, board)) {
-        return [];
-    }
-
+﻿function getValidMoves(board, piece) {
+    let validMoves = [];
+    
     switch (piece.type) {
         case 'King':
-            return getKingMove(board, piece, pieces);
+            validMoves = getKingMove(board, piece);
+            break;
         case 'Queen':
-            return getQueenMove(piece, pieces);
+            validMoves = getQueenMove(piece, board.pieces);
+            break;
         case 'Rook':
-            return getRookMove(piece, pieces);
+            validMoves = getRookMove(piece, board.pieces);
+            break;
         case 'Pawn':
-            return getPawnMove(piece, pieces);
+            validMoves = getPawnMove(piece, board.pieces);
+            break;
         case 'Bishop':
-            return getBishopMove(piece, pieces);
+            validMoves = getBishopMove(piece, board.pieces);
+            break;
         case 'Knight':
-            return getKnightMove(piece, pieces);
+            validMoves = getKnightMove(piece, board.pieces);
+            break;
         default:
-            return [];
+            return validMoves;
     }
+
+    validMoves = filterMovesLeavingKingInCheck(board, piece, validMoves);
+
+    return validMoves
 }
 
-function getKingMove(board, piece, pieces) {
-    const directions = [
-        { row: 1, col: 0 },
-        { row: 1, col: 1 },
-        { row: 1, col: -1 },
-        { row: -1, col: 0 },
-        { row: -1, col: 1 },
-        { row: -1, col: -1 },
-        { row: 0, col: 1 },
-        { row: 0, col: -1 }
-    ];
-
-    let validSquares = getSingleMoves(piece, pieces, directions);
+function getKingMove(board, piece) {
+    const validSquares = getSafeKingMoves(board, piece, piece.isWhite);
 
     const smallCastleType = piece.isWhite
         ? board.canWhiteSmallCastle
@@ -45,14 +41,12 @@ function getKingMove(board, piece, pieces) {
         : board.canBlackBigCastle;
 
     if (smallCastleType) {
-        addCastleMove(piece, pieces, validSquares, -1);
+        addCastleMove(piece, board.pieces, validSquares, -1);
     }
 
     if (bigCastleType) {
-        addCastleMove(piece, pieces, validSquares, 1);
+        addCastleMove(piece, board.pieces, validSquares, 1);
     }
-
-    validSquares = getAttackedSquares(validSquares, board, piece.isWhite);
 
     return validSquares;
 }
@@ -215,13 +209,22 @@ function addCastleMove(piece, pieces, validSquares, direction) {
     }
 }
 
-function getAttackedSquares(validSquares, board, isWhite) {
-
-    const enemyPieces = board.pieces.filter(p => p.isWhite !== isWhite);
+function getSafeKingMoves(board, kingPiece, isKingWhite) {
+    const enemyPieces = board.pieces.filter(p => p.isWhite !== isKingWhite);
     let attackedSquares = [];
+    const kingDirections = [
+        { row: 1, col: 0 },
+        { row: 1, col: 1 },
+        { row: 1, col: -1 },
+        { row: -1, col: 0 },
+        { row: -1, col: 1 },
+        { row: -1, col: -1 },
+        { row: 0, col: 1 },
+        { row: 0, col: -1 }
+    ];
+    let kingMoves = getSingleMoves(kingPiece, board.pieces, kingDirections);
 
     for (const piece of enemyPieces) {
-
         let attackMoves = [];
 
         switch (piece.type) {
@@ -259,16 +262,7 @@ function getAttackedSquares(validSquares, board, isWhite) {
                 break;
 
             case 'King':
-                attackMoves = getSingleMoves(piece, board.pieces, [
-                    { row: 1, col: 0 },
-                    { row: 1, col: 1 },
-                    { row: 1, col: -1 },
-                    { row: -1, col: 0 },
-                    { row: -1, col: 1 },
-                    { row: -1, col: -1 },
-                    { row: 0, col: 1 },
-                    { row: 0, col: -1 }
-                ]);
+                attackMoves = getSingleMoves(piece, board.pieces, kingDirections);
                 break;
 
             default:
@@ -278,7 +272,7 @@ function getAttackedSquares(validSquares, board, isWhite) {
         attackedSquares.push(...attackMoves);
     }
 
-    return validSquares.filter(square =>
+    return kingMoves.filter(square =>
         !attackedSquares.some(attacked =>
             attacked.row === square.row &&
             attacked.col === square.col
@@ -286,51 +280,96 @@ function getAttackedSquares(validSquares, board, isWhite) {
     );
 }
 
-function canPieceMove(piece, board) {
-    // Вземаме валидните ходове за фигурата
-    const validMoves = getValidMoves(board, piece, board.pieces);
+function filterMovesLeavingKingInCheck(board, piece, validMoves) {
 
-    // Ако няма ходове → няма как да се премести
-    if (validMoves.length === 0) return false;
+    const legalMoves = [];
 
-    // Царят на същия цвят
-    const king = board.pieces.find(
-        p => p.type === 'King' && p.isWhite === piece.isWhite
-    );
-
-    // Проверяваме дали поне един ход не оставя царя в шах
     for (const move of validMoves) {
-        // Симулираме хода временно
-        const newPieces = board.pieces.map(p => ({ ...p }));
 
-        // Намираме същата фигура в копието и местим
-        const movingPiece = newPieces.find(
-            p => p.row === piece.row && p.col === piece.col
+        // 1️⃣ Deep copy на board
+        const simulatedBoard = structuredClone(board);
+
+        // 2️⃣ Намери фигурата в копието
+        const simulatedPiece = simulatedBoard.pieces.find(
+            p => p.row === piece.row &&
+                p.col === piece.col &&
+                p.type === piece.type &&
+                p.isWhite === piece.isWhite
         );
-        movingPiece.row = move.row;
-        movingPiece.col = move.col;
 
-        // Проверяваме дали царят е атакуван след този ход
-        const kingSafeSquares = getSingleMoves(king, newPieces, [
-            { row: 1, col: 0 },
-            { row: 1, col: 1 },
-            { row: 1, col: -1 },
-            { row: -1, col: 0 },
-            { row: -1, col: 1 },
-            { row: -1, col: -1 },
-            { row: 0, col: 1 },
-            { row: 0, col: -1 }
-        ]);
+        if (!simulatedPiece) continue;
 
-        const safeMoves = getAttackedSquares(kingSafeSquares, { ...board, pieces: newPieces }, king.isWhite);
+        // 3️⃣ Махни евентуално взета фигура
+        simulatedBoard.pieces = simulatedBoard.pieces.filter(
+            p => !(p.row === move.row && p.col === move.col)
+        );
 
-        // Ако има поне един безопасен квадрат → можеш да местиш фигурата
-        if (safeMoves.length > 0) return true;
+        // 4️⃣ Премести фигурата
+        simulatedPiece.row = move.row;
+        simulatedPiece.col = move.col;
+
+        // 5️⃣ Провери дали царят е в шах
+        if (!isKingInCheck(simulatedBoard, piece.isWhite)) {
+            legalMoves.push(move);
+        }
     }
 
-    // Ако всички ходове водят до шах → не може
+    return legalMoves;
+}
+
+function isKingInCheck(board, isWhite) {
+    const king = board.pieces.find(
+        p => p.type === 'King' && p.isWhite === isWhite
+    );
+
+    if (!king) return false;
+
+    const enemyPieces = board.pieces.filter(
+        p => p.isWhite !== isWhite
+    );
+
+    for (const enemy of enemyPieces) {
+
+        const attackMoves = getPseudoMoves(board, enemy);
+
+        if (attackMoves.some(
+            move => move.row === king.row && move.col === king.col
+        )) {
+            return true;
+        }
+    }
+
     return false;
 }
+
+function getPseudoMoves(board, piece) {
+    switch (piece.type) {
+        case 'Queen':
+            return getQueenMove(piece, board.pieces);
+        case 'Rook':
+            return getRookMove(piece, board.pieces);
+        case 'Bishop':
+            return getBishopMove(piece, board.pieces);
+        case 'Knight':
+            return getKnightMove(piece, board.pieces);
+        case 'Pawn':
+            return getPawnMove(piece, board.pieces);
+        case 'King':
+            return getSingleMoves(piece, board.pieces, [
+                { row: 1, col: 0 },
+                { row: 1, col: 1 },
+                { row: 1, col: -1 },
+                { row: -1, col: 0 },
+                { row: -1, col: 1 },
+                { row: -1, col: -1 },
+                { row: 0, col: 1 },
+                { row: 0, col: -1 }
+            ]);
+        default:
+            return [];
+    }
+}
+
 
 
 export default getValidMoves;

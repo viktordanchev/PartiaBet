@@ -5,7 +5,7 @@ import PlayerCard from '../PlayerCard';
 import TurnTimer from './TurnTimer';
 import { useMatchHub } from '../../../contexts/MatchHubContext';
 
-const ChessMatch = ({ data }) => {
+const ChessMatch = ({ data, isPaused }) => {
     const { newMove } = useMatchHub();
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const userId = decodedToken['Id'];
@@ -13,7 +13,7 @@ const ChessMatch = ({ data }) => {
     const [loggedPlayer, setLoggedPlayer] = useState(data.players.find(p => p.id === userId));
     const [board, setBoard] = useState(data.board);
     const [playerInTurn, setPlayerInTurn] = useState(data.players.find(p => p.isOnTurn)?.id);
-    
+    console.log(data);
     useEffect(() => {
         if (!newMove) return;
 
@@ -48,6 +48,7 @@ const ChessMatch = ({ data }) => {
                     <TurnTimer
                         timeLeft={opponent.turnTimeLeft}
                         isActive={playerInTurn === opponent.id}
+                        isPaused={isPaused}
                     />
                 </div>
                 <div className="space-y-3">
@@ -55,6 +56,7 @@ const ChessMatch = ({ data }) => {
                     <TurnTimer
                         timeLeft={loggedPlayer.turnTimeLeft}
                         isActive={playerInTurn === loggedPlayer.id}
+                        isPaused={isPaused}
                     />
                 </div>
             </article>

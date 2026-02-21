@@ -44,11 +44,11 @@ namespace RestAPI.Controllers
         [Authorize]
         public async Task<IActionResult> GetMatchCountdown()
         {
-            var playerId = User.FindFirstValue("Id");
+            var playerId = Guid.Parse(User.FindFirstValue("Id"));
 
-            var timeLeft = await _matchService.GetMatchAutoEndTimeRemainingAsync(Guid.Parse(playerId));
+            var matchCountdown = await _matchService.GetMatchCountdownAsync(playerId);
 
-            return Ok(timeLeft);
+            return Ok(matchCountdown);
         }
     }
 }

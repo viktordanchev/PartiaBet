@@ -9,10 +9,23 @@ import { useMatchHub } from '../contexts/MatchHubContext';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-    const { connection, newPlayer, removedPlayer, matchStarted } = useMatchHub();
+    const { connection, stopConnection, newPlayer, removedPlayer, matchStarted, leaverData, resumeMatch } = useMatchHub();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [match, setMatch] = useState(null);
+    const [isPaused, setIsPaused] = useState(false);
+
+    useEffect(() => {
+        if (!match) return;
+
+        setIsPaused(false);
+    }, [resumeMatch]);
+
+    useEffect(() => {
+        if (!match) return;
+
+        setIsPaused(true);
+    }, [leaverData]);
 
     useEffect(() => {
         if (!match) return;
@@ -40,6 +53,7 @@ const MatchPage = () => {
 
             setIsLoading(false);
             setMatch(data);
+            setIsPaused(data.status === 'Paused');
         };
 
         receiveData();
@@ -48,7 +62,7 @@ const MatchPage = () => {
     useEffect(() => {
         return () => {
             if (connection) {
-                connection.invoke("LeaveMatch", matchId);
+                stopConnection();
             }
         };
     }, [connection]);
@@ -56,7 +70,7 @@ const MatchPage = () => {
     const renderGame = (matchData) => {
         switch (game) {
             case "chess":
-                return <ChessMatch data={matchData} />;
+                return <ChessMatch data={matchData} isPaused={isPaused} />;
             case "dota":
                 return <DotaMatch data={matchData} />;
             case "csgo":
@@ -72,7 +86,7 @@ const MatchPage = () => {
                 <>
                     {match?.status === "Created" && <LobbyList match={match} />}
 
-                    {match?.status === "Paused" && (
+                    {isPaused && (
                         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
                             <div className="bg-gray-900 p-6 rounded-xl text-center">
                                 <p className="text-xl font-semibold text-white">
@@ -85,7 +99,7 @@ const MatchPage = () => {
                         </div>
                     )}
 
-                    {match?.status === "Ongoing" &&
+                    {match?.status !== "Created" &&
                         <>
                             <div className="flex flex-col items-end gap-3">
                                 <Spectators peopleCount={0} />

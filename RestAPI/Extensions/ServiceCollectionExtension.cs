@@ -98,6 +98,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IMatchTurnService, MatchTurnService>();
 
             services.AddSingleton<IGameProvider, GameProvider>();
+            services.AddSingleton<IMatchPlayersManager, MatchPlayersManager>();
             services.AddSingleton<IMatchTimer, MatchTimer>();
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {

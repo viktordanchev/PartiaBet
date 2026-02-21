@@ -45,6 +45,15 @@ namespace RestAPI.Services
             });
         }
 
+        public void PauseTurnTimer(PlayerModel player)
+        {
+            if (!_timers.TryGetValue(player.Id, out var timer))
+                return;
+
+            timer.Cancel();
+            timer.Dispose();
+        }
+
         public void StartMatchCountdown(GameType gameType, Guid matchId, TimeSpan countdown)
         {
             var cts = new CancellationTokenSource();
@@ -69,9 +78,9 @@ namespace RestAPI.Services
             });
         }
 
-        public void RemoveTimer(Guid playerId)
+        public void RemoveTimer(Guid key)
         {
-            if (_timers.TryRemove(playerId, out var cts))
+            if (_timers.TryRemove(key, out var cts))
             {
                 cts.Cancel();
                 cts.Dispose();
