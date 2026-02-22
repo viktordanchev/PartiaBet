@@ -32,10 +32,11 @@ namespace Infrastructure.CacheRedis
 
         public async Task<MatchModel> GetMatchAsync(Guid matchId)
         {
-            var gameBoardJSON = await _redis.StringGetAsync(matchId.ToString());
-            var gameBoard = JsonSerializer.Deserialize<MatchModel>(gameBoardJSON);
+            var matchJson = await _redis.StringGetAsync(matchId.ToString());
 
-            return gameBoard;
+            var match = JsonSerializer.Deserialize<MatchModel>(matchJson);
+
+            return match;
         }
 
         public async Task<IEnumerable<MatchModel>> GetAllMatchesAsync(GameType gameType)

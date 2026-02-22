@@ -6,6 +6,7 @@ namespace Core.Interfaces.Services
 {
     public interface IMatchService
     {
+        Task Resume(Guid playerId);
         Task Puase(Guid playerId);
         Task<MatchModel> CreateMatchAsync(GameType gameType, decimal betAmount);
         Task<JoinMatchResult> JoinMatchAsync(Guid matchId, Guid playerId);

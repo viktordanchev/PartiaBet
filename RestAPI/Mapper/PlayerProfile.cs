@@ -10,7 +10,15 @@ namespace RestAPI.Mapper
         {
             CreateMap<PlayerModel, PlayerDto>()
             .ForMember(dest => dest.TurnTimeLeft, opt =>
-                opt.MapFrom(src => src.Timer.TimeLeft.TotalSeconds));
+                opt.MapFrom(src => GetTurnTimeLeft(src)));
+        }
+
+        private double GetTurnTimeLeft(PlayerModel player)
+        {
+            if (player.IsOnTurn && !player.Timer.IsPaused)
+                return Math.Max(0, (player.Timer.TurnExpiresAt - DateTime.UtcNow).TotalSeconds);
+
+            return Math.Max(0, player.Timer.TimeLeft.TotalSeconds);
         }
     }
 }

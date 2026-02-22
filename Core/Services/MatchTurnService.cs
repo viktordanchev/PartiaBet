@@ -45,6 +45,7 @@ namespace Core.Services
 
         public void PauseTurn(PlayerModel player)
         {
+            player.Timer.IsPaused = true;
             player.Timer.TimeLeft = player.Timer.TurnExpiresAt - DateTime.UtcNow;
 
             _matchTimer.PauseTurnTimer(player);

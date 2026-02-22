@@ -64,6 +64,32 @@ namespace Core.Services
             }
         }
 
+        public async Task Resume(Guid playerId)
+        {
+            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
+            var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
+
+            if (lockHandle == null)
+            {
+                throw new TimeoutException("Match is busy. Please try again.");
+            }
+
+            try
+            {
+                if(matchId == Guid.Empty)
+                    return;
+
+                var match = await _cacheService.GetMatchAsync(matchId);
+
+                var playerInTurn = match.Players.First(p => p.IsOnTurn);
+                playerInTurn.Timer.IsPaused = false;
+            }
+            finally
+            {
+                await _redisLock.ReleaseAsync(lockHandle);
+            }
+        }
+
         public async Task<HandlePlayerDisconnectResult> HandlePlayerDisconnectAsync(Guid playerId)
         {
             var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
@@ -87,7 +113,6 @@ namespace Core.Services
                 match.Status = MatchStatus.Paused;
                 player.Status = PlayerStatus.Disconnected;
 
-                _matchTurnService.PauseTurn(playerInTurn);
                 _matchTimer.StartMatchCountdown(
                     match.GameType,
                     match.Id,
@@ -243,7 +268,7 @@ namespace Core.Services
                     _matchTimer.RemoveTimer(matchId);
 
                     var playerInTurn = match.Players.First(p => p.IsOnTurn);
-
+                    playerInTurn.Timer.IsPaused = false;
                     playerInTurn.Timer.TurnExpiresAt = DateTime.UtcNow + playerInTurn.Timer.TimeLeft;
 
                     _matchTimer.StartTurnTimer(playerInTurn);

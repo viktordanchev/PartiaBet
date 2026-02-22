@@ -5,5 +5,7 @@
         public DateTime TurnExpiresAt { get; set; }
 
         public TimeSpan TimeLeft { get; set; }
+
+        public bool IsPaused { get; set; }
     }
 }

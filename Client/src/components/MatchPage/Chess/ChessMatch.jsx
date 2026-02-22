@@ -13,7 +13,7 @@ const ChessMatch = ({ data, isPaused }) => {
     const [loggedPlayer, setLoggedPlayer] = useState(data.players.find(p => p.id === userId));
     const [board, setBoard] = useState(data.board);
     const [playerInTurn, setPlayerInTurn] = useState(data.players.find(p => p.isOnTurn)?.id);
-    console.log(data);
+    
     useEffect(() => {
         if (!newMove) return;
 

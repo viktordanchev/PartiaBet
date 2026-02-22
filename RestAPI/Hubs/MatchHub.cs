@@ -62,6 +62,7 @@ namespace RestAPI.Hubs
 
             var userId = Guid.Parse(user);
             _matchPlayersManager.MarkAsConnected(userId);
+            await _matchService.Resume(userId);
 
             await base.OnConnectedAsync();
         }
