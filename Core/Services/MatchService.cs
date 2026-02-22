@@ -38,6 +38,32 @@ namespace Core.Services
             _matchTurnService = matchTurnService;
         }
 
+        public async Task Puase(Guid playerId)
+        {
+            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
+            var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
+
+            if (lockHandle == null)
+            {
+                throw new TimeoutException("Match is busy. Please try again.");
+            }
+
+            try
+            {
+                var match = await _cacheService.GetMatchAsync(matchId);
+
+                var playerInTurn = match.Players.First(p => p.IsOnTurn);
+
+                _matchTurnService.PauseTurn(playerInTurn);
+
+                await _cacheService.SetMatchAsync(match.Id, match);
+            }
+            finally
+            {
+                await _redisLock.ReleaseAsync(lockHandle);
+            }
+        }
+
         public async Task<HandlePlayerDisconnectResult> HandlePlayerDisconnectAsync(Guid playerId)
         {
             var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);

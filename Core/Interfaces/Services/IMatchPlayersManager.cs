@@ -2,8 +2,8 @@
 {
     public interface IMatchPlayersManager
     {
-        void MarkAsDisconnected(Guid playerId);
-        bool IsStillDisconnected(Guid playerId);
-        void MarkAsConnected(Guid playerId);
+        void MarkAsDisconnected(Guid userId);
+        bool IsStillDisconnected(Guid userId);
+        void MarkAsConnected(Guid userId);
     }
 }

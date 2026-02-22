@@ -29,24 +29,41 @@ namespace RestAPI.Hubs
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            MarkPlayerAsDisconnected(Context.UserIdentifier);
+            var user = Context.User?.FindFirst("Id")?.Value;
+
+            if (user == null)
+                return;
+
+            var userId = Guid.Parse(user);
+            _matchPlayersManager.MarkAsDisconnected(userId);
+            await _matchService.Puase(userId);
 
             _ = Task.Run(async () =>
             {
                 await Task.Delay(15000);
 
-                if (IsStillDisconnected(Context.UserIdentifier))
+                if (_matchPlayersManager.IsStillDisconnected(userId))
                 {
-                    RemovePlayerFromMatch();
+                    var result = await _matchService.HandlePlayerDisconnectAsync(userId);
+
+                    await Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
                 }
             });
-            var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
-
-            var result = await _matchService.HandlePlayerDisconnectAsync(playerId);
-
-            await Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", playerId, result.TimeLeftToRejoin);
 
             await base.OnDisconnectedAsync(exception);
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            var user = Context.User?.FindFirst("Id")?.Value;
+
+            if (user == null)
+                return;
+
+            var userId = Guid.Parse(user);
+            _matchPlayersManager.MarkAsConnected(userId);
+
+            await base.OnConnectedAsync();
         }
 
         public async Task JoinGameGroup(GameType gameType)

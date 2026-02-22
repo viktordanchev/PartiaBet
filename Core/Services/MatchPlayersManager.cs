@@ -1,36 +1,30 @@
 ﻿using Core.Interfaces.Services;
+using System.Collections.Concurrent;
 
 namespace Core.Services
 {
     public class MatchPlayersManager : IMatchPlayersManager
     {
-        private readonly List<Guid> _players;
+        private readonly ConcurrentDictionary<Guid, byte> _users;
 
         public MatchPlayersManager()
         {
-            _players = new List<Guid>();
+            _users = new ConcurrentDictionary<Guid, byte>();
         }
 
-        public void MarkAsDisconnected(Guid playerId)
+        public void MarkAsDisconnected(Guid userId)
         {
-            var player = _players.FirstOrDefault(p => p == playerId);
-
-            if (player == null)
-            {
-                _players.Add(playerId);
-            }
+            _users.TryAdd(userId, 0);
         }
 
-        public bool IsStillDisconnected(Guid playerId)
+        public bool IsStillDisconnected(Guid userId)
         {
-            var player = _players.FirstOrDefault(p => p == playerId);
-
-            return player != null;
+            return _users.ContainsKey(userId);
         }
 
-        public void MarkAsConnected(Guid playerId)
+        public void MarkAsConnected(Guid userId)
         {
-            _players.RemoveAll(p => p == playerId);
+            _users.TryRemove(userId, out _);
         }
     }
 }
