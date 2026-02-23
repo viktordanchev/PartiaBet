@@ -16,12 +16,12 @@ const Header = ({ isLogoVis }) => {
                 </NavLink>)}
             {isAuthenticated ? <Profile token={token} /> :
                 <div className="space-x-4">
-                    <a href="/login" className="bg-maincolor text-gray-900 font-medium py-3 px-6 rounded hover:bg-[#81e4dc]">
+                    <NavLink to="/login" className="bg-maincolor text-gray-900 font-medium py-3 px-6 rounded hover:bg-[#81e4dc]">
                         Login
-                    </a>
-                    <a href="/register" className="bg-maincolor text-gray-900 font-medium py-3 px-6 rounded hover:bg-[#81e4dc]">
+                    </NavLink>
+                    <NavLink to="/register" className="bg-maincolor text-gray-900 font-medium py-3 px-6 rounded hover:bg-[#81e4dc]">
                         Register
-                    </a>
+                    </NavLink>
                 </div>}
         </header>
     );

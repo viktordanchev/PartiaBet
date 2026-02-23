@@ -15,16 +15,19 @@ namespace RestAPI.Hubs
         private readonly IGameProvider _gameProvider;
         private readonly IMatchPlayersManager _matchPlayersManager;
         private readonly IMapper _mapper;
+        private readonly IHubContext<MatchHub> _hubContext;
 
         public MatchHub(IMatchService matchService,
             IGameProvider gameProvider,
             IMatchPlayersManager matchPlayersManager,
-            IMapper mapper)
+            IMapper mapper,
+            IHubContext<MatchHub> hubContext)
         {
             _matchService = matchService;
             _gameProvider = gameProvider;
             _matchPlayersManager = matchPlayersManager;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -45,7 +48,7 @@ namespace RestAPI.Hubs
                 {
                     var result = await _matchService.HandlePlayerDisconnectAsync(userId);
 
-                    await Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
+                    await _hubContext.Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
                 }
             });
 
