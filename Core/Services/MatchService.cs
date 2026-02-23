@@ -38,32 +38,6 @@ namespace Core.Services
             _matchTurnService = matchTurnService;
         }
 
-        public async Task Puase(Guid playerId)
-        {
-            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
-            var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
-
-            if (lockHandle == null)
-            {
-                throw new TimeoutException("Match is busy. Please try again.");
-            }
-
-            try
-            {
-                var match = await _cacheService.GetMatchAsync(matchId);
-
-                var playerInTurn = match.Players.First(p => p.IsOnTurn);
-
-                _matchTurnService.PauseTurn(playerInTurn);
-
-                await _cacheService.SetMatchAsync(match.Id, match);
-            }
-            finally
-            {
-                await _redisLock.ReleaseAsync(lockHandle);
-            }
-        }
-
         public async Task Resume(Guid playerId)
         {
             var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
@@ -83,8 +57,9 @@ namespace Core.Services
 
                 var playerInTurn = match.Players.First(p => p.IsOnTurn);
                 playerInTurn.Timer.IsPaused = false;
+                playerInTurn.Timer.TurnExpiresAt = DateTime.UtcNow.Add(playerInTurn.Timer.TimeLeft);
             }
-            finally
+            finally 
             {
                 await _redisLock.ReleaseAsync(lockHandle);
             }
@@ -105,13 +80,18 @@ namespace Core.Services
                 var match = await _cacheService.GetMatchAsync(matchId);
 
                 var playerInTurn = match.Players.First(p => p.IsOnTurn);
+                playerInTurn.Timer.IsPaused = true;
+                var remaining = playerInTurn.Timer.TurnExpiresAt - DateTime.UtcNow;
+                remaining += TimeSpan.FromSeconds(3);
+                playerInTurn.Timer.TimeLeft = remaining;
+
+                var player = match.Players.First(p => p.Id == playerId);
+                player.Status = PlayerStatus.Disconnected;
+
                 var rejoinDeadline = DateTime.UtcNow.AddMinutes(5);
                 var rejoinWindow = TimeSpan.FromMinutes(5);
-                var player = match.Players.First(p => p.Id == playerId);
-
                 match.RejoinDeadline = rejoinDeadline;
                 match.Status = MatchStatus.Paused;
-                player.Status = PlayerStatus.Disconnected;
 
                 _matchTimer.StartMatchCountdown(
                     match.GameType,

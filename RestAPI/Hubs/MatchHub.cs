@@ -36,11 +36,10 @@ namespace RestAPI.Hubs
 
             var userId = Guid.Parse(user);
             _matchPlayersManager.MarkAsDisconnected(userId);
-            await _matchService.Puase(userId);
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(15000);
+                await Task.Delay(3000);
 
                 if (_matchPlayersManager.IsStillDisconnected(userId))
                 {
