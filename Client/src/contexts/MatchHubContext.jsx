@@ -53,6 +53,7 @@ export const MatchHubProvider = ({ children }) => {
     }, [connection]);
 
     const handleMatchResumed = () => {
+        console.log('da');
         setResumeMatch(!resumeMatch);
     };
 

@@ -38,33 +38,6 @@ namespace Core.Services
             _matchTurnService = matchTurnService;
         }
 
-        public async Task Resume(Guid playerId)
-        {
-            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
-            var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
-
-            if (lockHandle == null)
-            {
-                throw new TimeoutException("Match is busy. Please try again.");
-            }
-
-            try
-            {
-                if(matchId == Guid.Empty)
-                    return;
-
-                var match = await _cacheService.GetMatchAsync(matchId);
-
-                var playerInTurn = match.Players.First(p => p.IsOnTurn);
-                playerInTurn.Timer.IsPaused = false;
-                playerInTurn.Timer.TurnExpiresAt = DateTime.UtcNow.Add(playerInTurn.Timer.TimeLeft);
-            }
-            finally 
-            {
-                await _redisLock.ReleaseAsync(lockHandle);
-            }
-        }
-
         public async Task<HandlePlayerDisconnectResult> HandlePlayerDisconnectAsync(Guid playerId)
         {
             var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
@@ -82,7 +55,7 @@ namespace Core.Services
                 var playerInTurn = match.Players.First(p => p.IsOnTurn);
                 playerInTurn.Timer.IsPaused = true;
                 var remaining = playerInTurn.Timer.TurnExpiresAt - DateTime.UtcNow;
-                remaining += TimeSpan.FromSeconds(3);
+                remaining += TimeSpan.FromSeconds(15);
                 playerInTurn.Timer.TimeLeft = remaining;
 
                 var player = match.Players.First(p => p.Id == playerId);
@@ -249,7 +222,7 @@ namespace Core.Services
 
                     var playerInTurn = match.Players.First(p => p.IsOnTurn);
                     playerInTurn.Timer.IsPaused = false;
-                    playerInTurn.Timer.TurnExpiresAt = DateTime.UtcNow + playerInTurn.Timer.TimeLeft;
+                    playerInTurn.Timer.TurnExpiresAt = DateTime.UtcNow.Add(playerInTurn.Timer.TimeLeft);
 
                     _matchTimer.StartTurnTimer(playerInTurn);
                 }

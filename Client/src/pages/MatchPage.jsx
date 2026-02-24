@@ -48,7 +48,7 @@ const MatchPage = () => {
     useEffect(() => {
         const receiveData = async () => {
             const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
-            
+            console.log(data);
             if (!data) return;
 
             setIsLoading(false);
@@ -62,7 +62,7 @@ const MatchPage = () => {
     useEffect(() => {
         return () => {
             if (connection) {
-                stopConnection();
+                connection.invoke('LeaveActiveMatch');
             }
         };
     }, [connection]);

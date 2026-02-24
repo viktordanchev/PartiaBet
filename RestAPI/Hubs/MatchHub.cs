@@ -30,43 +30,25 @@ namespace RestAPI.Hubs
             _hubContext = hubContext;
         }
 
-        public override async Task OnDisconnectedAsync(Exception? exception)
+        [Authorize]
+        public async Task LeaveActiveMatch()
         {
-            var user = Context.User?.FindFirst("Id")?.Value;
+            var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
 
-            if (user == null)
-                return;
-
-            var userId = Guid.Parse(user);
             _matchPlayersManager.MarkAsDisconnected(userId);
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(3000);
+                await Task.Delay(15000);
 
                 if (_matchPlayersManager.IsStillDisconnected(userId))
+
                 {
                     var result = await _matchService.HandlePlayerDisconnectAsync(userId);
 
                     await _hubContext.Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
                 }
             });
-
-            await base.OnDisconnectedAsync(exception);
-        }
-
-        public override async Task OnConnectedAsync()
-        {
-            var user = Context.User?.FindFirst("Id")?.Value;
-
-            if (user == null)
-                return;
-
-            var userId = Guid.Parse(user);
-            _matchPlayersManager.MarkAsConnected(userId);
-            await _matchService.Resume(userId);
-
-            await base.OnConnectedAsync();
         }
 
         public async Task JoinGameGroup(GameType gameType)
@@ -151,11 +133,12 @@ namespace RestAPI.Hubs
         [Authorize]
         public async Task<Guid> RejoinMatch()
         {
-            var playerId = Guid.Parse(Context.User.FindFirst("Id").Value);
+            var userId = Guid.Parse(Context.User.FindFirst("Id").Value);
 
-            var result = await _matchService.PlayerRejoinMatchAsync(playerId);
+            _matchPlayersManager.MarkAsConnected(userId);
+            var result = await _matchService.PlayerRejoinMatchAsync(userId);
 
-            await Clients.Group($"{result.MatchId}").SendAsync("RejoinPlayer", playerId);
+            await Clients.Group($"{result.MatchId}").SendAsync("RejoinPlayer", userId);
 
             if (result.MatchStatus == MatchStatus.Ongoing)
             {
