@@ -55,7 +55,7 @@ namespace Core.Services
                 var playerInTurn = match.Players.First(p => p.IsOnTurn);
                 playerInTurn.Timer.IsPaused = true;
                 var remaining = playerInTurn.Timer.TurnExpiresAt - DateTime.UtcNow;
-                remaining += TimeSpan.FromSeconds(15);
+                remaining += TimeSpan.FromSeconds(5);
                 playerInTurn.Timer.TimeLeft = remaining;
 
                 var player = match.Players.First(p => p.Id == playerId);
@@ -192,7 +192,6 @@ namespace Core.Services
                 throw new ApiException(statusCode: StatusCodes.Status404NotFound);
             }
 
-
             return match;
         }
 
@@ -237,12 +236,12 @@ namespace Core.Services
             }
         }
 
-        public async Task<double> GetMatchCountdownAsync(Guid playerId)
+        public async Task<HandlePlayerDisconnectResult> GetMatchCountdownAsync(Guid playerId)
         {
             var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
 
             if (matchId == Guid.Empty)
-                return 0;
+                return HandlePlayerDisconnectResult.Success(matchId, 0);
 
             var match = await _cacheService.GetMatchAsync(matchId);
             double timeLeft = 0;
@@ -252,7 +251,7 @@ namespace Core.Services
                 timeLeft = (match.RejoinDeadline.Value - DateTime.UtcNow).TotalSeconds;
             }
 
-            return timeLeft;
+            return HandlePlayerDisconnectResult.Success(matchId, timeLeft);
         }
 
         public async Task<МакеMoveResult> MakeMoveAsync(Guid matchId, Guid playerId, string moveDataJson)

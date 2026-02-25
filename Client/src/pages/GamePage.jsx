@@ -19,8 +19,8 @@ function GamePage() {
         const receiveData = async () => {
             const gameData = await apiRequest('games', 'getGameData', 'POST', false, false, game);
 
-            const conn = await ensureConnection();
-            await conn.invoke("JoinGameGroup", gameData.gameType);
+            const connection = await ensureConnection();
+            await connection.invoke("JoinGameGroup", gameData.gameType);
 
             sessionStorage.setItem('connection-gameType', gameData.gameType);
 

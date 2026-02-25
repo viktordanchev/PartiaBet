@@ -46,9 +46,9 @@ namespace RestAPI.Controllers
         {
             var playerId = Guid.Parse(User.FindFirstValue("Id"));
 
-            var matchCountdown = await _matchService.GetMatchCountdownAsync(playerId);
+            var result = await _matchService.GetMatchCountdownAsync(playerId);
 
-            return Ok(matchCountdown);
+            return Ok(result);
         }
     }
 }

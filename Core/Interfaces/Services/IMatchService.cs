@@ -13,7 +13,7 @@ namespace Core.Interfaces.Services
         Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType);
         Task<MatchModel> GetMatchAsync(Guid matchId);
         Task<PlayerRejoinMatchResult> PlayerRejoinMatchAsync(Guid playerId);
-        Task<double> GetMatchCountdownAsync(Guid playerId);
+        Task<HandlePlayerDisconnectResult> GetMatchCountdownAsync(Guid playerId);
         Task EndMatchAsync(Guid matchId);
         Task<HandlePlayerDisconnectResult> HandlePlayerDisconnectAsync(Guid playerId);
     }

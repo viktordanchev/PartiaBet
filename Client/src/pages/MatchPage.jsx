@@ -18,12 +18,6 @@ const MatchPage = () => {
     useEffect(() => {
         if (!match) return;
 
-        setIsPaused(false);
-    }, [resumeMatch]);
-
-    useEffect(() => {
-        if (!match) return;
-
         setIsPaused(true);
     }, [leaverData]);
 
@@ -47,9 +41,9 @@ const MatchPage = () => {
 
     useEffect(() => {
         const receiveData = async () => {
+            setIsLoading(true);
+
             const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
-            console.log(data);
-            if (!data) return;
 
             setIsLoading(false);
             setMatch(data);
@@ -57,12 +51,12 @@ const MatchPage = () => {
         };
 
         receiveData();
-    }, [matchStarted]);
+    }, [matchStarted, resumeMatch]);
 
     useEffect(() => {
         return () => {
             if (connection) {
-                connection.invoke('LeaveActiveMatch');
+                stopConnection();
             }
         };
     }, [connection]);

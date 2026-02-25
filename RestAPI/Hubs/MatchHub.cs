@@ -2,7 +2,6 @@
 using Core.Enums;
 using Core.Interfaces.Games;
 using Core.Interfaces.Services;
-using Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using RestAPI.Dtos.Match;
@@ -30,25 +29,42 @@ namespace RestAPI.Hubs
             _hubContext = hubContext;
         }
 
-        [Authorize]
-        public async Task LeaveActiveMatch()
+        public override Task OnDisconnectedAsync(Exception? exception)
         {
-            var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
+            var user = Context.User?.FindFirst("Id")?.Value;
 
+            if (user == null) 
+                return base.OnDisconnectedAsync(exception);
+
+            var userId = Guid.Parse(user);
             _matchPlayersManager.MarkAsDisconnected(userId);
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(15000);
+                await Task.Delay(5000);
 
                 if (_matchPlayersManager.IsStillDisconnected(userId))
-
                 {
                     var result = await _matchService.HandlePlayerDisconnectAsync(userId);
 
                     await _hubContext.Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
                 }
             });
+
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        public override Task OnConnectedAsync()
+        {
+            var user = Context.User?.FindFirst("Id")?.Value;
+
+            if (user != null)
+            {
+                var userId = Guid.Parse(user);
+                _matchPlayersManager.MarkAsConnected(userId);
+            }
+
+            return base.OnConnectedAsync();
         }
 
         public async Task JoinGameGroup(GameType gameType)
@@ -131,7 +147,7 @@ namespace RestAPI.Hubs
         }
 
         [Authorize]
-        public async Task<Guid> RejoinMatch()
+        public async Task RejoinMatch()
         {
             var userId = Guid.Parse(Context.User.FindFirst("Id").Value);
 
@@ -144,8 +160,6 @@ namespace RestAPI.Hubs
             {
                 await Clients.Group($"{result.MatchId}").SendAsync("MatchResumed");
             }
-
-            return result.MatchId;
         }
     }
 }

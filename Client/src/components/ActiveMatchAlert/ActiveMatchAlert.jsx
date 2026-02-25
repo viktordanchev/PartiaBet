@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useMatch } from 'react-router-dom';
 import { useTimer } from 'react-timer-hook';
-import { useMatchHub } from '../../contexts/MatchHubContext';
 import { useAuth } from '../../contexts/AuthContext';
 import RejoinButton from './RejoinButton';
 import useApiRequest from '../../hooks/useApiRequest';
@@ -15,7 +14,6 @@ const getExpiry = (seconds) => {
 };
 
 function ActiveMatchAlert() {
-    const { leaverData } = useMatchHub();
     const { isAuthenticated } = useAuth();
     const apiRequest = useApiRequest();
     const { seconds, minutes, restart } = useTimer({
@@ -27,13 +25,13 @@ function ActiveMatchAlert() {
     useEffect(() => {
         const fetchRejoinTime = async () => {
             const response = await apiRequest('matches', 'getMatchCountdown', 'GET', true, false);
-            if (!response) return;
+            if (!response || response.timeLeftToRejoin === 0) return;
 
-            var expiry = getExpiry(response);
+            sessionStorage.setItem('connection-matchId', response.matchId);
 
-            localStorage.setItem(COUNTDOWN_KEY, expiry);
-            
+            var expiry = getExpiry(response.timeLeftToRejoin);
             restart(expiry, true);
+            localStorage.setItem(COUNTDOWN_KEY, expiry);
         };
 
         if (isAuthenticated) {
@@ -55,15 +53,6 @@ function ActiveMatchAlert() {
         restart(expiry, true);
     }, [restart]);
 
-    useEffect(() => {
-        if (!leaverData) return;
-
-        const expiry = getExpiry(leaverData.timeLeft);
-
-        localStorage.setItem(COUNTDOWN_KEY, expiry.toISOString());
-        restart(expiry, true);
-    }, [leaverData]);
-
     if ((minutes === 0 && seconds === 0) || inMatch) return null;
 
     return (
@@ -72,7 +61,7 @@ function ActiveMatchAlert() {
                 <div className="flex-1 flex items-center justify-center text-lg">
                     Match will end after {minutes}:{seconds.toString().padStart(2, '0')} minutes!
                 </div>
-                <RejoinButton />
+                <RejoinButton onRejoin={() => { restart(new Date(), false); } } />
             </div>
         </div>
     );
