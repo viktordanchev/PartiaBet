@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces.Infrastructure;
 using Core.Models.User;
 using Infrastructure.Database.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
@@ -78,6 +79,15 @@ namespace Infrastructure.Database.Repositories
                     Roles = u.Roles.Select(r => r.RoleType.Name).ToList()
                 })
                 .FirstAsync();
+        }
+
+        public async Task UpdateUserDataAsync(UpdateUserModel data, string userEmail)
+        {
+            var user = await _database.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            user.Username = data.Username;
+
+            await _database.SaveChangesAsync();
         }
     }
 }

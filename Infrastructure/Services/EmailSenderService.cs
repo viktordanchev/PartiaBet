@@ -39,9 +39,8 @@ namespace Infrastructure.Services
             await SendEmailAsync(toEmail, subject, message);
         }
 
-        /// <summary>
-        /// This method send emails.
-        /// </summary>
+        //private methods
+
         private async Task SendEmailAsync(string toEmail, string subject, string htmlMessage)
         {
             var email = new MimeMessage();

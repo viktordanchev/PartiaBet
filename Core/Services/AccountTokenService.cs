@@ -23,7 +23,7 @@ namespace Core.Services
             _memoryCache.Set(email, token, TimeSpan.FromMinutes(1));
         }
 
-        public async Task SendRecoverPassLinkAsync(string email)
+        public async Task SendRecoverPassEmailAsync(string email)
         {
             var token = Guid.NewGuid().ToString();
             await _emailSender.SendPasswordRecoverLink(email, token);

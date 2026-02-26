@@ -1,10 +1,10 @@
-﻿using Common.Constants;
-using Common.Exceptions;
+﻿using Common.Exceptions;
 using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http;
 using Core.Models.User;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using static Common.Constants.ErrorMessages.Account;
 
 namespace Core.Services
 {
@@ -24,9 +24,9 @@ namespace Core.Services
             var (emailExists, usernameExists) = await _userRepository.IsUserDataUniqueAsync(data.Email, data.Username);
 
             if (emailExists)
-                throw new ApiException(ErrorMessages.UsedEmail, StatusCodes.Status409Conflict);
+                throw new ApiException(UsedEmail, StatusCodes.Status409Conflict);
             else if (usernameExists)
-                throw new ApiException(ErrorMessages.UsedUsername, StatusCodes.Status409Conflict);
+                throw new ApiException(UsedUsername, StatusCodes.Status409Conflict);
 
             data.Password = _passwordHasher.HashPassword(null!, data.Password);
 
@@ -58,6 +58,20 @@ namespace Core.Services
         public async Task<UserClaimsModel> GetClaimsAsync(string email)
         {
             return await _userRepository.GetUserClaimsByEmailAsync(email);
+        }
+
+        public async Task UpdateUserAsync(UpdateUserModel data, string userEmail)
+        {
+            var newPassword = string.Empty;
+            var profileImageUrl = string.Empty;
+
+            if (!string.IsNullOrEmpty(data.NewPassword))
+                newPassword = _passwordHasher.HashPassword(null!, data.NewPassword);
+
+            if (data.ProfileImage != null)
+            {
+                
+            }
         }
     }
 }

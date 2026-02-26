@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces.ExternalServices;
 using Core.Interfaces.Games;
 using Core.Interfaces.Infrastructure;
+using Core.Interfaces.Service;
 using Core.Interfaces.Services;
 using Core.Services;
 using Core.Services.Configs;
@@ -88,6 +89,7 @@ namespace RestAPI.Extensions
         {
             services.AddTransient<IEmailSenderService, EmailSenderService>();
 
+            services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountTokenService, AccountTokenService>();
             services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
@@ -96,6 +98,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IMatchService, MatchService>();
             services.AddScoped<IGameFactory, GameFactory>();
             services.AddScoped<IMatchTurnService, MatchTurnService>();
+            services.AddScoped<IMemoryCacheService, MemoryCacheService>();
 
             services.AddSingleton<IGameProvider, GameProvider>();
             services.AddSingleton<IMatchPlayersManager, MatchPlayersManager>();

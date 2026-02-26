@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Core.Interfaces.Service;
 using Core.Interfaces.Services;
 using Core.Models.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestAPI.Dtos.User;
-using static Common.Constants.ErrorMessages;
-using static Common.Constants.Messages;
+using System.Security.Claims;
+using static Common.Constants.ErrorMessages.Account;
+using static Common.Constants.Messages.Account;
 
 namespace RestAPI.Controllers
 {
@@ -12,18 +15,21 @@ namespace RestAPI.Controllers
     [Route("api/account")]
     public class AccountController : Controller
     {
+        private readonly IMemoryCacheService _memoryCacheService;
         private readonly IUserService _userService;
         private readonly IAccountTokenService _accountTokenService;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IHostEnvironment _environment;
         private readonly IMapper _mapper;
 
-        public AccountController(IUserService userService,
+        public AccountController(IMemoryCacheService memoryCacheService,
+            IUserService userService,
             IAccountTokenService accountTokenService,
             IJwtTokenService jwtTokenService,
             IHostEnvironment environment,
             IMapper mapper)
         {
+            _memoryCacheService = memoryCacheService;
             _userService = userService;
             _accountTokenService = accountTokenService;
             _jwtTokenService = jwtTokenService;
@@ -77,35 +83,53 @@ namespace RestAPI.Controllers
             return Ok(new { Message = NewVrfCode });
         }
 
-        [HttpPost("sendRecoverPassLink")]
-        public async Task<IActionResult> SendRecoverPasswordLink([FromBody] string email)
+        [HttpPost("sendRecoverPasswordEmail")]
+        public async Task<IActionResult> SendRecoverPasswordEmail([FromBody] string email)
         {
             if (!await _userService.IsUserExistAsync(email))
             {
                 return BadRequest(new { Error = NotRegistered });
             }
 
-            await _accountTokenService.SendRecoverPassLinkAsync(email);
+            await _accountTokenService.SendRecoverPassEmailAsync(email);
 
-            return Ok(new { Message = SendedPassRecoverLink });
+            return Ok(new { Message = SendedPassRecoverEmail });
         }
 
-        //[HttpPost("recoverPass")]
-        //public async Task<IActionResult> RecoverPassword(RecoverPasswordDto data)
-        //{
-        //    if (!await _userService.IsUserExistAsync(data.Email))
-        //    {
-        //        return BadRequest(new { Error = NotRegistered });
-        //    }
-        //    else if (_accountTokenService.IsTokenValid(data.Email, data.Token))
-        //    {
-        //        return BadRequest(new { Error = InvalidToken });
-        //    }
-        //
-        //    await _userService.UpdatePasswordAsync(data.Email, data.Password);
-        //
-        //    return Ok();
-        //}
+        [HttpPost("recoverPassword")]
+        public async Task<IActionResult> RecoverPassword([FromBody] RecoverPasswordDto data)
+        {
+            if (!_memoryCacheService.isExist(data.Token))
+                return BadRequest(new { Error = InvalidToken });
+
+            var userEmail = _memoryCacheService.GetValue(data.Token);
+            await _userService.UpdatePasswordAsync(userEmail, data.Password);
+
+            return NoContent();
+        }
+
+        [HttpPut("updateUser")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto data)
+        {
+            if (!string.IsNullOrEmpty(data.CurrentPassword) && data.CurrentPassword == data.NewPassword)
+                return BadRequest(new { Error = SamePassword });
+
+            var userEmail = User.FindFirstValue("Email");
+            var dataModel = _mapper.Map<UpdateUserModel>(data);
+
+            await _userService.UpdateUserAsync(dataModel, userEmail);
+
+            var userClaims = await _userService.GetClaimsAsync(userEmail);
+            var accessToken = _jwtTokenService.GenerateAccessToken(userClaims);
+
+            return Ok(
+                new
+                {
+                    Message = UserDataUpdated,
+                    Token = accessToken
+                });
+        }
 
         [HttpGet("refreshToken")]
         public async Task<IActionResult> RefreshToken()
