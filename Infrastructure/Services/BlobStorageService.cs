@@ -14,7 +14,7 @@ namespace Infrastructure.Services
             _connectionString = configuration["AzureStorage:ConnectionString"]!;
         }
 
-        public async Task<string> UploadProfileImageAsync(IFormFile file, string userId)
+        public async Task<string> UploadProfileImageAsync(IFormFile imageFile, string userId)
         {
             BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("profile-images");

@@ -1,4 +1,5 @@
 ﻿using Common.Exceptions;
+using Core.Interfaces.ExternalServices;
 using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.User;
@@ -11,11 +12,15 @@ namespace Core.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IBlobStorageService _blobStorageService;
         private readonly IPasswordHasher<object> _passwordHasher;
 
-        public UserService(IUserRepository userRepository, IPasswordHasher<object> passwordHasher)
+        public UserService(IUserRepository userRepository, 
+            IBlobStorageService blobStorageService,
+            IPasswordHasher<object> passwordHasher)
         {
             _userRepository = userRepository;
+            _blobStorageService = blobStorageService;
             _passwordHasher = passwordHasher;
         }
 
@@ -69,9 +74,7 @@ namespace Core.Services
                 newPassword = _passwordHasher.HashPassword(null!, data.NewPassword);
 
             if (data.ProfileImage != null)
-            {
-                
-            }
+                profileImageUrl = await _blobStorageService.UploadProfileImageAsync(data.ProfileImage, "profile-images");
         }
     }
 }

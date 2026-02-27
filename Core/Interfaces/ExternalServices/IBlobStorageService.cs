@@ -4,7 +4,7 @@ namespace Core.Interfaces.ExternalServices
 {
     public interface IBlobStorageService
     {
-        Task<string> UploadProfileImageAsync(IFormFile file, string userId);
+        Task<string> UploadProfileImageAsync(IFormFile imageFile, string userId);
         Task DeleteProfileImageAsync(string imageUrl, string container);
     }
 }
