@@ -14,15 +14,13 @@ namespace Infrastructure.Services
             _connectionString = configuration["AzureStorage:ConnectionString"]!;
         }
 
-        public async Task<string> UploadProfileImageAsync(IFormFile imageFile, string userId)
+        public async Task<string> UploadProfileImageAsync(IFormFile imageFile, string userEmail)
         {
             BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("profile-images");
+            BlobClient blobClient = containerClient.GetBlobClient(userEmail);
 
-            var fileName = $"{userId}{Path.GetExtension(file.FileName)}";
-            BlobClient blobClient = containerClient.GetBlobClient(fileName);
-
-            using (var stream = file.OpenReadStream())
+            using (var stream = imageFile.OpenReadStream())
             {
                 await blobClient.UploadAsync(stream, overwrite: true);
             }
