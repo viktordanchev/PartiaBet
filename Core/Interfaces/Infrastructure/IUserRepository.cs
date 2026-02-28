@@ -10,5 +10,7 @@ namespace Core.Interfaces.Infrastructure
         Task UpdatePasswordAsync(string email, string passwordHash);
         Task<string?> GetUserPasswordHashAsync(string email);
         Task<UserClaimsModel> GetUserClaimsByEmailAsync(string email);
+        Task<UserDataModel?> GetUserDataAsync(string userEmail);
+        Task UpdateUserDataAsync(UpdateUserModel data, string userEmail);
     }
 }

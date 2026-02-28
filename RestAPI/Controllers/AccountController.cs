@@ -131,6 +131,21 @@ namespace RestAPI.Controllers
                 });
         }
 
+        [HttpGet("getUserData")]
+        [Authorize]
+        public async Task<IActionResult> GetUserData()
+        {
+            var userEmail = User.FindFirstValue("Email");
+            var userData = await _userService.GetUserDataAsync(userEmail);
+
+            if (userData == null)
+                return NotFound();
+
+            var result = _mapper.Map<UserDataDto>(userData);
+
+            return Ok(result);
+        }
+
         [HttpGet("refreshToken")]
         public async Task<IActionResult> RefreshToken()
         {

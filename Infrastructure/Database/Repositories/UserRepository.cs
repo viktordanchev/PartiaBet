@@ -89,5 +89,21 @@ namespace Infrastructure.Database.Repositories
 
             await _database.SaveChangesAsync();
         }
+
+        public async Task<UserDataModel?> GetUserDataAsync(string userEmail)
+        {
+            var user = await _database.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            if (user == null)
+                return null;
+
+            var userData = new UserDataModel()
+            {
+                Username = user.Username,
+                ProfileImageUrl = user.ImageUrl ?? string.Empty
+            };
+
+            return userData;
+        }
     }
 }

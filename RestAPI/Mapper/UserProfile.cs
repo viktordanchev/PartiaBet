@@ -10,6 +10,7 @@ namespace RestAPI.Mapper
         {
             CreateMap<RegisterUserDto, RegisterUserModel>();
             CreateMap<LoginUserDto, LoginUserModel>();
+            CreateMap<UserDataModel, UserDataDto>();
         }
     }
 }

@@ -76,5 +76,10 @@ namespace Core.Services
             if (data.ProfileImage != null)
                 profileImageUrl = await _blobStorageService.UploadProfileImageAsync(data.ProfileImage, "profile-images");
         }
+
+        public async Task<UserDataModel?> GetUserDataAsync(string userEmail)
+        {
+            return await _userRepository.GetUserDataAsync(userEmail);
+        }
     }
 }

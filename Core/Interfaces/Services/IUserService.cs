@@ -10,5 +10,6 @@ namespace Core.Interfaces.Services
         Task<bool> IsLoginDataValidAsync(LoginUserModel data);
         Task<UserClaimsModel> GetClaimsAsync(string email);
         Task UpdateUserAsync(UpdateUserModel data, string userEmail);
+        Task<UserDataModel?> GetUserDataAsync(string userEmail);
     }
 }
