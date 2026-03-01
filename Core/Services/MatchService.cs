@@ -19,6 +19,7 @@ namespace Core.Services
         private IGameProvider _gameProvider;
         private IMatchTimer _matchTimer;
         private IMatchTurnService _matchTurnService;
+        private IRatingCalculator _ratingCalculator;
 
         public MatchService(
             IMatchRepository matchRepository,
@@ -297,7 +298,12 @@ namespace Core.Services
 
             try
             {
-                var match = await _cacheService.GetMatchAsync(matchId); 
+                var match = await _cacheService.GetMatchAsync(matchId);
+
+                foreach (var player in match.Players)
+                {
+                    _ratingCalculator.CalculateNewRating(player.Rating, )
+                }
 
                 await _cacheService.RemoveMatchAsync(matchId, match.GameType);
             }
@@ -349,6 +355,8 @@ namespace Core.Services
 
             if (gameService.IsWinningMove(match.Board))
             {
+                _ratingCalculator.CalculatePlayersRating(match);
+
                 return МакеMoveResult.Win(playerId);
             }
 

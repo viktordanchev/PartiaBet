@@ -40,5 +40,6 @@ namespace Infrastructure.Database.Entities
         public ICollection<Friendship> ReceivedFriendRequests { get; set; }
         public ICollection<UserRole> Roles { get; set; }
         public ICollection<UserMatch> MatchHistory { get; set; }
+        public ICollection<UserGameRating> GameRatings { get; set; }
     }
 }
