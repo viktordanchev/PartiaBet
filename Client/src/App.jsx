@@ -15,6 +15,7 @@ import NavigationBar from './components/NavigationBar';
 import SessionEndNotification from './components/SessionEndNotification';
 import ProtectedRoute from './components/ProtectedRoute';
 import ActiveMatchAlert from './components/ActiveMatchAlert/ActiveMatchAlert';
+import EndingScreen from './components/MatchPage/EndingScreen';
 
 function App() {
     const location = useLocation();

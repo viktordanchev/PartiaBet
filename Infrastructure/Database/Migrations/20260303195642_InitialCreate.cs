@@ -142,6 +142,25 @@ namespace Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserGameRatings",
+                columns: table => new
+                {
+                    PlayerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GameType = table.Column<int>(type: "integer", nullable: false),
+                    Rating = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserGameRatings", x => new { x.PlayerId, x.GameType });
+                    table.ForeignKey(
+                        name: "FK_UserGameRatings_Users_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserMatch",
                 columns: table => new
                 {
@@ -258,6 +277,9 @@ namespace Infrastructure.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "TransactionHistory");
+
+            migrationBuilder.DropTable(
+                name: "UserGameRatings");
 
             migrationBuilder.DropTable(
                 name: "UserMatch");

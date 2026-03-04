@@ -125,12 +125,14 @@ namespace RestAPI.Hubs
 
             if (!result.IsValid) return;
 
+            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.GameBoard, result.NextId, result.Duration);
+
             if (result.IsWinningMove)
             {
                 await _matchService.EndMatchAsync(matchId);
-            }
 
-            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.GameBoard, result.NextId, result.Duration);
+                await Clients.Group($"{matchId}").SendAsync("MatchEnd", result.Winners);
+            }
         }
 
         [Authorize]

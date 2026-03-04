@@ -4,16 +4,24 @@ import Loading from '../components/Loading';
 import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
 import Spectators from '../components/MatchPage/Spectators';
 import LobbyList from '../components/MatchPage/WaitingLobby/LobbyList';
+import EndingScreen from '../components/MatchPage/EndingScreen';
 import useApiRequest from '../hooks/useApiRequest';
 import { useMatchHub } from '../contexts/MatchHubContext';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-    const { connection, stopConnection, newPlayer, removedPlayer, matchStarted, leaverData, resumeMatch } = useMatchHub();
+    const { connection, stopConnection, newPlayer, removedPlayer, matchStarted, leaverData, resumeMatch, matchEnd } = useMatchHub();
     const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [match, setMatch] = useState(null);
     const [isPaused, setIsPaused] = useState(false);
+    const [isEnded, setIsEnded] = useState(false);
+
+    useEffect(() => {
+        if (!match) return;
+
+        setIsEnded(true);
+    }, [matchEnd]);
 
     useEffect(() => {
         if (!match) return;
@@ -23,7 +31,7 @@ const MatchPage = () => {
 
     useEffect(() => {
         if (!match) return;
-        
+
         setMatch(prev => ({
             ...prev,
             players: [...prev.players, newPlayer.player]
@@ -78,6 +86,8 @@ const MatchPage = () => {
         <section className="flex-1 p-6 flex justify-center gap-3">
             {isLoading ? <Loading size={'small'} /> :
                 <>
+                    {isEnded && <EndingScreen winners={matchEnd.winners} />}
+
                     {match?.status === "Created" && <LobbyList match={match} />}
 
                     {isPaused && (

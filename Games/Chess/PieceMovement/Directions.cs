@@ -2,7 +2,7 @@
 {
     public static class Directions
     {
-        public static readonly List<(int, int)> King = new()
+        public static readonly List<(int Row, int Col)> King = new()
         {
             (1, 0),
             (1,  1),
@@ -14,7 +14,7 @@
             (0, -1)
         };
 
-        public static readonly List<(int, int)> Queen = new()
+        public static readonly List<(int Row, int)> Queen = new()
         {
             (1, 1),
             (1, -1),

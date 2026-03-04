@@ -175,6 +175,22 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Infrastructure.Database.Entities.UserGameRating", b =>
+                {
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("GameType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PlayerId", "GameType");
+
+                    b.ToTable("UserGameRatings");
+                });
+
             modelBuilder.Entity("Infrastructure.Database.Entities.UserMatch", b =>
                 {
                     b.Property<Guid>("PlayerId")
@@ -296,6 +312,17 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("Infrastructure.Database.Entities.UserGameRating", b =>
+                {
+                    b.HasOne("Infrastructure.Database.Entities.User", "Player")
+                        .WithMany("GameRatings")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Player");
+                });
+
             modelBuilder.Entity("Infrastructure.Database.Entities.UserMatch", b =>
                 {
                     b.HasOne("Infrastructure.Database.Entities.Match", "Match")
@@ -341,6 +368,8 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Infrastructure.Database.Entities.User", b =>
                 {
+                    b.Navigation("GameRatings");
+
                     b.Navigation("MatchHistory");
 
                     b.Navigation("ReceivedFriendRequests");

@@ -1,13 +1,19 @@
 ﻿using Core.Enums;
 using Core.Models.Games;
+using Core.Models.Match;
 
 namespace Core.Results.Match
 {
     public class МакеMoveResult
     {
+        public МакеMoveResult()
+        {
+            Winners = new List<PlayerModel>();
+        }
+
         public bool IsValid { get; private set; }
         public bool IsWinningMove { get; private set; }
-        public Guid? WinnerId { get; private set; }
+        public IEnumerable<PlayerModel>? Winners { get; private set; }
         public Guid NextId { get; set; }
         public double Duration { get; set; }
         public GameType GameType { get; private set; }
@@ -19,7 +25,7 @@ namespace Core.Results.Match
         public static МакеMoveResult Success(GameBoardModel board, GameType gameType) =>
             new() { IsValid = true, GameBoard = board, GameType = gameType };
 
-        public static МакеMoveResult Win(Guid winnerId) =>
-            new() { IsValid = true, IsWinningMove = true, WinnerId = winnerId };
+        public static МакеMoveResult Win(IEnumerable<PlayerModel> winners) =>
+            new() { IsValid = true, IsWinningMove = true, Winners = winners };
     }
 }

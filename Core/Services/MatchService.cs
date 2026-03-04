@@ -6,7 +6,6 @@ using Core.Interfaces.Services;
 using Core.Models.Match;
 using Core.Results.Match;
 using Microsoft.AspNetCore.Http;
-using System.Text.RegularExpressions;
 
 namespace Core.Services
 {
@@ -300,11 +299,6 @@ namespace Core.Services
             {
                 var match = await _cacheService.GetMatchAsync(matchId);
 
-                foreach (var player in match.Players)
-                {
-                    _ratingCalculator.CalculateNewRating(player.Rating, )
-                }
-
                 await _cacheService.RemoveMatchAsync(matchId, match.GameType);
             }
             finally
@@ -353,11 +347,13 @@ namespace Core.Services
 
             gameService.UpdateBoard(match.Board, moveDataModel);
 
-            if (gameService.IsWinningMove(match.Board))
+            if (gameService.IsWinningMove(match.Board, moveDataModel))
             {
                 _ratingCalculator.CalculatePlayersRating(match);
 
-                return МакеMoveResult.Win(playerId);
+                var winners = gameService.UpdateWinners(match.Players, playerId);
+
+                return МакеMoveResult.Win(winners);
             }
 
             return МакеMoveResult.Success(match.Board, match.GameType);
@@ -369,12 +365,11 @@ namespace Core.Services
 
             var currPlayer = match.Players.First(p => p.Id == currentPlayerId);
             _matchTurnService.EndTurn(match, currPlayer);
+            currPlayer.IsOnTurn = false;
 
             var nextPlayerId = gameService.SwitchTurn(currentPlayerId, match.Players);
-
             var nextPlayer = match.Players.First(p => p.Id == nextPlayerId);
             _matchTurnService.StartTurn(match, nextPlayer);
-
             nextPlayer.IsOnTurn = true;
 
             return (nextPlayerId, nextPlayer.Timer.TimeLeft.TotalSeconds);

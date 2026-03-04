@@ -87,11 +87,17 @@ namespace Games.Chess.Services
             currPiece.Col = chessMove.NewCol;
         }
 
-        public bool IsWinningMove(GameBoardModel board)
+        public bool IsWinningMove(GameBoardModel board, GameMoveModel move)
         {
             var chessBoard = board as ChessBoardModel;
+            var chessMove = move as ChessMoveModel;
 
-            return ChessMoveService.IsWinningMove(chessBoard);
+            return ChessMoveService.IsWinningMove(chessBoard, chessMove);
+        }
+
+        public IEnumerable<PlayerModel> UpdateWinners(IEnumerable<PlayerModel> players, Guid winnerMoveId)
+        {
+            return players.Where(p => p.Id != winnerMoveId);
         }
 
         public bool IsValidMove(GameBoardModel board, GameMoveModel move)

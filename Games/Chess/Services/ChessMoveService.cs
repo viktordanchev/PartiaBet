@@ -1,5 +1,7 @@
 ﻿using Core.Games.Enums;
 using Core.Models.Games.Chess;
+using Games.Chess.Interfaces;
+using Games.Chess.PieceMovement;
 
 namespace Games.Chess.Services
 {
@@ -34,11 +36,26 @@ namespace Games.Chess.Services
             return validator.IsValidMove(board, move);
         }
 
-        public static bool IsWinningMove(ChessBoardModel board)
+        public static bool IsWinningMove(ChessBoardModel board, ChessMoveModel move)
         {
-            var kingsCount = board.Pieces.Count(p => p.Type == PieceType.King);
+            var attackerFigure = board.Pieces
+                .FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
 
-            return kingsCount < 2;
+            var kingPosition = board.Pieces.FirstOrDefault(p => p.Type == PieceType.King && p.IsWhite != attackerFigure.IsWhite);
+
+            if (!ChessAttackDetector.IsSquareAttacked(board, kingPosition.Row, kingPosition.Col, kingPosition.IsWhite))
+                return false;
+
+            foreach (var direction in Directions.King)
+            {
+                var newKingRow = kingPosition.Row + direction.Row;
+                var newKingCol = kingPosition.Col + direction.Col;
+
+                if (!ChessAttackDetector.IsSquareAttacked(board, newKingRow, newKingCol, kingPosition.IsWhite))
+                    return true;
+            }
+
+            return false;
         }
 
         public static void UpdateCastlingRights(ChessBoardModel board, FigureModel currPiece)
@@ -158,6 +175,47 @@ namespace Games.Chess.Services
             }
 
             return false;
+        }
+
+        private static bool HasAnyLegalMove(
+    ChessBoardModel board,
+    bool playerIsWhite,
+    IEnumerable<IPieceMoveValidator> validators)
+        {
+            var pieces = board.Pieces
+                .Where(p => p.IsWhite == playerIsWhite)
+                .ToList();
+
+            foreach (var piece in pieces)
+            {
+                for (int row = 0; row < 8; row++)
+                {
+                    for (int col = 0; col < 8; col++)
+                    {
+                        var move = new ChessMoveModel
+                        {
+                            OldRow = piece.Row,
+                            OldCol = piece.Col,
+                            NewRow = row,
+                            NewCol = col
+                        };
+
+                        var validator = validators
+                            .First(v => v.CanValidate(piece.Type));
+
+                        if (!validator.IsValidMove(board, move))
+                            continue;
+
+                        var simulatedBoard = CloneBoard(board);
+                        ApplyMove(simulatedBoard, move);
+
+                        if (!IsInCheck(simulatedBoard, playerIsWhite))
+                            return true; // намерихме ход
+                    }
+                }
+            }
+
+            return false; // няма нито един ход
         }
     }
 }

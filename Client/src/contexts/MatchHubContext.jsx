@@ -15,11 +15,12 @@ export const MatchHubProvider = ({ children }) => {
     const [rejoinedPlayer, setRejoinedPlayer] = useState('');
     const [matchStarted, setMatchStarted] = useState('');
     const [resumeMatch, setResumeMatch] = useState(false);
-    
+    const [matchEnd, setMatchEnd] = useState(null);
+
     useEffect(() => {
         const matchId = sessionStorage.getItem('connection-matchId');
         const gameType = sessionStorage.getItem('connection-gameType');
-        
+
         const createConnection = async () => {
             const newConnection = await startConnection();
 
@@ -41,7 +42,8 @@ export const MatchHubProvider = ({ children }) => {
 
     useEffect(() => {
         if (!connection) return;
-        
+
+        connection.on("MatchEnd", handleMatchEnd);
         connection.on("MatchResumed", handleMatchResumed);
         connection.on("StartMatch", handleStartMatch);
         connection.on("RejoinPlayer", handleRejoinPlayer);
@@ -51,6 +53,10 @@ export const MatchHubProvider = ({ children }) => {
         connection.on("ReceiveMove", handleReceiveMove);
         connection.on("ReceivePlayer", handleReceivePlayer);
     }, [connection]);
+
+    const handleMatchEnd = (winners) => {
+        setMatchEnd({ winners });
+    };
 
     const handleMatchResumed = () => {
         setResumeMatch(prev => !prev);
@@ -90,10 +96,10 @@ export const MatchHubProvider = ({ children }) => {
             setConnection(null);
         }
     };
-     
+
     const startConnection = async () => {
         await stopConnection();
-        
+
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl('https://localhost:7182/match', {
                 accessTokenFactory: () => localStorage.getItem('accessToken')
@@ -114,7 +120,7 @@ export const MatchHubProvider = ({ children }) => {
     };
 
     return (
-        <MatchHubContext.Provider value={{ connection, ensureConnection, stopConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted, resumeMatch }}>
+        <MatchHubContext.Provider value={{ connection, ensureConnection, stopConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted, resumeMatch, matchEnd }}>
             {children}
         </MatchHubContext.Provider>
     );
