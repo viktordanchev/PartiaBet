@@ -25,7 +25,7 @@ namespace Core.Results.Match
         public static МакеMoveResult Success(GameBoardModel board, GameType gameType) =>
             new() { IsValid = true, GameBoard = board, GameType = gameType };
 
-        public static МакеMoveResult Win(IEnumerable<PlayerModel> winners) =>
-            new() { IsValid = true, IsWinningMove = true, Winners = winners };
+        public static МакеMoveResult Win(IEnumerable<PlayerModel> winners, GameBoardModel board, GameType gameType) =>
+            new() { IsValid = true, IsWinningMove = true, Winners = winners, GameBoard = board, GameType = gameType };
     }
 }

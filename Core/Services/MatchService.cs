@@ -27,7 +27,8 @@ namespace Core.Services
             IGameFactory gameFactory,
             IGameProvider gameProvider,
             IMatchTimer matchTimer,
-            IMatchTurnService matchTurnService)
+            IMatchTurnService matchTurnService,
+             IRatingCalculator ratingCalculator)
         {
             _matchRepository = matchRepository;
             _redisLock = redisLock;
@@ -36,6 +37,7 @@ namespace Core.Services
             _gameProvider = gameProvider;
             _matchTimer = matchTimer;
             _matchTurnService = matchTurnService;
+            _ratingCalculator = ratingCalculator;
         }
 
         public async Task<HandlePlayerDisconnectResult> HandlePlayerDisconnectAsync(Guid playerId)
@@ -267,7 +269,7 @@ namespace Core.Services
             {
                 var match = await _cacheService.GetMatchAsync(matchId);
                 var matchResult = UpdateBoardAsync(match, playerId, moveDataJson);
-
+                 
                 if (matchResult.IsValid)
                 {
                     var (nextPlayer, timeLeft) = SwtichTurnAsync(match, playerId);
@@ -349,11 +351,13 @@ namespace Core.Services
 
             if (gameService.IsWinningMove(match.Board, moveDataModel))
             {
+                gameService.UpdateWinners(match.Players, playerId);
+
                 _ratingCalculator.CalculatePlayersRating(match);
 
-                var winners = gameService.UpdateWinners(match.Players, playerId);
+                var winners = match.Players.Where(p => p.Status == PlayerStatus.Winner).ToList();
 
-                return МакеMoveResult.Win(winners);
+                return МакеMoveResult.Win(winners, match.Board, match.GameType);
             }
 
             return МакеMoveResult.Success(match.Board, match.GameType);

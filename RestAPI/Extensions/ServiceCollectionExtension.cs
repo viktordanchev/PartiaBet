@@ -99,6 +99,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IGameFactory, GameFactory>();
             services.AddScoped<IMatchTurnService, MatchTurnService>();
             services.AddScoped<IMemoryCacheService, MemoryCacheService>();
+            services.AddScoped<IRatingCalculator, RatingCalculator>();
 
             services.AddSingleton<IGameProvider, GameProvider>();
             services.AddSingleton<IMatchPlayersManager, MatchPlayersManager>();

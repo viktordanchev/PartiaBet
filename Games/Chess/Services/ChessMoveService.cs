@@ -38,24 +38,32 @@ namespace Games.Chess.Services
 
         public static bool IsWinningMove(ChessBoardModel board, ChessMoveModel move)
         {
-            var attackerFigure = board.Pieces
-                .FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol);
+            var attackerPiece = board.Pieces
+                .FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol);
 
-            var kingPosition = board.Pieces.FirstOrDefault(p => p.Type == PieceType.King && p.IsWhite != attackerFigure.IsWhite);
+            var kingPiece = board.Pieces.FirstOrDefault(p => p.Type == PieceType.King && p.IsWhite != attackerPiece.IsWhite);
 
-            if (!ChessAttackDetector.IsSquareAttacked(board, kingPosition.Row, kingPosition.Col, kingPosition.IsWhite))
+            if (!ChessAttackDetector.IsSquareAttacked(board, kingPiece.Row, kingPiece.Col, kingPiece.IsWhite))
                 return false;
 
             foreach (var direction in Directions.King)
             {
-                var newKingRow = kingPosition.Row + direction.Row;
-                var newKingCol = kingPosition.Col + direction.Col;
+                var newKingRow = kingPiece.Row + direction.Row;
+                var newKingCol = kingPiece.Col + direction.Col;
 
-                if (!ChessAttackDetector.IsSquareAttacked(board, newKingRow, newKingCol, kingPosition.IsWhite))
-                    return true;
+                if (newKingRow < 0 || newKingRow > 7 || newKingCol < 0 || newKingCol > 7)
+                    continue;
+
+                var piece = board.Pieces.FirstOrDefault(p => p.Row == newKingRow && p.Col == newKingCol);
+
+                if (piece != null && piece.IsWhite == kingPiece.IsWhite)
+                    continue;
+
+                if (!ChessAttackDetector.IsSquareAttacked(board, newKingRow, newKingCol, kingPiece.IsWhite))
+                    return false;
             }
 
-            return false;
+            return true;
         }
 
         public static void UpdateCastlingRights(ChessBoardModel board, FigureModel currPiece)
@@ -175,47 +183,6 @@ namespace Games.Chess.Services
             }
 
             return false;
-        }
-
-        private static bool HasAnyLegalMove(
-    ChessBoardModel board,
-    bool playerIsWhite,
-    IEnumerable<IPieceMoveValidator> validators)
-        {
-            var pieces = board.Pieces
-                .Where(p => p.IsWhite == playerIsWhite)
-                .ToList();
-
-            foreach (var piece in pieces)
-            {
-                for (int row = 0; row < 8; row++)
-                {
-                    for (int col = 0; col < 8; col++)
-                    {
-                        var move = new ChessMoveModel
-                        {
-                            OldRow = piece.Row,
-                            OldCol = piece.Col,
-                            NewRow = row,
-                            NewCol = col
-                        };
-
-                        var validator = validators
-                            .First(v => v.CanValidate(piece.Type));
-
-                        if (!validator.IsValidMove(board, move))
-                            continue;
-
-                        var simulatedBoard = CloneBoard(board);
-                        ApplyMove(simulatedBoard, move);
-
-                        if (!IsInCheck(simulatedBoard, playerIsWhite))
-                            return true; // намерихме ход
-                    }
-                }
-            }
-
-            return false; // няма нито един ход
         }
     }
 }

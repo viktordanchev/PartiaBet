@@ -1,4 +1,5 @@
-﻿using Core.Games.Enums;
+﻿using Core.Enums;
+using Core.Games.Enums;
 using Core.Interfaces.Games;
 using Core.Models.Games;
 using Core.Models.Games.Chess;
@@ -95,9 +96,16 @@ namespace Games.Chess.Services
             return ChessMoveService.IsWinningMove(chessBoard, chessMove);
         }
 
-        public IEnumerable<PlayerModel> UpdateWinners(IEnumerable<PlayerModel> players, Guid winnerMoveId)
+        public void UpdateWinners(IEnumerable<PlayerModel> players, Guid winnerMoveId)
         {
-            return players.Where(p => p.Id != winnerMoveId);
+            foreach (var player in players)
+            {
+                if (player.Id == winnerMoveId)
+                {
+                    player.Status = PlayerStatus.Winner; 
+                    break;
+                }
+            }
         }
 
         public bool IsValidMove(GameBoardModel board, GameMoveModel move)
