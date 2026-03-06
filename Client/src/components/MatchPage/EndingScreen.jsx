@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const EndingScreen = () => {
-
+    const navigate = useNavigate();
     const isWinner = false;
 
     const oldRating = 1000;
@@ -11,7 +12,6 @@ const EndingScreen = () => {
     const [displayRating, setDisplayRating] = useState(oldRating);
 
     useEffect(() => {
-
         let start = oldRating;
         const end = newRating;
 
@@ -61,16 +61,14 @@ const EndingScreen = () => {
 
             <div className={`bg-gray-900 w-[500px] max-w-[95%] p-8 rounded-xl shadow-2xl text-center text-white border-2 ${isWinner ? "border-green-400" : "border-red-400"}`}>
 
-                {/* Result */}
                 <h1 className={`text-5xl font-bold ${isWinner ? "text-green-400" : "text-red-400"}`}>
                     {isWinner ? "WIN" : "LOSE"}
                 </h1>
 
-                {/* Rating Section */}
                 <div className="my-6">
 
                     <p className="text-gray-400 text-sm uppercase tracking-widest">
-                        New Rating
+                        Your New Rating
                     </p>
 
                     <p className="text-4xl font-bold">
@@ -83,7 +81,6 @@ const EndingScreen = () => {
 
                 </div>
 
-                {/* Winners */}
                 <div>
 
                     <h2 className="text-lg mb-3 text-gray-300">
@@ -91,28 +88,22 @@ const EndingScreen = () => {
                     </h2>
 
                     <div className="flex flex-col gap-3">
-
                         {winners.map(player => (
-                            <div
-                                key={player.id}
-                                className="flex items-center gap-4 bg-gray-800 p-3 rounded-xl"
-                            >
 
-                                <img
-                                    src={player.profileImageUrl}
+                            <div key={player.id}
+                                className="flex items-center gap-4 bg-gray-800 p-3 rounded-xl">
+
+                                <img src={player.profileImageUrl}
                                     alt={player.username}
-                                    className="w-12 h-12 rounded-full object-cover border-2 border-yellow-400"
-                                />
+                                    className="w-12 h-12 rounded-full object-cover border-2 border-maincolor" />
 
                                 <div className="flex-1 text-left">
 
-                                    <p className="font-semibold">
-                                        {player.username}
-                                    </p>
+                                    <p className="font-semibold">{player.username}</p>
 
                                     <p className="text-sm text-gray-400">
-                                        New {player.newRating}
-                                        <span className={`ml-2 font-semibold ${player.ratingChange > 0 ? "text-green-400" : "text-red-400"}`}>
+                                        New Rating: {player.newRating}
+                                        <span className={`ml-4 font-semibold ${player.ratingChange > 0 ? "text-green-400" : "text-red-400"}`}>
                                             {player.ratingChange > 0 ? "+" : ""}{player.ratingChange}
                                         </span>
                                     </p>
@@ -120,11 +111,16 @@ const EndingScreen = () => {
                                 </div>
 
                             </div>
-                        ))}
 
+                        ))}
                     </div>
 
                 </div>
+
+                <button className="mt-8 bg-maincolor text-gray-900 text-xl font-medium py-2 px-8 rounded-xl hover:bg-[#81e4dc] hover:cursor-pointer"
+                    onClick={() => navigate("/")}>
+                    Exit
+                </button>
 
             </div>
 
