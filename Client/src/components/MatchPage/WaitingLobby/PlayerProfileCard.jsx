@@ -2,7 +2,7 @@ import React from 'react';
 import QuestionMark from '../../../assets/images/question-mark.png';
 import ProfilePhoto from '../../../assets/images/profile-photo.jpg';
 
-const PlayerCard = ({ data }) => {
+const PlayerProfileCard = ({ data }) => {
     return (
         <div className="flex flex-col gap-3 items-center text-gray-300 text-center">
             <img src={data ? (data.profileImageUrl || ProfilePhoto) : QuestionMark}
@@ -16,4 +16,4 @@ const PlayerCard = ({ data }) => {
     );
 };
 
-export default PlayerCard;
+export default PlayerProfileCard;

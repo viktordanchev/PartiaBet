@@ -86,8 +86,7 @@ const MatchPage = () => {
         <section className="flex-1 p-6 flex justify-center gap-3">
             {isLoading ? <Loading size={'small'} /> :
                 <>
-                    {isEnded && <EndingScreen winners={matchEnd.winners} />}
-
+                    
                     {match?.status === "Created" && <LobbyList match={match} />}
 
                     {isPaused && (

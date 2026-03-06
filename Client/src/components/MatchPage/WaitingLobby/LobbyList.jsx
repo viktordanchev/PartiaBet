@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import PlayerCard from './PlayerCard';
+import PlayerProfileCard from './PlayerProfileCard';
 import { useMatchHub } from '../../../contexts/MatchHubContext';
 
 const LobbyList = ({ match }) => {
@@ -16,19 +16,19 @@ const LobbyList = ({ match }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex flex-col gap-6 items-center justify-center bg-black/70 text-white">
+        <div className="fixed inset-0 z-50 flex flex-col gap-6 items-center justify-center backdrop-blur-sm text-white">
             <p className="text-2xl font-semibold">
                 Waiting...
             </p>
             <div className="flex gap-6">
                 {match.players.map((player) =>
-                    <PlayerCard
+                    <PlayerProfileCard
                         key={player.id}
                         data={player}
                     />
                 )}
                 {Array.from({ length: match.maxPlayersCount - match.players.length }).map((_, index) => (
-                    <PlayerCard
+                    <PlayerProfileCard
                         key={index}
                         data={null}
                     />

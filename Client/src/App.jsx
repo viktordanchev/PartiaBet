@@ -25,6 +25,7 @@ function App() {
     return (
         <>
             <ActiveMatchAlert />
+            <EndingScreen />
             {!pagesNoNav && <NavigationBar />}
             <div className={`flex-grow flex flex-col ${!pagesNoNav && "ml-80"}`}>
                 <Header isLogoVis={pagesNoNav} />
