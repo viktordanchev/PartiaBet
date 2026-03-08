@@ -8,12 +8,12 @@ namespace Core.Results.Match
     {
         public МакеMoveResult()
         {
-            Winners = new List<PlayerModel>();
+            Players = new List<PlayerModel>();
         }
 
         public bool IsValid { get; private set; }
         public bool IsWinningMove { get; private set; }
-        public IEnumerable<PlayerModel>? Winners { get; private set; }
+        public IEnumerable<PlayerModel>? Players { get; private set; }
         public Guid NextId { get; set; }
         public double Duration { get; set; }
         public GameType GameType { get; private set; }
@@ -26,6 +26,6 @@ namespace Core.Results.Match
             new() { IsValid = true, GameBoard = board, GameType = gameType };
 
         public static МакеMoveResult Win(IEnumerable<PlayerModel> winners, GameBoardModel board, GameType gameType) =>
-            new() { IsValid = true, IsWinningMove = true, Winners = winners, GameBoard = board, GameType = gameType };
+            new() { IsValid = true, IsWinningMove = true, Players = winners, GameBoard = board, GameType = gameType };
     }
 }

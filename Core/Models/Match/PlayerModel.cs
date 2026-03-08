@@ -15,7 +15,9 @@ namespace Core.Models.Match
 
         public string Username { get; set; } = string.Empty;
 
-        public int Rating { get; set; }
+        public int CurrentRating { get; set; }
+
+        public int NewRating { get; set; }
 
         public PlayerTimer Timer { get; set; }
 

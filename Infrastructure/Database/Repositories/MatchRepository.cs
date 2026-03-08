@@ -26,7 +26,7 @@ namespace Infrastructure.Database.Repositories
                 Id = playerEntity.Id,
                 ProfileImageUrl = playerEntity.ImageUrl,
                 Username = playerEntity.Username,
-                Rating = 1000
+                CurrentRating = 1000
             };
         }
     }

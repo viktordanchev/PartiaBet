@@ -129,9 +129,10 @@ namespace RestAPI.Hubs
 
             if (result.IsWinningMove)
             {
+                var winnersDto = _mapper.Map<List<PlayerMatchStatsDto>>(result.Players);
                 await _matchService.EndMatchAsync(matchId);
 
-                await Clients.Group($"{matchId}").SendAsync("MatchEnd", result.Winners);
+                await Clients.Group($"{matchId}").SendAsync("MatchEnd", winnersDto);
             }
         }
 

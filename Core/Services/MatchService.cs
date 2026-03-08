@@ -355,7 +355,7 @@ namespace Core.Services
 
                 _ratingCalculator.CalculatePlayersRating(match);
 
-                var winners = match.Players.Where(p => p.Status == PlayerStatus.Winner).ToList();
+                var winners = match.Players.ToList();
 
                 return МакеMoveResult.Win(winners, match.Board, match.GameType);
             }

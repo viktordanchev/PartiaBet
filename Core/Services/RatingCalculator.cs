@@ -13,11 +13,14 @@ namespace Core.Services
             {
                 if (player.Status == Enums.PlayerStatus.Winner)
                 {
-                    player.Rating += RatingChange;
+                    player.NewRating = player.CurrentRating + RatingChange;
                 }
                 else
                 {
-                    player.Rating -= RatingChange;
+                    player.NewRating = player.CurrentRating - RatingChange;
+
+                    if(player.NewRating < 0)
+                        player.NewRating = 0;
                 }
             }
         }
