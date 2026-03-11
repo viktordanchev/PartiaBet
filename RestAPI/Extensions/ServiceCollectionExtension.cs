@@ -97,13 +97,13 @@ namespace RestAPI.Extensions
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IMatchService, MatchService>();
             services.AddScoped<IGameFactory, GameFactory>();
-            services.AddScoped<IMatchTurnService, MatchTurnService>();
             services.AddScoped<IMemoryCacheService, MemoryCacheService>();
             services.AddScoped<IRatingCalculator, RatingCalculator>();
+            services.AddScoped<IMatchHubNotifier, MatchHubNotifier>();
 
+            services.AddSingleton<IMatchTurnManager, MatchTurnManager>();
             services.AddSingleton<IGameProvider, GameProvider>();
             services.AddSingleton<IMatchPlayersManager, MatchPlayersManager>();
-            services.AddSingleton<IMatchTimer, MatchTimer>();
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
                 var configuration = "localhost:6379";

@@ -43,7 +43,7 @@ export const MatchHubProvider = ({ children }) => {
     useEffect(() => {
         if (!connection) return;
 
-        connection.on("MatchEnd", handleMatchEnd);
+        connection.on("EndMatch", handleMatchEnd);
         connection.on("MatchResumed", handleMatchResumed);
         connection.on("StartMatch", handleStartMatch);
         connection.on("RejoinPlayer", handleRejoinPlayer);

@@ -15,6 +15,8 @@ namespace Infrastructure.CacheRedis
             _redis = mux.GetDatabase();
         }
 
+        //Set methods
+
         public async Task SetMatchAsync(Guid matchId, MatchModel match)
         {
             var json = JsonSerializer.Serialize(match);
@@ -30,13 +32,21 @@ namespace Infrastructure.CacheRedis
             );
         }
 
-        public async Task<MatchModel> GetMatchAsync(Guid matchId)
+        public async Task SetPlayerMatchAsync(Guid playerId, Guid matchId)
+        {
+            await _redis.StringSetAsync($"{playerId}", matchId.ToString());
+        }
+
+        //Get methods
+
+        public async Task<MatchModel?> GetMatchAsync(Guid matchId)
         {
             var matchJson = await _redis.StringGetAsync(matchId.ToString());
 
-            var match = JsonSerializer.Deserialize<MatchModel>(matchJson);
+            if (string.IsNullOrEmpty(matchJson))
+                return null;
 
-            return match;
+            return JsonSerializer.Deserialize<MatchModel>(matchJson);
         }
 
         public async Task<IEnumerable<MatchModel>> GetAllMatchesAsync(GameType gameType)
@@ -56,11 +66,6 @@ namespace Infrastructure.CacheRedis
             return matches;
         }
 
-        public async Task SetPlayerMatchAsync(Guid playerId, Guid matchId)
-        {
-            await _redis.StringSetAsync($"{playerId}", matchId.ToString());
-        }
-
         public async Task<Guid> GetPlayerMatchIdAsync(Guid playerId)
         {
             var matchIdString = await _redis.StringGetAsync($"{playerId}");
@@ -69,16 +74,21 @@ namespace Infrastructure.CacheRedis
             return Guid.Parse(matchIdString);
         }
 
-        public async Task RemoveMatchAsync(Guid matchId, GameType gameType)
-        {
-            // 1. Махаш самия мач
-            await _redis.KeyDeleteAsync(matchId.ToString());
+        //Delete methods
 
-            // 2. Махаш го от сета по тип игра
+        public async Task RemoveMatchAsync(MatchModel match)
+        {
+            await _redis.KeyDeleteAsync(match.Id.ToString());
+
             await _redis.SetRemoveAsync(
-                gameType.ToString(),
-                matchId.ToString()
+                match.GameType.ToString(),
+                match.Id.ToString()
             );
+
+            foreach (var player in match.Players)
+            {
+                await _redis.KeyDeleteAsync(player.Id.ToString());
+            }
         }
     }
 }

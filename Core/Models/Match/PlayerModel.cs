@@ -25,6 +25,8 @@ namespace Core.Models.Match
 
         public PlayerStatus Status { get; set; }
 
+        public MatchResult? Result { get; set; }
+
         public int TurnOrder { get; set; }
 
         public int TeamNumber { get; set; }

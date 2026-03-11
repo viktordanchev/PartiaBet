@@ -4,7 +4,5 @@
     {
         Active = 1,
         Disconnected,
-        Winner,
-        Loser
     }
 }

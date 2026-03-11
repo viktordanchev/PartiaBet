@@ -123,16 +123,17 @@ namespace RestAPI.Hubs
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
             var result = await _matchService.MakeMoveAsync(matchId, playerId, jsonData);
 
-            if (!result.IsValid) return;
+            if (result.Status == MoveStatus.Invalid) 
+                return;
 
-            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.GameBoard, result.NextId, result.Duration);
+            await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.GameBoard, result.NextPlayerId, result.Duration);
 
-            if (result.IsWinningMove)
+            if (result.Status == MoveStatus.Win)
             {
-                var winnersDto = _mapper.Map<List<PlayerMatchStatsDto>>(result.Players);
-                await _matchService.EndMatchAsync(matchId);
+                var endMatchResult = await _matchService.EndMatchAsync(matchId);
+                var players = _mapper.Map<List<PlayerMatchStatsDto>>(endMatchResult.Players);
 
-                await Clients.Group($"{matchId}").SendAsync("MatchEnd", winnersDto);
+                await Clients.Group($"{matchId}").SendAsync("EndMatch", players);
             }
         }
 

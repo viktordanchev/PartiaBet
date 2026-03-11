@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
+import PlayerResult from './PlayerResult';
 
 const EndingScreen = ({ players }) => {
     const navigate = useNavigate();
@@ -8,10 +9,17 @@ const EndingScreen = ({ players }) => {
     const userId = decodedToken['Id'];
     const myStats = players.find(p => p.id === userId);
     const otherPlayers = players.filter(p => p.id !== userId);
-    const isWinner = myStats.isWinner;
     const [displayRating, setDisplayRating] = useState(myStats?.currentRating ?? 0);
     const ratingDiff = myStats.newRating - myStats.currentRating;
-    
+
+    const resultConfig = {
+        1: { text: "WIN", color: "text-green-400", border: "border-green-400" },
+        2: { text: "LOSE", color: "text-red-400", border: "border-red-400" },
+        3: { text: "DRAW", color: "text-yellow-400", border: "border-yellow-400" }
+    };
+
+    const config = resultConfig[myStats?.result] || { text: "", color: "", border: "" };
+
     useEffect(() => {
         let start = myStats.currentRating;
         const end = myStats.newRating;
@@ -35,10 +43,10 @@ const EndingScreen = ({ players }) => {
     return (
         <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center">
 
-            <div className={`bg-gray-900 w-[500px] max-w-[95%] p-8 rounded-xl shadow-2xl text-center text-white border-2 ${isWinner ? "border-green-400" : "border-red-400"}`}>
+            <div className={`bg-gray-900 w-[500px] max-w-[95%] p-8 rounded-xl shadow-2xl text-center text-white border-2 ${config.border}`}>
 
-                <h1 className={`text-5xl font-bold ${isWinner ? "text-green-400" : "text-red-400"}`}>
-                    {isWinner ? "WIN" : "LOSE"}
+                <h1 className={`text-5xl font-bold ${config.color}`}>
+                    {config.text}
                 </h1>
 
                 <div className="my-6">
@@ -65,33 +73,7 @@ const EndingScreen = ({ players }) => {
 
                     <div className="flex flex-col gap-3">
                         {otherPlayers.map(player => {
-
-                            const diff = player.newRating - player.currentRating;
-
-                            return (
-                                <div key={player.id}
-                                    className="flex items-center gap-4 bg-gray-800 p-3 rounded-xl">
-
-                                    <img src={player.profileImageUrl}
-                                        alt={player.username}
-                                        className="w-12 h-12 rounded-full object-cover border-2 border-maincolor" />
-
-                                    <div className="flex-1 text-left">
-
-                                        <p className="font-semibold">{player.username}</p>
-
-                                        <p className="text-sm text-gray-400">
-                                            New Rating: {player.newRating}
-                                            <span className={`ml-4 font-semibold ${diff > 0 ? "text-green-400" : "text-red-400"}`}>
-                                                {diff > 0 && "+"}{diff}
-                                            </span>
-                                        </p>
-
-                                    </div>
-
-                                </div>
-                            );
-
+                            <PlayerResult data={player} />
                         })}
                     </div>
 

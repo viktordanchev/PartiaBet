@@ -53,6 +53,8 @@ const MatchPage = () => {
 
             const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
 
+            if (!data) return;
+
             setIsLoading(false);
             setMatch(data);
             setIsPaused(data.status === 'Paused');

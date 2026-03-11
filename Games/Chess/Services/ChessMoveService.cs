@@ -1,6 +1,5 @@
 ﻿using Core.Games.Enums;
 using Core.Models.Games.Chess;
-using Games.Chess.Interfaces;
 using Games.Chess.PieceMovement;
 
 namespace Games.Chess.Services
@@ -25,7 +24,7 @@ namespace Games.Chess.Services
             if (targetPiece != null)
             {
                 if (IsCastleMove(board, currPiece, targetPiece))
-                    return CanPerformCastle(board, move);
+                    return CanPerformCastle(board, currPiece);
 
                 if (IsMoveBlockedByOwnPiece(board, currPiece, targetPiece))
                     return false;
@@ -44,6 +43,9 @@ namespace Games.Chess.Services
             var kingPiece = board.Pieces.FirstOrDefault(p => p.Type == PieceType.King && p.IsWhite != attackerPiece.IsWhite);
 
             if (!ChessAttackDetector.IsSquareAttacked(board, kingPiece.Row, kingPiece.Col, kingPiece.IsWhite))
+                return false;
+
+            if (CanPerformCastle(board, kingPiece))
                 return false;
 
             foreach (var direction in Directions.King)
@@ -143,36 +145,56 @@ namespace Games.Chess.Services
 
         //private methods
 
-        private static bool CanPerformCastle(ChessBoardModel board, ChessMoveModel move)
+        private static bool CanPerformCastle(ChessBoardModel board, FigureModel king)
         {
-            var king = board.Pieces.FirstOrDefault(p => p.Row == move.OldRow && p.Col == move.OldCol && p.Type == PieceType.King);
-            var rook = board.Pieces.FirstOrDefault(p => p.Row == move.NewRow && p.Col == move.NewCol && p.Type == PieceType.Rook);
-
             if (king.IsWhite)
             {
                 if (!board.CanWhiteSmallCastle && !board.CanWhiteBigCastle)
-                {
                     return false;
-                }
             }
             else
             {
                 if (!board.CanBlackSmallCastle && !board.CanBlackBigCastle)
-                {
                     return false;
-                }
             }
 
-            int startCol = king.Col;
-            int endCol = rook.Col;
+            int row = king.Row;
 
-            for (int c = startCol; c <= endCol; c++)
+            var kingsideRook = board.Pieces.FirstOrDefault(p => p.Row == row && p.Col == 7 && p.Type == PieceType.Rook && p.IsWhite == king.IsWhite);
+            if (kingsideRook != null)
             {
-                if (board.Pieces.Any(p => p.Row == king.Row && p.Col == c))
-                    return false;
+                bool pathClear = true;
+                for (int c = king.Col + 1; c < 7; c++)
+                {
+                    if (board.Pieces.Any(p => p.Row == row && p.Col == c))
+                    {
+                        pathClear = false;
+                        break;
+                    }
+                }
+
+                if (pathClear)
+                    return true;
             }
 
-            return true;
+            var queensideRook = board.Pieces.FirstOrDefault(p => p.Row == row && p.Col == 0 && p.Type == PieceType.Rook && p.IsWhite == king.IsWhite);
+            if (queensideRook != null)
+            {
+                bool pathClear = true;
+                for (int c = 1; c < king.Col; c++)
+                {
+                    if (board.Pieces.Any(p => p.Row == row && p.Col == c))
+                    {
+                        pathClear = false;
+                        break;
+                    }
+                }
+
+                if (pathClear)
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool IsMoveBlockedByOwnPiece(ChessBoardModel board, FigureModel currPiece, FigureModel targetPiece)

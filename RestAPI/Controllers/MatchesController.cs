@@ -35,6 +35,10 @@ namespace RestAPI.Controllers
         public async Task<IActionResult> GetMatch([FromBody] Guid matchId)
         {
             var match = await _matchService.GetMatchAsync(matchId);
+
+            if (match == null)
+                return NotFound();
+
             var matchDto = _mapper.Map<MatchDto>(match);
 
             return Ok(matchDto);

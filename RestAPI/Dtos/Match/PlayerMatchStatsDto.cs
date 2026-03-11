@@ -1,4 +1,6 @@
-﻿namespace RestAPI.Dtos.Match
+﻿using Core.Enums;
+
+namespace RestAPI.Dtos.Match
 {
     public class PlayerMatchStatsDto
     {
@@ -12,6 +14,6 @@
 
         public int NewRating { get; set; }
 
-        public bool IsWinner { get; set; }
+        public MatchResult Result { get; set; }
     }
 }

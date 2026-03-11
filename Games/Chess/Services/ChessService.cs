@@ -5,8 +5,6 @@ using Core.Models.Games;
 using Core.Models.Games.Chess;
 using Core.Models.Match;
 using Games.Chess.Models;
-using System.ComponentModel;
-using System.IO.Pipelines;
 
 namespace Games.Chess.Services
 {
@@ -33,7 +31,14 @@ namespace Games.Chess.Services
                 if (player.Id == chessBoard.WhitePlayerId)
                 {
                     player.IsOnTurn = true;
+                    player.TurnOrder = 1;
                 }
+                else
+                {
+                    player.TurnOrder = 2;
+                }
+
+                player.Timer.TimeLeft = TimeSpan.FromMinutes(1);
             }
 
             chessBoard.CanBlackBigCastle= true;
@@ -96,13 +101,13 @@ namespace Games.Chess.Services
             return ChessMoveService.IsWinningMove(chessBoard, chessMove);
         }
 
-        public void UpdateWinners(IEnumerable<PlayerModel> players, Guid winnerMoveId)
+        public void UpdateWinners(IEnumerable<PlayerModel> players, Guid winnerId)
         {
             foreach (var player in players)
             {
-                if (player.Id == winnerMoveId)
+                if (player.Id == winnerId)
                 {
-                    player.Status = PlayerStatus.Winner; 
+                    player.Result = MatchResult.Win;
                     break;
                 }
             }

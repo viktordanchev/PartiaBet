@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Services;
+﻿using Core.Enums;
+using Core.Interfaces.Services;
 using Core.Models.Match;
 
 namespace Core.Services
@@ -11,7 +12,7 @@ namespace Core.Services
         {
             foreach (var player in match.Players)
             {
-                if (player.Status == Enums.PlayerStatus.Winner)
+                if (player.Result == MatchResult.Win)
                 {
                     player.NewRating = player.CurrentRating + RatingChange;
                 }
