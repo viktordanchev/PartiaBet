@@ -19,9 +19,11 @@ const PlayerResult = ({ data }) => {
                 <p className="text-sm text-gray-400">
                     New Rating {data.newRating}
 
-                    <span className={`ml-4 font-semibold ${ratingDiff > 0 ? "text-green-400" : "text-red-400"}`}>
-                        {ratingDiff > 0 && "+"}{ratingDiff}       
-                    </span>
+                    {data?.result !== "Draw" && (
+                        <p className={`text-lg font-semibold ${ratingDiff > 0 ? "text-green-400" : "text-red-400"}`}>
+                            {ratingDiff > 0 && "+"}{ratingDiff}
+                        </p>
+                    )}
 
                 </p>
 

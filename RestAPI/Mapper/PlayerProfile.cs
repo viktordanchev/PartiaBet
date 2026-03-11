@@ -10,7 +10,9 @@ namespace RestAPI.Mapper
         {
             CreateMap<PlayerModel, PlayerDto>()
             .ForMember(dest => dest.TurnTimeLeft, opt =>
-                opt.MapFrom(src => GetTurnTimeLeft(src)));
+                opt.MapFrom(src => GetTurnTimeLeft(src)))
+            .ForMember(dest => dest.Rating,
+                opt => opt.MapFrom(src => src.CurrentRating));
 
             CreateMap<PlayerModel, PlayerMatchStatsDto>();
         }

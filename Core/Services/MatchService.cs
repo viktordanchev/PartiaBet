@@ -276,9 +276,7 @@ namespace Core.Services
             var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
 
             if (lockHandle == null)
-            {
                 throw new TimeoutException("Match is busy. Please try again.");
-            }
 
             try
             {

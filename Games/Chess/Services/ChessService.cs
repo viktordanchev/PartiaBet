@@ -38,7 +38,7 @@ namespace Games.Chess.Services
                     player.TurnOrder = 2;
                 }
 
-                player.Timer.TimeLeft = TimeSpan.FromMinutes(1);
+                player.Timer.TimeLeft = TimeSpan.FromMinutes(10);
             }
 
             chessBoard.CanBlackBigCastle= true;

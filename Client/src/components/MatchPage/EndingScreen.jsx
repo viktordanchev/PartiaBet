@@ -9,13 +9,13 @@ const EndingScreen = ({ players }) => {
     const userId = decodedToken['Id'];
     const myStats = players.find(p => p.id === userId);
     const otherPlayers = players.filter(p => p.id !== userId);
-    const [displayRating, setDisplayRating] = useState(myStats?.currentRating ?? 0);
+    const [displayRating, setDisplayRating] = useState(myStats?.currentRating ?? 1000);
     const ratingDiff = myStats.newRating - myStats.currentRating;
 
     const resultConfig = {
-        1: { text: "WIN", color: "text-green-400", border: "border-green-400" },
-        2: { text: "LOSE", color: "text-red-400", border: "border-red-400" },
-        3: { text: "DRAW", color: "text-yellow-400", border: "border-yellow-400" }
+        "Win": { text: "WIN", color: "text-green-400", border: "border-green-400" },
+        "Lose": { text: "LOSE", color: "text-red-400", border: "border-red-400" },
+        "Draw": { text: "DRAW", color: "text-gray-400", border: "border-gray-400" }
     };
 
     const config = resultConfig[myStats?.result] || { text: "", color: "", border: "" };
@@ -23,20 +23,25 @@ const EndingScreen = ({ players }) => {
     useEffect(() => {
         let start = myStats.currentRating;
         const end = myStats.newRating;
-       
+
+        if (start === end) {
+            setDisplayRating(end);
+            return;
+        }
+
         const step = start < end ? 1 : -1;
-
+    
         const interval = setInterval(() => {
-
+    
             start += step;
             setDisplayRating(start);
-
+    
             if (start === end) {
                 clearInterval(interval);
             }
-
+    
         }, 70);
-
+    
         return () => clearInterval(interval);
     }, []);
 
@@ -59,9 +64,11 @@ const EndingScreen = ({ players }) => {
                         {displayRating}
                     </p>
 
-                    <p className={`text-lg font-semibold ${ratingDiff > 0 ? "text-green-400" : "text-red-400"}`}>
-                        {ratingDiff > 0 && "+"}{ratingDiff}
-                    </p>
+                    {myStats?.result !== "Draw" && (
+                        <p className={`text-lg font-semibold ${ratingDiff > 0 ? "text-green-400" : "text-red-400"}`}>
+                            {ratingDiff > 0 && "+"}{ratingDiff}
+                        </p>
+                    )}
 
                 </div>
 
@@ -72,9 +79,9 @@ const EndingScreen = ({ players }) => {
                     </h2>
 
                     <div className="flex flex-col gap-3">
-                        {otherPlayers.map(player => {
+                        {otherPlayers.map(player => (
                             <PlayerResult data={player} />
-                        })}
+                        ))}
                     </div>
 
                 </div>
