@@ -9,7 +9,7 @@ namespace Core.Interfaces.Games
         void UpdateBoard(GameBoardModel board, GameMoveModel move);
         bool IsValidMove(GameBoardModel board, GameMoveModel move);
         bool IsWinningMove(GameBoardModel board, GameMoveModel move);
-        void UpdateWinners(IEnumerable<PlayerModel> players, Guid winnerId);
+        void SetMatchResults(IEnumerable<PlayerModel> players, Guid winnerId);
         Guid SwitchTurn(Guid playerId, IEnumerable<PlayerModel> players);
     }
 }

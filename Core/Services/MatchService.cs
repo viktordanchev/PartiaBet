@@ -253,7 +253,7 @@ namespace Core.Services
                 var match = await _cacheService.GetMatchAsync(matchId);
                 var result = ProcessMove(match, playerId, moveDataJson);
                  
-                if (result.Status == MoveStatus.Success)
+                if (result.Status == MoveStatus.Success || result.Status == MoveStatus.Win)
                 {
                     var (nextPlayer, timeLeft) = SwitchTurnAsync(match, playerId);
 
@@ -373,7 +373,7 @@ namespace Core.Services
 
             if (gameService.IsWinningMove(match.Board, moveData))
             {
-                gameService.UpdateWinners(match.Players, winnerId);
+                gameService.SetMatchResults(match.Players, winnerId);
 
                 _ratingCalculator.CalculatePlayersRating(match);
 

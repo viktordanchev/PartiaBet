@@ -9,9 +9,9 @@ const EndingScreen = ({ players }) => {
     const userId = decodedToken['Id'];
     const myStats = players.find(p => p.id === userId);
     const otherPlayers = players.filter(p => p.id !== userId);
-    const [displayRating, setDisplayRating] = useState(myStats?.currentRating ?? 1000);
+    const [displayRating, setDisplayRating] = useState(myStats?.currentRating ?? 0);
     const ratingDiff = myStats.newRating - myStats.currentRating;
-
+    
     const resultConfig = {
         "Win": { text: "WIN", color: "text-green-400", border: "border-green-400" },
         "Lose": { text: "LOSE", color: "text-red-400", border: "border-red-400" },

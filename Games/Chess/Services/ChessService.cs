@@ -101,15 +101,13 @@ namespace Games.Chess.Services
             return ChessMoveService.IsWinningMove(chessBoard, chessMove);
         }
 
-        public void UpdateWinners(IEnumerable<PlayerModel> players, Guid winnerId)
+        public void SetMatchResults(IEnumerable<PlayerModel> players, Guid winnerId)
         {
             foreach (var player in players)
             {
-                if (player.Id == winnerId)
-                {
-                    player.Result = MatchResult.Win;
-                    break;
-                }
+                player.Result = player.Id == winnerId
+                    ? MatchResult.Win
+                    : MatchResult.Lose;
             }
         }
 
