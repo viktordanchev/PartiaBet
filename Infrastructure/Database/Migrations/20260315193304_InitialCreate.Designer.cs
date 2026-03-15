@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(PartiaBetDbContext))]
-    [Migration("20260303195642_InitialCreate")]
+    [Migration("20260315193304_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -64,8 +64,8 @@ namespace Infrastructure.Database.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsAccepted")
-                        .HasColumnType("boolean");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "FriendId");
 

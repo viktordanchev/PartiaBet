@@ -1,8 +1,14 @@
-﻿namespace Core.Interfaces.Infrastructure
+﻿using Core.Enums;
+using Core.Models.Friendship;
+
+namespace Core.Interfaces.Infrastructure
 {
     public interface IFriendshipRepository
     {
         Task RemoveFriendship(Guid userId, Guid friendId);
-        Task MakeNewFriendship(Guid senderId, Guid receiverId);
+        Task AddFriendship(Guid senderId, Guid receiverId);
+        Task ChangeStatusAsync(Guid userId, Guid friendId, FriendshipStatus status);
+        Task<IEnumerable<FriendModel>> GetFriendsAsync(Guid userId);
+        Task<IEnumerable<FriendModel>> GetAllUsersAsync(string searchQuery);
     }
 }

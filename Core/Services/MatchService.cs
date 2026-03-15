@@ -10,7 +10,7 @@ namespace Core.Services
     public class MatchService : IMatchService
     {
         private IMatchRepository _matchRepository;
-        private ICacheService _cacheService;
+        private IMatchCache _matchCache;
         private IRedisLockService _redisLock;
         private IGameFactory _gameFactory;
         private IGameProvider _gameProvider;
@@ -20,7 +20,7 @@ namespace Core.Services
         public MatchService(
             IMatchRepository matchRepository,
             IRedisLockService redisLock,
-            ICacheService cacheService,
+            IMatchCache matchCache,
             IGameFactory gameFactory,
             IGameProvider gameProvider,
             IMatchTurnManager matchTurnManager,
@@ -28,7 +28,7 @@ namespace Core.Services
         {
             _matchRepository = matchRepository;
             _redisLock = redisLock;
-            _cacheService = cacheService;
+            _matchCache = matchCache;
             _gameFactory = gameFactory;
             _gameProvider = gameProvider;
             _matchTurnManager = matchTurnManager;
@@ -37,7 +37,7 @@ namespace Core.Services
 
         public async Task<HandlePlayerDisconnectResult> HandlePlayerDisconnectAsync(Guid playerId)
         {
-            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
+            var matchId = await _matchCache.GetPlayerMatchIdAsync(playerId);
             var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
 
             if (lockHandle == null)
@@ -47,7 +47,7 @@ namespace Core.Services
 
             try
             {
-                var match = await _cacheService.GetMatchAsync(matchId);
+                var match = await _matchCache.GetMatchAsync(matchId);
 
                 var playerInTurn = match.Players.First(p => p.IsOnTurn);
                 var remaining = playerInTurn.Timer.TurnExpiresAt - DateTime.UtcNow;
@@ -65,7 +65,7 @@ namespace Core.Services
                 match.RejoinDeadline = rejoinDeadline;
                 match.Status = MatchStatus.Paused;
 
-                await _cacheService.SetMatchAsync(match.Id, match);
+                await _matchCache.SetMatchAsync(match.Id, match);
 
                 return HandlePlayerDisconnectResult.Success(match.Id, rejoinWindow.TotalSeconds);
             }
@@ -85,7 +85,7 @@ namespace Core.Services
                 MaxPlayersCount = _gameProvider.GetMaxPlayersCount(gameType),
             };
 
-            await _cacheService.SetMatchAsync(match.Id, match);
+            await _matchCache.SetMatchAsync(match.Id, match);
 
             return match;
         }
@@ -101,7 +101,7 @@ namespace Core.Services
 
             try
             {
-                var match = await _cacheService.GetMatchAsync(matchId);
+                var match = await _matchCache.GetMatchAsync(matchId);
                 var maxPlayersCount = _gameProvider.GetMaxPlayersCount(match.GameType);
 
                 if (match.Status == MatchStatus.Ongoing ||
@@ -118,7 +118,7 @@ namespace Core.Services
                     StartMatch(match);
                 }
 
-                await _cacheService.SetMatchAsync(match.Id, match);
+                await _matchCache.SetMatchAsync(match.Id, match);
 
                 return JoinMatchResult.Success(
                     addedPlayer,
@@ -133,7 +133,7 @@ namespace Core.Services
 
         public async Task<LeaveMatchQueueResult> LeaveMatchQueueAsync(Guid playerId)
         {
-            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
+            var matchId = await _matchCache.GetPlayerMatchIdAsync(playerId);
             var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
 
             if (lockHandle == null)
@@ -144,7 +144,7 @@ namespace Core.Services
             try
             {
                 var isRemoved = false;
-                var match = await _cacheService.GetMatchAsync(matchId);
+                var match = await _matchCache.GetMatchAsync(matchId);
 
                 if (match.Status == MatchStatus.Created)
                 {
@@ -155,10 +155,10 @@ namespace Core.Services
 
                     if (match.Players.Count == 0)
                     {
-                        await _cacheService.RemoveMatchAsync(match);
+                        await _matchCache.RemoveMatchAsync(match);
                     }
 
-                    await _cacheService.SetMatchAsync(match.Id, match);
+                    await _matchCache.SetMatchAsync(match.Id, match);
                 }
 
                 return LeaveMatchQueueResult.Success(match.Id, isRemoved, match.GameType);
@@ -171,21 +171,21 @@ namespace Core.Services
 
         public async Task<IEnumerable<MatchModel>> GetActiveMatchesAsync(GameType gameType)
         {
-            var matches = await _cacheService.GetAllMatchesAsync(gameType);
+            var matches = await _matchCache.GetAllMatchesAsync(gameType);
 
             return matches;
         }
 
         public async Task<MatchModel?> GetMatchAsync(Guid matchId)
         {
-            var match = await _cacheService.GetMatchAsync(matchId);
+            var match = await _matchCache.GetMatchAsync(matchId);
 
             return match;
         }
 
         public async Task<PlayerRejoinMatchResult> PlayerRejoinMatchAsync(Guid playerId)
         {
-            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
+            var matchId = await _matchCache.GetPlayerMatchIdAsync(playerId);
             var lockHandle = await _redisLock.AcquireAsync($"lock:match:{matchId}");
 
             if (lockHandle == null)
@@ -195,7 +195,7 @@ namespace Core.Services
 
             try
             {
-                var match = await _cacheService.GetMatchAsync(matchId);
+                var match = await _matchCache.GetMatchAsync(matchId);
                 var player = match.Players.First(p => p.Id == playerId);
 
                 player.Status = PlayerStatus.Active;
@@ -213,7 +213,7 @@ namespace Core.Services
                     _matchTurnManager.StartTurn(match, playerInTurn);
                 }
 
-                await _cacheService.SetMatchAsync(match.Id, match);
+                await _matchCache.SetMatchAsync(match.Id, match);
 
                 return PlayerRejoinMatchResult.Success(match.Id, match.Status);
             }
@@ -225,12 +225,12 @@ namespace Core.Services
 
         public async Task<HandlePlayerDisconnectResult> GetMatchCountdownAsync(Guid playerId)
         {
-            var matchId = await _cacheService.GetPlayerMatchIdAsync(playerId);
+            var matchId = await _matchCache.GetPlayerMatchIdAsync(playerId);
 
             if (matchId == Guid.Empty)
                 return HandlePlayerDisconnectResult.Success(matchId, 0);
 
-            var match = await _cacheService.GetMatchAsync(matchId);
+            var match = await _matchCache.GetMatchAsync(matchId);
             double timeLeft = 0;
 
             if (match.RejoinDeadline != null)
@@ -250,7 +250,7 @@ namespace Core.Services
 
             try
             {
-                var match = await _cacheService.GetMatchAsync(matchId);
+                var match = await _matchCache.GetMatchAsync(matchId);
                 var result = ProcessMove(match, playerId, moveDataJson);
                  
                 if (result.Status == MoveStatus.Success || result.Status == MoveStatus.Win)
@@ -260,7 +260,7 @@ namespace Core.Services
                     result.NextPlayerId = nextPlayer;
                     result.Duration = timeLeft;
 
-                    await _cacheService.SetMatchAsync(match.Id, match);
+                    await _matchCache.SetMatchAsync(match.Id, match);
                 }
 
                 return result;
@@ -280,9 +280,9 @@ namespace Core.Services
 
             try
             {
-                var match = await _cacheService.GetMatchAsync(matchId);
+                var match = await _matchCache.GetMatchAsync(matchId);
 
-                await _cacheService.RemoveMatchAsync(match);
+                await _matchCache.RemoveMatchAsync(match);
 
                 return EndMatchResult.Success(match.Id, match.Players);
             }
@@ -301,7 +301,7 @@ namespace Core.Services
 
             try
             {
-                var match = await _cacheService.GetMatchAsync(matchId);
+                var match = await _matchCache.GetMatchAsync(matchId);
 
                 foreach (var player in match.Players)
                 {
@@ -309,7 +309,7 @@ namespace Core.Services
                     player.Result = MatchResult.Draw;
                 }
 
-                await _cacheService.SetMatchAsync(match.Id, match);
+                await _matchCache.SetMatchAsync(match.Id, match);
             }
             finally
             {
@@ -341,7 +341,7 @@ namespace Core.Services
             player.Status = PlayerStatus.Active;
 
             match.Players.Add(player);
-            await _cacheService.SetPlayerMatchAsync(playerId, match.Id);
+            await _matchCache.SetPlayerMatchAsync(playerId, match.Id);
 
             return player;
         }

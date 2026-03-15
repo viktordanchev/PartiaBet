@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Database.Entities
@@ -19,6 +20,6 @@ namespace Infrastructure.Database.Entities
 
         public DateTime CreatedAt { get; set; }
 
-        public bool IsAccepted { get; set; }
+        public FriendshipStatus Status { get; set; }
     }
 }

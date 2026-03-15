@@ -3,7 +3,7 @@ using Core.Models.Match;
 
 namespace Core.Interfaces.Infrastructure
 {
-    public interface ICacheService
+    public interface IMatchCache
     {
         Task SetMatchAsync(Guid matchId, MatchModel match);
         Task<MatchModel?> GetMatchAsync(Guid matchId);

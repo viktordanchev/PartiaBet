@@ -81,7 +81,8 @@ namespace RestAPI.Extensions
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
-            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IMatchCache, MatchCache>();
+            services.AddScoped<IOnlineUsersCache, OnlineUsersCache>();
             services.AddScoped<IRedisLockService, RedisLockService>();
             services.AddScoped<IFriendshipRepository, FriendshipRepository>();
         }

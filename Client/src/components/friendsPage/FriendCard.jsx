@@ -4,11 +4,12 @@ const FriendCard = ({ username, isOnline }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <article
-            className={`bg-gray-900 rounded-xl border border-gray-500 shadow-xl shadow-gray-900 p-3 flex items-center gap-2 transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:border-white ${isOpen ? 'h-50 w-100 justify-center items-start' : 'h-25 w-70 hover:scale-105'}`}
+        <article className={`bg-gray-900 rounded-xl border border-gray-500 shadow-xl shadow-gray-900 p-3 flex items-center gap-2 transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:border-white ${isOpen ? 'h-50 w-100 justify-center items-start' : 'h-25 w-70 hover:scale-105'}`}
             onClick={() => setIsOpen(!isOpen)}>
-            <img src=""
-                className="w-16 h-16 rounded-full object-cover border-2 border-gray-500" />
+
+            <img className="w-16 h-16 rounded-full object-cover border-2 border-gray-500"
+                src="" />
+
             <div className="flex flex-col">
                 <h2 className="text-white text-lg font-semibold">{username}</h2>
                 <span className={`flex items-center text-sm ${isOnline ? 'text-green-400' : 'text-red-400'}`}>
@@ -16,6 +17,7 @@ const FriendCard = ({ username, isOnline }) => {
                     {isOnline ? 'Online' : 'Offline'}
                 </span>
             </div>
+
         </article>
     );
 };

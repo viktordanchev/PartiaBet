@@ -6,11 +6,11 @@ using System.Text.Json;
 
 namespace Infrastructure.CacheRedis
 {
-    public class CacheService : ICacheService
+    public class MatchCache : IMatchCache
     {
         private readonly IDatabase _redis;
 
-        public CacheService(IConnectionMultiplexer mux)
+        public MatchCache(IConnectionMultiplexer mux)
         {
             _redis = mux.GetDatabase();
         }

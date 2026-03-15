@@ -93,7 +93,7 @@ namespace Infrastructure.Database.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     FriendId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsAccepted = table.Column<bool>(type: "boolean", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
