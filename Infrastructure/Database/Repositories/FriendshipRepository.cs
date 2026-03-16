@@ -85,5 +85,19 @@ namespace Infrastructure.Database.Repositories
 
             return users;
         }
+
+        public async Task<PlayerDataModel> GetPlayerDataAsync(Guid playerId)
+        {
+            var player = await _context.Users.
+                Where(u => u.Id == playerId)
+                .Select(u => new PlayerDataModel()
+                {
+                    Id = u.Id,
+                    ProfileImageUrl = u.ImageUrl,
+                    Username = u.Username,
+                    IsFriend = u.fr
+                })
+                .FirstOrDefaultAsync();
+        }
     }
 }
