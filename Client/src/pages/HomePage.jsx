@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import GameCard from '../components/HomePage/GameCard';
+import GameCard from '../components/homePage/GameCard';
 import Loading from '../components/Loading';
 import useApiRequest from '../hooks/useApiRequest';
 

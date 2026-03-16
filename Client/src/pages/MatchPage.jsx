@@ -1,10 +1,10 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import Loading from '../components/Loading';
-import ChessMatch from '../components/MatchPage/Chess/ChessMatch';
-import Spectators from '../components/MatchPage/Spectators';
-import LobbyList from '../components/MatchPage/WaitingLobby/LobbyList';
-import EndingScreen from '../components/MatchPage/EndingScreen';
+import ChessMatch from '../components/matchPage/chess/ChessMatch';
+import Spectators from '../components/matchPage/Spectators';
+import LobbyList from '../components/matchPage/waitingLobby/LobbyList';
+import EndingScreen from '../components/matchPage/EndingScreen';
 import useApiRequest from '../hooks/useApiRequest';
 import { useMatchHub } from '../contexts/MatchHubContext';
 

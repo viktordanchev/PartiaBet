@@ -1,6 +1,6 @@
 ﻿import React, { useEffect } from 'react';
-import FriendCard from '../components/FriendsPage/FriendCard';
-import SearchBar from '../components/FriendsPage/SearchBar';
+import FriendCard from '../components/friendsPage/FriendCard';
+import SearchBar from '../components/friendsPage/SearchBar';
 
 function FriendsPage() {
 

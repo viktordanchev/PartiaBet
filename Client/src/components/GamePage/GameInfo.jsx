@@ -1,6 +1,6 @@
 import React from 'react';
-import PlayButton from './GameInfo/PlayButton';
-import FriendChallengeButton from './GameInfo/FriendChallengeButton';
+import PlayButton from './gameInfo/PlayButton';
+import FriendChallengeButton from './gameInfo/FriendChallengeButton';
 import getGameImage from '../../constants/gameImages';
 
 const GameInfo = ({ gameData }) => {

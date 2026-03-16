@@ -1,9 +1,9 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import TopPlayers from '../components/GamePage/TopPlayers';
-import GameInfo from '../components/GamePage/GameInfo';
-import Matches from '../components/GamePage/Matches';
-import GameRules from '../components/GamePage/GameRules';
+import TopPlayers from '../components/gamePage/TopPlayers';
+import GameInfo from '../components/gamePage/GameInfo';
+import Matches from '../components/gamePage/Matches';
+import GameRules from '../components/gamePage/GameRules';
 import Loading from '../components/Loading';
 import useApiRequest from '../hooks/useApiRequest';
 import { useMatchHub } from '../contexts/MatchHubContext';

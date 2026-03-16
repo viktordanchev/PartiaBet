@@ -1,5 +1,5 @@
 import React from 'react';
-import ChessRules from './AllGameRules/ChessRules';
+import ChessRules from './gameRules/ChessRules';
 
 const rulesComponents = {
     Chess: ChessRules,

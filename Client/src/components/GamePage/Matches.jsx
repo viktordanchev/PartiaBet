@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MatchList from './Matches/MatchList';
+import MatchList from './matches/MatchList';
 import useApiRequest from '../../hooks/useApiRequest';
 import Loading from '../Loading';
 import { useMatchHub } from '../../contexts/MatchHubContext';
