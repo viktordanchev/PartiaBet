@@ -37,17 +37,20 @@ function GamePage() {
         document.title = gameData.name;
     }, [gameData]);
 
+    if (isLoading) {
+        return (
+            <Loading size={'big'} />
+        );
+    }
+
     return (
         <section className="flex-1 p-6 space-y-6">
-            {isLoading ? <Loading size={'small'} /> :
-                <>
-                    <div className="grid grid-cols-2 gap-6">
-                        <GameInfo gameData={gameData} />
-                        <TopPlayers />
-                    </div>
-                    <Matches gameType={gameData.gameType} />
-                    <GameRules game={gameData.name} />
-                </>}
+            <div className="grid grid-cols-2 gap-6">
+                <GameInfo gameData={gameData} />
+                <TopPlayers />
+            </div>
+            <Matches gameType={gameData.gameType} />
+            <GameRules game={gameData.name} />
         </section>
     );
 }

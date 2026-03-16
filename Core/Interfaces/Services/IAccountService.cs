@@ -2,7 +2,7 @@
 
 namespace Core.Interfaces.Services
 {
-    public interface IUserService
+    public interface IAccountService
     {
         Task RegisterUserAsync(RegisterUserModel data);
         Task<bool> IsUserExistAsync(string email);

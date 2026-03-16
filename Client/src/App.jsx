@@ -8,6 +8,7 @@ import FriendsPage from './pages/FriendsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import GamePage from './pages/GamePage';
 import MatchPage from './pages/MatchPage';
+import PlayerPage from './pages/PlayerPage';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -38,6 +39,8 @@ function App() {
                                 <MatchPage />
                             </ProtectedRoute>}
                         />
+
+                        <Route path="/player/:playerId" element={<PlayerPage />} />
 
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />

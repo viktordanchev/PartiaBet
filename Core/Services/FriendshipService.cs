@@ -50,6 +50,9 @@ namespace Core.Services
 
         public async Task<IEnumerable<FriendModel>> GetAllUsersAsync(string searchQuery)
         {
+            if (string.IsNullOrWhiteSpace(searchQuery))
+                return new List<FriendModel>();
+
             var users = await _friendshipRepo.GetAllUsersAsync(searchQuery.ToLower());
 
             return users;

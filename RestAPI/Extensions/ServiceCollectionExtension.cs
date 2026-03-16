@@ -92,7 +92,7 @@ namespace RestAPI.Extensions
             services.AddTransient<IEmailSenderService, EmailSenderService>();
 
             services.AddScoped<IBlobStorageService, BlobStorageService>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountTokenService, AccountTokenService>();
             services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
             services.AddScoped<IGamesService, GamesService>();
@@ -102,6 +102,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IMemoryCacheService, MemoryCacheService>();
             services.AddScoped<IRatingCalculator, RatingCalculator>();
             services.AddScoped<IMatchHubNotifier, MatchHubNotifier>();
+            services.AddScoped<IFriendshipService, FriendshipService>();
 
             services.AddSingleton<IMatchTurnManager, MatchTurnManager>();
             services.AddSingleton<IGameProvider, GameProvider>();

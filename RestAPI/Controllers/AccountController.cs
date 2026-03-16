@@ -16,14 +16,14 @@ namespace RestAPI.Controllers
     public class AccountController : Controller
     {
         private readonly IMemoryCacheService _memoryCacheService;
-        private readonly IUserService _userService;
+        private readonly IAccountService _userService;
         private readonly IAccountTokenService _accountTokenService;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IHostEnvironment _environment;
         private readonly IMapper _mapper;
 
         public AccountController(IMemoryCacheService memoryCacheService,
-            IUserService userService,
+            IAccountService userService,
             IAccountTokenService accountTokenService,
             IJwtTokenService jwtTokenService,
             IHostEnvironment environment,

@@ -33,13 +33,28 @@ namespace RestAPI.Controllers
             return Ok(friendsDto);
         }
 
-        [HttpPost("getUsers")]
-        public async Task<IActionResult> GetUsers([FromBody] string searchQuery)
+        [HttpPost("getPlayers")]
+        public async Task<IActionResult> GetPlayers([FromBody] string username)
         {
-            var users = await _friendshipService.GetAllUsersAsync(searchQuery);
+            var users = await _friendshipService.GetAllUsersAsync(username);
             var friendsDto = _mapper.Map<IEnumerable<FriendDto>>(users);
 
             return Ok(users);
         }
+
+        //[HttpPost("getPlayer")]
+        //public async Task<IActionResult> GetPlayer([FromBody] Guid playerId)
+        //{
+        //    var user = await _friendshipService.GetUserProfileAsync(userId);
+        //
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //
+        //    var userDto = _mapper.Map<UserProfileDto>(user);
+        //
+        //    return Ok(userDto);
+        //}
     }
 }

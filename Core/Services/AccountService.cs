@@ -9,13 +9,13 @@ using static Common.Constants.ErrorMessages.Account;
 
 namespace Core.Services
 {
-    public class UserService : IUserService
+    public class AccountService : IAccountService
     {
         private readonly IUserRepository _userRepository;
         private readonly IBlobStorageService _blobStorageService;
         private readonly IPasswordHasher<object> _passwordHasher;
 
-        public UserService(IUserRepository userRepository, 
+        public AccountService(IUserRepository userRepository, 
             IBlobStorageService blobStorageService,
             IPasswordHasher<object> passwordHasher)
         {

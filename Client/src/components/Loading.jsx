@@ -14,7 +14,7 @@ function Loading({ size }) {
     }
 
     return (
-        <div className="h-full w-full flex justify-center items-center">
+        <div className="min-h-full min-w-full flex justify-center items-center">
             <img src={Dice} className={`animate-[spin_2s_linear_infinite] ${width}`} />
         </div>
     );

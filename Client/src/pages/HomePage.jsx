@@ -19,10 +19,6 @@ function HomePage() {
         receiveData();
     }, []);
 
-    useEffect(() => {
-        document.title = 'Home';
-    }, []);
-
     return (
         <section className="flex-1 p-6 flex flex-wrap justify-center items-center gap-6">
             {isLoading ? <Loading size={'small'} /> :

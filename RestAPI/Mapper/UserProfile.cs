@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Models.Friendship;
 using Core.Models.User;
 using RestAPI.Dtos.User;
 
@@ -11,6 +12,7 @@ namespace RestAPI.Mapper
             CreateMap<RegisterUserDto, RegisterUserModel>();
             CreateMap<LoginUserDto, LoginUserModel>();
             CreateMap<UserDataModel, UserDataDto>();
+            CreateMap<FriendModel, FriendDto>();
         }
     }
 }
