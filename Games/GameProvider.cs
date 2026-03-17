@@ -6,7 +6,7 @@ using Games.Belote;
 using Games.Chess.Models;
 using Games.Models;
 using Games.SixtySix;
-
+ 
 namespace Games
 {
     public class GameProvider : IGameProvider

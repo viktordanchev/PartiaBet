@@ -10,5 +10,6 @@ namespace Core.Interfaces.Infrastructure
         Task ChangeStatusAsync(Guid userId, Guid friendId, FriendshipStatus status);
         Task<IEnumerable<FriendModel>> GetFriendsAsync(Guid userId);
         Task<IEnumerable<FriendModel>> GetAllUsersAsync(string searchQuery);
+        Task<PlayerDataModel?> GetPlayerDataAsync(Guid requesterId, Guid playerId);
     }
 }
