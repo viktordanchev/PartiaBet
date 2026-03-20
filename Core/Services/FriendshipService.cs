@@ -1,6 +1,7 @@
-﻿using Core.Interfaces.Infrastructure;
+﻿using Core.Enums;
+using Core.Interfaces.Games;
+using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
-using Core.Enums;
 using Core.Models.Friendship;
 
 namespace Core.Services
@@ -9,13 +10,16 @@ namespace Core.Services
     {
         private IFriendshipRepository _friendshipRepo;
         private IOnlineUsersCache _onlineUsersCache;
+        private IGameProvider _gameProvider;
 
         public FriendshipService(
             IFriendshipRepository friendshipRepo,
-            IOnlineUsersCache onlineUsersCache)
+            IOnlineUsersCache onlineUsersCache,
+            IGameProvider gameProvider)
         {
             _friendshipRepo = friendshipRepo;
             _onlineUsersCache = onlineUsersCache;
+            _gameProvider = gameProvider;
         }
 
         public async Task SendFriendRequestAsync(Guid userId, Guid friendId)
@@ -56,6 +60,14 @@ namespace Core.Services
             var users = await _friendshipRepo.GetAllUsersAsync(searchQuery.ToLower());
 
             return users;
+        }
+
+        public async Task<PlayerDataModel?> GetPlayerProfileAsync(Guid requesterId, Guid playerId) 
+        {
+            var player = await _friendshipRepo.GetPlayerDataAsync(requesterId, playerId);
+
+            var allGames = _gameProvider.GenerateAllGames();
+            player.GamesStats.For
         }
     }
 }
