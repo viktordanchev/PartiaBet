@@ -1,8 +1,8 @@
 ﻿using Core.Enums;
 
-namespace Core.Models.Friendship
+namespace RestAPI.Dtos.Friendship
 {
-    public class GameStatsModel
+    public class GameStatsDto
     {
         public GameType GameType { get; set; }
 

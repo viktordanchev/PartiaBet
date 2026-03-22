@@ -88,22 +88,27 @@ namespace Infrastructure.Database.Repositories
 
         public async Task<PlayerDataModel?> GetPlayerDataAsync(Guid requesterId, Guid playerId)
         {
-            var player = await _context.Users.
-                Where(u => u.Id == playerId)
-                .Select(u => new PlayerDataModel()
+            var player = await _context.Users
+                .Where(u => u.Id == playerId)
+                .Select(u => new PlayerDataModel
                 {
                     Id = u.Id,
                     ProfileImageUrl = u.ImageUrl,
                     Username = u.Username,
-                    IsFriend =
-                        u.Friendships.Any(f =>
-                            (f.UserId == requesterId || f.FriendId == requesterId)
-                            && f.Status == FriendshipStatus.Accepted
-                            ),
-                    GamesStats = u.GameRatings.Select(f => new GameStatsModel()
+                    IsFriend = u.Friendships
+                        .Any(f => (f.UserId == requesterId || f.FriendId == requesterId)
+                                  && f.Status == FriendshipStatus.Accepted),
+                    GamesStats = u.GameRatings.Select(f => new GameStatsModel
                     {
-                        GameType = f.GameType
-                    })
+                        GameType = f.GameType,
+                        Rating = f.Rating,
+                        WinCount = u.MatchHistory
+                            .Count(um => um.Match.GameType == f.GameType
+                                         && um.MatchResult == MatchResult.Win),
+                        LossCount = u.MatchHistory
+                            .Count(um => um.Match.GameType == f.GameType
+                                         && um.MatchResult == MatchResult.Lose)
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
 

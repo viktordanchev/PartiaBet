@@ -18,11 +18,13 @@ namespace Infrastructure.Database.Entities
         [ForeignKey(nameof(PlayerId))]
         public User Player { get; set; } = null!;
 
-        public int TurnOrder { get; set; }
-
-        public int TeamNumber { get; set; }
+        [Required]
+        public MatchResult MatchResult { get; set; }
 
         [Required]
-        public PlayerStatus Status { get; set; }
+        public int CurrentRating { get; set; }
+
+        [Required]
+        public int NewRating { get; set; }
     }
 }

@@ -10,16 +10,13 @@ namespace Core.Services
     {
         private IFriendshipRepository _friendshipRepo;
         private IOnlineUsersCache _onlineUsersCache;
-        private IGameProvider _gameProvider;
 
         public FriendshipService(
             IFriendshipRepository friendshipRepo,
-            IOnlineUsersCache onlineUsersCache,
-            IGameProvider gameProvider)
+            IOnlineUsersCache onlineUsersCache)
         {
             _friendshipRepo = friendshipRepo;
             _onlineUsersCache = onlineUsersCache;
-            _gameProvider = gameProvider;
         }
 
         public async Task SendFriendRequestAsync(Guid userId, Guid friendId)
@@ -62,12 +59,15 @@ namespace Core.Services
             return users;
         }
 
-        public async Task<PlayerDataModel?> GetPlayerProfileAsync(Guid requesterId, Guid playerId) 
+        public async Task<PlayerDataModel?> GetPlayerProfileAsync(string? requesterId, Guid playerId) 
         {
-            var player = await _friendshipRepo.GetPlayerDataAsync(requesterId, playerId);
+            var userIdGuid = Guid.Empty;
+            if (requesterId != null)
+                userIdGuid = Guid.Parse(requesterId);
 
-            var allGames = _gameProvider.GenerateAllGames();
-            player.GamesStats.For
+            var player = await _friendshipRepo.GetPlayerDataAsync(userIdGuid, playerId);
+
+            return player;
         }
     }
 }

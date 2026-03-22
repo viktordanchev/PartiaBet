@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Core.Interfaces.Services;
+using Core.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestAPI.Dtos.User;
+using RestAPI.Dtos.Friendship;
 using System.Security.Claims;
 
 namespace RestAPI.Controllers
@@ -42,19 +43,19 @@ namespace RestAPI.Controllers
             return Ok(users);
         }
 
-        //[HttpPost("getPlayer")]
-        //public async Task<IActionResult> GetPlayer([FromBody] Guid playerId)
-        //{
-        //    var user = await _friendshipService.GetUserProfileAsync(userId);
-        //
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //
-        //    var userDto = _mapper.Map<UserProfileDto>(user);
-        //
-        //    return Ok(userDto);
-        //}
+        [HttpPost("getPlayer")]
+        public async Task<IActionResult> GetPlayer([FromBody] Guid playerId)
+        {
+            var userId = User.FindFirstValue("Id");
+
+            var player = await _friendshipService.GetPlayerProfileAsync(userId, playerId);
+        
+            if (player == null)
+                return NotFound();
+
+            var playerDto = _mapper.Map<PlayerDataDto>(player);
+        
+            return Ok(playerDto);
+        }
     }
 }

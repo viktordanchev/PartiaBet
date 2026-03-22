@@ -1,8 +1,8 @@
 import React from 'react';
 
 const PlayerStats = ({ playerData }) => {
-    const totalWins = playerData.games.reduce((sum, g) => sum + g.wins, 0);
-    const totalLosses = playerData.games.reduce((sum, g) => sum + g.losses, 0);
+    const totalWins = playerData.gamesStats.reduce((sum, g) => sum + g.winCount, 0);
+    const totalLosses = playerData.gamesStats.reduce((sum, g) => sum + g.lossCount, 0);
     const totalGames = totalWins + totalLosses;
 
     return (

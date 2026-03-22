@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
+import useApiRequest from '../hooks/useApiRequest';
 
 import Loading from '../components/Loading';
 import PlayerInfo from '../components/playerPage/PlayerInfo';
@@ -8,6 +9,7 @@ import PlayerGames from '../components/playerPage/PlayerGames';
 
 function PlayerPage() {
     const { playerId } = useParams();
+    const apiRequest = useApiRequest();
     const [isLoading, setIsLoading] = useState(true);
     const [playerData, setPlayerData] = useState(null);
 
@@ -20,17 +22,7 @@ function PlayerPage() {
     useEffect(() => {
         const receiveData = async () => {
             setIsLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            const playerData = {
-                username: "Viktordanchev123",
-                avatar: "https://i.pravatar.cc/150",
-                isFriend: true,
-                games: [
-                    { name: "Chess", wins: 42, losses: 18, rating: 1720 },
-                    { name: "Checkers", wins: 30, losses: 25, rating: 1605 },
-                    { name: "TicTacToe", wins: 120, losses: 40, rating: 1950 }
-                ]
-            };
+            const playerData = await apiRequest('friends', 'getPlayer', 'POST', true, false, playerId);
             setIsLoading(false);
     
             setPlayerData(playerData);
@@ -53,7 +45,7 @@ function PlayerPage() {
                 <PlayerStats playerData={playerData} />
             </div>
 
-            <PlayerGames games={playerData.games} />
+            <PlayerGames games={playerData.gamesStats} />
 
         </section>
     );

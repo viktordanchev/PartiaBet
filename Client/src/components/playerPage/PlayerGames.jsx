@@ -23,15 +23,14 @@ const PlayerGames = ({ games }) => {
                 <tbody>
 
                     {games.map(game => {
-
-                        const total = game.wins + game.losses;
+                        const total = game.winCount + game.lossCount;
 
                         return (
                             <tr key={game.name} className="border-b border-gray-700 text-center">
 
-                                <td className="py-3 text-left">{game.name}</td>
-                                <td className="text-green-400">{game.wins}</td>
-                                <td className="text-red-400">{game.losses}</td>
+                                <td className="py-3 text-left">{game.gameType}</td>
+                                <td className="text-green-400">{game.winCount}</td>
+                                <td className="text-red-400">{game.lossCount}</td>
                                 <td>{total}</td>
                                 <td className="text-indigo-400">{game.rating}</td>
 

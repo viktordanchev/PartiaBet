@@ -64,9 +64,14 @@ namespace Infrastructure.Database.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uuid");
+
                     b.HasKey("UserId", "FriendId");
 
                     b.HasIndex("FriendId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Friendship");
                 });
@@ -80,17 +85,14 @@ namespace Infrastructure.Database.Migrations
                     b.Property<decimal>("BetAmount")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid>("CurrentTurnPlayerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("DateAndTime")
+                    b.Property<DateTime>("EndTimeUTC")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("GameType")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MatchStatus")
-                        .HasColumnType("integer");
+                    b.Property<DateTime>("StartTimeUTC")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -199,13 +201,13 @@ namespace Infrastructure.Database.Migrations
                     b.Property<Guid>("MatchId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("CurrentRating")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TeamNumber")
+                    b.Property<int>("MatchResult")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TurnOrder")
+                    b.Property<int>("NewRating")
                         .HasColumnType("integer");
 
                     b.HasKey("PlayerId", "MatchId");
@@ -288,6 +290,10 @@ namespace Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Infrastructure.Database.Entities.User", null)
+                        .WithMany("Friendships")
+                        .HasForeignKey("UserId1");
+
                     b.Navigation("Friend");
 
                     b.Navigation("User");
@@ -368,6 +374,8 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Infrastructure.Database.Entities.User", b =>
                 {
+                    b.Navigation("Friendships");
+
                     b.Navigation("GameRatings");
 
                     b.Navigation("MatchHistory");

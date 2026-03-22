@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Infrastructure;
+﻿using Core.Enums;
+using Core.Interfaces.Infrastructure;
 using Core.Models.User;
 using Infrastructure.Database.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +26,15 @@ namespace Infrastructure.Database.Repositories
                 RegisteredAt = DateTime.Parse(data.DateAndTime, new CultureInfo("bg-BG")),
                 PasswordHash = data.Password
             };
+
+            var allGameTypes = Enum.GetValues(typeof(GameType)).Cast<GameType>();
+
+            user.GameRatings = allGameTypes
+                .Select(gt => new UserGameRating
+                {
+                    GameType = gt,
+                    Rating = 0
+                }).ToList();
 
             await _database.Users.AddAsync(user);
             await _database.SaveChangesAsync();

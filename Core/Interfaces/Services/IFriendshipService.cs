@@ -9,6 +9,6 @@ namespace Core.Interfaces.Services
         Task AcceptFriendRequestAsync(Guid userId, Guid friendId);
         Task<IEnumerable<FriendModel>> GetFriendsAsync(Guid userId);
         Task<IEnumerable<FriendModel>> GetAllUsersAsync(string searchQuery);
-        Task<PlayerDataModel?> GetPlayerProfileAsync(Guid requesterId, Guid playerId);
+        Task<PlayerDataModel?> GetPlayerProfileAsync(string? requesterId, Guid playerId);
     }
 }

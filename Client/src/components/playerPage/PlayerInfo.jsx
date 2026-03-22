@@ -1,4 +1,5 @@
 import React from 'react';
+import ProfileImage from '../../assets/images/profile-photo.jpg';
 
 const PlayerInfo = ({ playerData }) => {
     return (
@@ -6,7 +7,7 @@ const PlayerInfo = ({ playerData }) => {
 
             <div className="flex flex-col">
                 <img className="h-35 w-35 m-auto rounded-full shadow-lg shadow-gray-900"
-                    src={playerData.avatar} />
+                    src={playerData.profileImageUrl ? playerData.profileImageUrl : ProfileImage} />
 
                 <p className="text-gray-300 text-4xl text-center font-semibold">
                     {playerData.username}

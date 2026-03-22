@@ -19,14 +19,14 @@ namespace Games
             new ChessGame()
         };
 
-        public IEnumerable<GameModel> GenerateAllGames()
+        public IEnumerable<GameModel> GetAllGames()
         {
             var games = _games.Select(g => new GameModel()
             {
                 GameType = g.GameType,
                 Name = g.Name,
                 MaxPlayersCount = g.MaxPlayersCount
-            });
+            }).ToList();
 
             return games;
         }

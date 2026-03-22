@@ -6,6 +6,7 @@ namespace Infrastructure.Database.Entities
 {
     public class UserGameRating
     {
+        [Key]
         [Required]
         public Guid PlayerId { get; set; }
 

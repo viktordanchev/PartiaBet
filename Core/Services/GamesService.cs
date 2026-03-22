@@ -15,12 +15,12 @@ namespace Core.Services
 
         public IEnumerable<GameModel> GetAll()
         {
-            return _gameProvider.GenerateAllGames();
+            return _gameProvider.GetAllGames();
         }
 
         public GameModel? GetGame(string game)
         {
-            var allGames = _gameProvider.GenerateAllGames();
+            var allGames = _gameProvider.GetAllGames();
 
             return allGames.FirstOrDefault(g => g.Name.Equals(game, StringComparison.OrdinalIgnoreCase));
         }

@@ -5,7 +5,7 @@ namespace Core.Interfaces.Games
 {
     public interface IGameProvider
     {
-        IEnumerable<GameModel> GenerateAllGames();
+        IEnumerable<GameModel> GetAllGames();
         int GetMaxPlayersCount(GameType gameType);
         bool IsValidGameType(GameType gameType);
     }

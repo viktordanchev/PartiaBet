@@ -1,4 +1,4 @@
-﻿namespace RestAPI.Dtos.User
+﻿namespace RestAPI.Dtos.Friendship
 {
     public class FriendDto
     {

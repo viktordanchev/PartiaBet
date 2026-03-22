@@ -18,9 +18,8 @@ namespace Infrastructure.Database.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     BetAmount = table.Column<decimal>(type: "numeric", nullable: false),
-                    DateAndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CurrentTurnPlayerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    MatchStatus = table.Column<int>(type: "integer", nullable: false),
+                    StartTimeUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndTimeUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     GameType = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -93,7 +92,8 @@ namespace Infrastructure.Database.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     FriendId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    UserId1 = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -110,6 +110,11 @@ namespace Infrastructure.Database.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Friendship_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -166,9 +171,9 @@ namespace Infrastructure.Database.Migrations
                 {
                     MatchId = table.Column<Guid>(type: "uuid", nullable: false),
                     PlayerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TurnOrder = table.Column<int>(type: "integer", nullable: false),
-                    TeamNumber = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false)
+                    MatchResult = table.Column<int>(type: "integer", nullable: false),
+                    CurrentRating = table.Column<int>(type: "integer", nullable: false),
+                    NewRating = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -227,6 +232,11 @@ namespace Infrastructure.Database.Migrations
                 name: "IX_Friendship_FriendId",
                 table: "Friendship",
                 column: "FriendId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Friendship_UserId1",
+                table: "Friendship",
+                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionHistory_ReceiverId",
