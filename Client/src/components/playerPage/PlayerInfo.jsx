@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useApiRequest from '../../hooks/useApiRequest';
 
 import ProfileImage from '../../assets/images/profile-photo.jpg';
 
 const PlayerInfo = ({ playerData }) => {
     const apiRequest = useApiRequest();
-
+    const [friendshipStatus, setFriendshipStatus] = useState(playerData.friendshipStatus);
+    console.log(friendshipStatus);
     const handleAddFriend = async () => {
         await apiRequest('friends', 'sendFriendRequest', 'POST', true, false, playerData.id);
+        setFriendshipStatus('Pending');
     };
 
     const handleRemoveFriend = async () => {
         await apiRequest('friends', 'removeFriend', 'POST', true, false, playerData.id);
+        setFriendshipStatus('None');
+    };
+
+    const handleCancelFriendRequest = async () => {
+        await apiRequest('friends', 'cancelFriendRequest', 'POST', true, false, playerData.id);
+        setFriendshipStatus('None');
     };
 
     return (
@@ -26,21 +34,26 @@ const PlayerInfo = ({ playerData }) => {
                 </p>
             </div>
 
-            {!playerData.isFriend && (
+            {friendshipStatus == 'None' && (
                 <button className="px-3 py-2 rounded-xl bg-green-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
                     onClick={handleAddFriend}>
                     Add Friend
                 </button>
             )}
 
-            {playerData.isFriend && (
+            {friendshipStatus == 'Accepted' && (
                 <button className="px-3 py-2 rounded-xl bg-red-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
                     onClick={handleRemoveFriend}>
                     Remove Friend
                 </button>
             )}
 
-
+            {friendshipStatus == 'Pending' && (
+                <button className="px-3 py-2 rounded-xl bg-red-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
+                    onClick={handleCancelFriendRequest}>
+                    Cancel
+                </button>
+            )}
         </article>
     );
 };

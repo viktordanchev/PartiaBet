@@ -17,6 +17,13 @@ namespace Infrastructure.Database.Repositories
 
         public async Task AddFriendship(Guid senderId, Guid receiverId)
         {
+            var exists = await _context.Friendship
+                .AnyAsync(f => (f.FirstUserId == senderId && f.SecondUserId == receiverId) ||
+                (f.FirstUserId == receiverId && f.SecondUserId == senderId));
+
+            if (exists)
+                return;
+
             var newFirendship = new Friendship()
             {
                 FirstUserId = senderId,
