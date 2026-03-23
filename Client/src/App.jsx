@@ -31,16 +31,21 @@ function App() {
                 <main className="flex-grow flex">
                     <Routes>
                         <Route path="/" element={<HomePage />} />
-                        <Route path="/friends" element={<FriendsPage />} />
+                        <Route path="/friends" element={
+                            <ProtectedRoute>
+                                <FriendsPage />
+                            </ProtectedRoute>} />
 
                         <Route path="/games/:game" element={<GamePage />} />
                         <Route path="/games/:game/match/:matchId" element={
                             <ProtectedRoute>
                                 <MatchPage />
-                            </ProtectedRoute>}
-                        />
+                            </ProtectedRoute>} />
 
-                        <Route path="/player/:playerId" element={<PlayerPage />} />
+                        <Route path="/player/:playerId" element={
+                            <ProtectedRoute>
+                                <PlayerPage />
+                            </ProtectedRoute>} />
 
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />

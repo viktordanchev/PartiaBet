@@ -11,7 +11,7 @@ const SearchBar = ({ setUsers, setIsLoading }) => {
     useEffect(() => {
         const receiveData = async () => {
             setIsLoading(true);
-            const users = await apiRequest('friends', 'getPlayers', 'POST', true, false, username);
+            const users = await apiRequest('friends', 'searchPlayers', 'POST', true, false, username);
             setIsLoading(false);
 
             setUsers(users);

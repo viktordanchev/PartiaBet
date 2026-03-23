@@ -8,11 +8,11 @@ const PlayerGames = ({ games }) => {
                 Game Statistics
             </h2>
 
-            <table className="w-full text-gray-300">
+            <table className="w-full text-gray-200 bg-white/5 backdrop-blur-md rounded-xl overflow-hidden">
 
-                <thead className="text-gray-400 border-b border-gray-600">
+                <thead className="bg-white/10 text-gray-300 text-sm uppercase">
                     <tr>
-                        <th className="py-2 text-left">Game</th>
+                        <th className="py-3 text-left pl-4">Game</th>
                         <th>Wins</th>
                         <th>Losses</th>
                         <th>Total</th>
@@ -21,23 +21,22 @@ const PlayerGames = ({ games }) => {
                 </thead>
 
                 <tbody>
-
                     {games.map(game => {
                         const total = game.winCount + game.lossCount;
 
                         return (
-                            <tr key={game.name} className="border-b border-gray-700 text-center">
-
-                                <td className="py-3 text-left">{game.gameType}</td>
-                                <td className="text-green-400">{game.winCount}</td>
-                                <td className="text-red-400">{game.lossCount}</td>
-                                <td>{total}</td>
-                                <td className="text-indigo-400">{game.rating}</td>
-
+                            <tr
+                                key={game.name}
+                                className="border-t border-white/10"
+                            >
+                                <td className="py-3 pl-4">{game.gameType}</td>
+                                <td className="text-green-400 text-center">{game.winCount}</td>
+                                <td className="text-red-400 text-center">{game.lossCount}</td>
+                                <td className="text-center">{total}</td>
+                                <td className="text-indigo-400 text-center">{game.rating}</td>
                             </tr>
                         );
                     })}
-
                 </tbody>
 
             </table>

@@ -19,12 +19,12 @@ namespace Core.Services
             _onlineUsersCache = onlineUsersCache;
         }
 
-        public async Task SendFriendRequestAsync(Guid userId, Guid friendId)
+        public async Task SendFriendRequestAsync(Guid senderId, Guid receiverId)
         {
-            await _friendshipRepo.AddFriendship(userId, friendId);
+            await _friendshipRepo.AddFriendship(senderId, receiverId);
         }
 
-        public async Task AcceptFriendRequestAsync(Guid userId, Guid friendId) 
+        public async Task AcceptFriendRequestAsync(Guid senderId, Guid receiverId) 
         {
             await _friendshipRepo.ChangeStatusAsync(userId, friendId, FriendshipStatus.Accepted);
         }
@@ -59,13 +59,9 @@ namespace Core.Services
             return users;
         }
 
-        public async Task<PlayerDataModel?> GetPlayerProfileAsync(string? requesterId, Guid playerId) 
+        public async Task<PlayerDataModel?> GetPlayerProfileAsync(Guid requesterId, Guid playerId) 
         {
-            var userIdGuid = Guid.Empty;
-            if (requesterId != null)
-                userIdGuid = Guid.Parse(requesterId);
-
-            var player = await _friendshipRepo.GetPlayerDataAsync(userIdGuid, playerId);
+            var player = await _friendshipRepo.GetPlayerDataAsync(requesterId, playerId);
 
             return player;
         }

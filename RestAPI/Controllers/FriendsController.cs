@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Core.Interfaces.Services;
-using Core.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestAPI.Dtos.Friendship;
@@ -9,6 +8,7 @@ using System.Security.Claims;
 namespace RestAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/friends")]
     public class FriendsController : Controller
     {
@@ -23,7 +23,6 @@ namespace RestAPI.Controllers
         }
 
         [HttpGet("getFriends")]
-        [Authorize]
         public async Task<IActionResult> GetFriends()
         {
             var playerId = Guid.Parse(User.FindFirstValue("Id"));
@@ -34,8 +33,8 @@ namespace RestAPI.Controllers
             return Ok(friendsDto);
         }
 
-        [HttpPost("getPlayers")]
-        public async Task<IActionResult> GetPlayers([FromBody] string username)
+        [HttpPost("searchPlayers")]
+        public async Task<IActionResult> SearchPlayers([FromBody] string username)
         {
             var users = await _friendshipService.GetAllUsersAsync(username);
             var friendsDto = _mapper.Map<IEnumerable<FriendDto>>(users);
@@ -46,7 +45,7 @@ namespace RestAPI.Controllers
         [HttpPost("getPlayer")]
         public async Task<IActionResult> GetPlayer([FromBody] Guid playerId)
         {
-            var userId = User.FindFirstValue("Id");
+            var userId = Guid.Parse(User.FindFirstValue("Id"));
 
             var player = await _friendshipService.GetPlayerProfileAsync(userId, playerId);
         
@@ -56,6 +55,26 @@ namespace RestAPI.Controllers
             var playerDto = _mapper.Map<PlayerDataDto>(player);
         
             return Ok(playerDto);
+        }
+
+        [HttpPost("sendFriendRequest")]
+        public async Task<IActionResult> SendFriendRequest([FromBody] Guid receiverId)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("Id"));
+
+            await _friendshipService.SendFriendRequestAsync(userId, receiverId);
+
+            return Ok();
+        }
+
+        [HttpGet("acceptFriendRequest")]
+        public async Task<IActionResult> AcceptFriendRequest([FromBody] Guid senderId)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("Id"));
+
+            await _friendshipService.AcceptFriendRequestAsync(senderId, userId);
+
+            return Ok();
         }
     }
 }

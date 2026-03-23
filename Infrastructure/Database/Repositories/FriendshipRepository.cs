@@ -42,10 +42,10 @@ namespace Infrastructure.Database.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task ChangeStatusAsync(Guid userId, Guid friendId, FriendshipStatus status)
+        public async Task ChangeStatusAsync(Guid senderId, Guid receiverId, FriendshipStatus status)
         {
             var friendship = await _context.Friendship
-                .Where(f => f.UserId == userId && f.FriendId == friendId)
+                .Where(f => f.UserId == senderId && f.FriendId == receiverId)
                 .FirstOrDefaultAsync();
 
             if (friendship == null)

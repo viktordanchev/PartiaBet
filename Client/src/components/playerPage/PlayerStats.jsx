@@ -12,21 +12,21 @@ const PlayerStats = ({ playerData }) => {
                 Overall Stats
             </h2>
 
-            <div className="grid grid-cols-3 text-center text-gray-300">
+            <div className="h-full grid grid-cols-3 items-center text-center text-gray-300">
 
                 <div>
-                    <p className="text-gray-400">Wins</p>
-                    <p className="text-green-400 text-2xl font-semibold">{totalWins}</p>
+                    <p className="text-xl font-bold">Wins</p>
+                    <p className="text-green-400 text-3xl font-semibold">{totalWins}</p>
                 </div>
 
                 <div>
-                    <p className="text-gray-400">Losses</p>
-                    <p className="text-red-400 text-2xl font-semibold">{totalLosses}</p>
+                    <p className="text-xl font-bold">Losses</p>
+                    <p className="text-red-400 text-3xl font-semibold">{totalLosses}</p>
                 </div>
 
                 <div>
-                    <p className="text-gray-400">Total Games</p>
-                    <p className="text-indigo-400 text-2xl font-semibold">{totalGames}</p>
+                    <p className="text-xl font-bold">Total Games</p>
+                    <p className="text-indigo-400 text-3xl font-semibold">{totalGames}</p>
                 </div>
 
             </div>
