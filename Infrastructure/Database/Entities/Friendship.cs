@@ -7,16 +7,16 @@ namespace Infrastructure.Database.Entities
     public class Friendship
     {
         [Required]
-        public Guid UserId { get; set; }
+        public Guid FirstUserId { get; set; }
 
-        [ForeignKey(nameof(UserId))]
-        public User User { get; set; } = null!;
+        [ForeignKey(nameof(FirstUserId))]
+        public User FirstUser { get; set; } = null!;
 
         [Required]
-        public Guid FriendId { get; set; }
+        public Guid SecondUserId { get; set; }
 
-        [ForeignKey(nameof(FriendId))]
-        public User Friend { get; set; } = null!;
+        [ForeignKey(nameof(SecondUserId))]
+        public User SecondUser { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; }
 

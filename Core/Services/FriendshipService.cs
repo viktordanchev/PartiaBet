@@ -26,7 +26,7 @@ namespace Core.Services
 
         public async Task AcceptFriendRequestAsync(Guid senderId, Guid receiverId) 
         {
-            await _friendshipRepo.ChangeStatusAsync(userId, friendId, FriendshipStatus.Accepted);
+            await _friendshipRepo.ChangeStatusAsync(senderId, receiverId, FriendshipStatus.Accepted);
         }
 
         public async Task RemoveFriendAsync(Guid userId, Guid friendId) 

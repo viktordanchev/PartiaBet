@@ -1,4 +1,6 @@
-﻿namespace Core.Models.Friendship
+﻿using Core.Enums;
+
+namespace Core.Models.Friendship
 {
     public class PlayerDataModel
     {
@@ -13,7 +15,7 @@
 
         public string ProfileImageUrl { get; set; } = string.Empty;
 
-        public bool IsFriend { get; set; }
+        public FriendshipStatus FriendshipStatus { get; set; }
 
         public IEnumerable<GameStatsModel> GamesStats { get; set; }
     }

@@ -19,8 +19,8 @@ namespace Infrastructure.Database.Repositories
         {
             var newFirendship = new Friendship()
             {
-                UserId = senderId,
-                FriendId = receiverId,
+                FirstUserId = senderId,
+                SecondUserId = receiverId,
                 CreatedAt = DateTime.UtcNow,
                 Status = FriendshipStatus.Pending
             };
@@ -32,7 +32,7 @@ namespace Infrastructure.Database.Repositories
         public async Task RemoveFriendship(Guid userId, Guid friendId)
         {
             var friendship = await _context.Friendship
-                .Where(f => f.UserId == userId && f.FriendId == friendId)
+                .Where(f => f.FirstUserId == userId && f.SecondUserId == friendId)
                 .FirstOrDefaultAsync();
 
             if (friendship == null)
@@ -45,7 +45,7 @@ namespace Infrastructure.Database.Repositories
         public async Task ChangeStatusAsync(Guid senderId, Guid receiverId, FriendshipStatus status)
         {
             var friendship = await _context.Friendship
-                .Where(f => f.UserId == senderId && f.FriendId == receiverId)
+                .Where(f => f.FirstUserId == senderId && f.SecondUserId == receiverId)
                 .FirstOrDefaultAsync();
 
             if (friendship == null)
@@ -59,12 +59,12 @@ namespace Infrastructure.Database.Repositories
         public async Task<IEnumerable<FriendModel>> GetFriendsAsync(Guid userId)
         {
             var friends = await _context.Friendship
-                .Where(f => f.UserId == userId && f.Status == FriendshipStatus.Accepted)
+                .Where(f => f.FirstUserId == userId && f.Status == FriendshipStatus.Accepted)
                 .Select(f => new FriendModel()
                 {
-                    Id = f.FriendId,
-                    Username = f.Friend.Username,
-                    ProfileImageUrl = f.Friend.ImageUrl
+                    Id = f.SecondUserId,
+                    Username = f.SecondUser.Username,
+                    ProfileImageUrl = f.SecondUser.ImageUrl
                 })
                 .ToListAsync();
 
@@ -95,9 +95,10 @@ namespace Infrastructure.Database.Repositories
                     Id = u.Id,
                     ProfileImageUrl = u.ImageUrl,
                     Username = u.Username,
-                    IsFriend = u.Friendships
-                        .Any(f => (f.UserId == requesterId || f.FriendId == requesterId)
-                                  && f.Status == FriendshipStatus.Accepted),
+                    FriendshipStatus = u.Friendships
+                        .Where(f => f.FirstUserId == requesterId || f.SecondUserId == requesterId)
+                        .Select(f => (FriendshipStatus?)f.Status)
+                        .FirstOrDefault() ?? FriendshipStatus.None,
                     GamesStats = u.GameRatings.Select(f => new GameStatsModel
                     {
                         GameType = f.GameType,

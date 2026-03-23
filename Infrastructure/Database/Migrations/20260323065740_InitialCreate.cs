@@ -89,30 +89,30 @@ namespace Infrastructure.Database.Migrations
                 name: "Friendship",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FriendId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirstUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SecondUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    UserId1 = table.Column<Guid>(type: "uuid", nullable: true)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Friendship", x => new { x.UserId, x.FriendId });
+                    table.PrimaryKey("PK_Friendship", x => new { x.FirstUserId, x.SecondUserId });
                     table.ForeignKey(
-                        name: "FK_Friendship_Users_FriendId",
-                        column: x => x.FriendId,
+                        name: "FK_Friendship_Users_FirstUserId",
+                        column: x => x.FirstUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Friendship_Users_SecondUserId",
+                        column: x => x.SecondUserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Friendship_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Friendship_Users_UserId1",
-                        column: x => x.UserId1,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -229,14 +229,14 @@ namespace Infrastructure.Database.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Friendship_FriendId",
+                name: "IX_Friendship_SecondUserId",
                 table: "Friendship",
-                column: "FriendId");
+                column: "SecondUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Friendship_UserId1",
+                name: "IX_Friendship_UserId",
                 table: "Friendship",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionHistory_ReceiverId",

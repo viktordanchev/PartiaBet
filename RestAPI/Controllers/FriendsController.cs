@@ -67,12 +67,32 @@ namespace RestAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("acceptFriendRequest")]
+        [HttpPost("acceptFriendRequest")]
         public async Task<IActionResult> AcceptFriendRequest([FromBody] Guid senderId)
         {
             var userId = Guid.Parse(User.FindFirstValue("Id"));
 
             await _friendshipService.AcceptFriendRequestAsync(senderId, userId);
+
+            return Ok();
+        }
+
+        [HttpPost("cancelFriendRequest")]
+        public async Task<IActionResult> CancelFriendRequest([FromBody] Guid senderId)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("Id"));
+
+            await _friendshipService.RemoveFriendAsync(senderId, userId);
+
+            return Ok();
+        }
+
+        [HttpPost("removeFriend")]
+        public async Task<IActionResult> RemoveFriend([FromBody] Guid friendId)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("Id"));
+
+            await _friendshipService.RemoveFriendAsync(userId, friendId);
 
             return Ok();
         }

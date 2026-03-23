@@ -1,4 +1,6 @@
-﻿namespace RestAPI.Dtos.Friendship
+﻿using Core.Enums;
+
+namespace RestAPI.Dtos.Friendship
 {
     public class PlayerDataDto
     {
@@ -13,7 +15,7 @@
 
         public string ProfileImageUrl { get; set; } = string.Empty;
 
-        public bool IsFriend { get; set; }
+        public FriendshipStatus FriendshipStatus { get; set; }
 
         public IEnumerable<GameStatsDto> GamesStats { get; set; }
     }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(PartiaBetDbContext))]
-    [Migration("20260322140020_InitialCreate")]
+    [Migration("20260323065740_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -55,10 +55,10 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Infrastructure.Database.Entities.Friendship", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("FirstUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("FriendId")
+                    b.Property<Guid>("SecondUserId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -67,14 +67,14 @@ namespace Infrastructure.Database.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("UserId1")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("UserId", "FriendId");
+                    b.HasKey("FirstUserId", "SecondUserId");
 
-                    b.HasIndex("FriendId");
+                    b.HasIndex("SecondUserId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Friendship");
                 });
@@ -281,25 +281,25 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Infrastructure.Database.Entities.Friendship", b =>
                 {
-                    b.HasOne("Infrastructure.Database.Entities.User", "Friend")
-                        .WithMany("ReceivedFriendRequests")
-                        .HasForeignKey("FriendId")
+                    b.HasOne("Infrastructure.Database.Entities.User", "FirstUser")
+                        .WithMany("SentFriendRequests")
+                        .HasForeignKey("FirstUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Database.Entities.User", "User")
-                        .WithMany("SentFriendRequests")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Infrastructure.Database.Entities.User", "SecondUser")
+                        .WithMany("ReceivedFriendRequests")
+                        .HasForeignKey("SecondUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Infrastructure.Database.Entities.User", null)
                         .WithMany("Friendships")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
 
-                    b.Navigation("Friend");
+                    b.Navigation("FirstUser");
 
-                    b.Navigation("User");
+                    b.Navigation("SecondUser");
                 });
 
             modelBuilder.Entity("Infrastructure.Database.Entities.Transaction", b =>
