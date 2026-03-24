@@ -12,6 +12,7 @@ const PlayerInfo = ({ playerData }) => {
     
     const handleAddFriend = async () => {
         await apiRequest('friends', 'sendFriendRequest', 'POST', true, false, playerData.id);
+        console.log(playerData.friendshipRequesterId);
         setFriendshipStatus('Pending');
     };
 
@@ -27,7 +28,7 @@ const PlayerInfo = ({ playerData }) => {
 
     const handleAcceptFriendRequest = async () => {
         await apiRequest('friends', 'acceptFriendRequest', 'POST', true, false, playerData.id);
-        setFriendshipStatus('None');
+        setFriendshipStatus('Accepted');
     };
 
     return (
@@ -57,7 +58,7 @@ const PlayerInfo = ({ playerData }) => {
             )}
 
             <div className="flex gap-6">
-                {(friendshipStatus == 'Pending' && playerData.friendshipRequesterId != userId) && (
+                {(friendshipStatus == 'Pending' && playerData.friendshipRequesterId && playerData.friendshipRequesterId != userId) && (
                     <button className="px-3 py-2 rounded-xl bg-green-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
                         onClick={handleAcceptFriendRequest}>
                         Accept
