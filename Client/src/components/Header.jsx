@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import Logo from '../assets/images/logo.png';
 import { useAuth } from '../contexts/AuthContext';
+
+import Logo from '../assets/images/logo.png';
 import Profile from './Profile';
 
 const Header = ({ isLogoVis }) => {

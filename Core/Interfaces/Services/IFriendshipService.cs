@@ -5,9 +5,9 @@ namespace Core.Interfaces.Services
     public interface IFriendshipService
     {
         Task SendFriendRequestAsync(Guid senderId, Guid receiverId);
-        Task RemoveFriendAsync(Guid userId, Guid friendId);
-        Task AcceptFriendRequestAsync(Guid userId, Guid friendId);
-        Task<IEnumerable<FriendModel>> GetFriendsAsync(Guid userId);
+        Task RemoveFriendAsync(Guid firstUserId, Guid secondUserId);
+        Task AcceptFriendRequestAsync(Guid senderId, Guid receiverId);
+        Task<IEnumerable<FriendModel>> GetFriendshipsAsync(Guid userId);
         Task<IEnumerable<FriendModel>> GetAllUsersAsync(string searchQuery);
         Task<PlayerDataModel?> GetPlayerProfileAsync(Guid requesterId, Guid playerId);
     }

@@ -16,7 +16,7 @@ function FriendsPage() {
     useEffect(() => {
         const receiveData = async () => {
             setIsLoading(true);
-            const friends = await apiRequest('friends', 'getFriends', 'GET', true);
+            const friends = await apiRequest('friends', 'getFriendships', 'GET', true);
             setIsLoading(false);
 
             setUsers(friends);

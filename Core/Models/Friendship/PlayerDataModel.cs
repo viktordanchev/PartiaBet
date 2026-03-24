@@ -17,6 +17,10 @@ namespace Core.Models.Friendship
 
         public FriendshipStatus FriendshipStatus { get; set; }
 
+        public Guid? FriendshipRequesterId { get; set; }
+
+        public bool IsOnline { get; set; }
+
         public IEnumerable<GameStatsModel> GamesStats { get; set; }
     }
 }

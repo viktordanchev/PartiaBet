@@ -28,6 +28,7 @@ namespace Infrastructure.Database.Repositories
             {
                 FirstUserId = senderId,
                 SecondUserId = receiverId,
+                RequesterId = senderId,
                 CreatedAt = DateTime.UtcNow,
                 Status = FriendshipStatus.Pending
             };
@@ -36,12 +37,12 @@ namespace Infrastructure.Database.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveFriendship(Guid userId, Guid friendId)
+        public async Task RemoveFriendship(Guid firstUserId, Guid secondUserId)
         {
             var friendship = await _context.Friendship
                 .Where(f =>
-                    (f.FirstUserId == userId && f.SecondUserId == friendId) ||
-                    (f.SecondUserId == userId && f.FirstUserId == friendId))
+                    (f.FirstUserId == firstUserId && f.SecondUserId == secondUserId) ||
+                    (f.SecondUserId == firstUserId && f.FirstUserId == secondUserId))
                 .FirstOrDefaultAsync();
 
             if (friendship == null)
@@ -65,16 +66,23 @@ namespace Infrastructure.Database.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<FriendModel>> GetFriendsAsync(Guid userId)
+        public async Task<IEnumerable<FriendModel>> GetFriendshipsAsync(Guid userId)
         {
             var friends = await _context.Friendship
-                .Where(f => f.FirstUserId == userId && f.Status == FriendshipStatus.Accepted)
+                .AsNoTracking()
+                .Where(f => f.FirstUserId == userId || f.SecondUserId == userId)
                 .Select(f => new FriendModel()
                 {
-                    Id = f.SecondUserId,
-                    Username = f.SecondUser.Username,
-                    ProfileImageUrl = f.SecondUser.ImageUrl
+                    Id = f.FirstUserId == userId ? f.SecondUserId : f.FirstUserId,
+                    Username = f.FirstUserId == userId
+                        ? f.SecondUser.Username
+                        : f.FirstUser.Username,
+                    ProfileImageUrl = f.FirstUserId == userId
+                        ? f.SecondUser.ImageUrl
+                        : f.FirstUser.ImageUrl,
+                    IsFriendRequestPending = f.Status == FriendshipStatus.Pending,
                 })
+                .OrderBy(f => f.IsFriendRequestPending == true)
                 .ToListAsync();
 
             return friends;
@@ -97,12 +105,11 @@ namespace Infrastructure.Database.Repositories
 
         public async Task<PlayerDataModel?> GetPlayerDataAsync(Guid requesterId, Guid playerId)
         {
-            var friendshipStatus = await _context.Friendship
+            var friendship = await _context.Friendship
                 .Where(f =>
                     (f.FirstUserId == requesterId && f.SecondUserId == playerId) ||
                     (f.SecondUserId == requesterId && f.FirstUserId == playerId))
-                .Select(f => (FriendshipStatus?)f.Status)
-                .FirstOrDefaultAsync() ?? FriendshipStatus.None;
+                .FirstOrDefaultAsync();
 
             var player = await _context.Users
                 .Where(u => u.Id == playerId)
@@ -111,7 +118,6 @@ namespace Infrastructure.Database.Repositories
                     Id = u.Id,
                     ProfileImageUrl = u.ImageUrl,
                     Username = u.Username,
-                    FriendshipStatus = friendshipStatus,
                     GamesStats = u.GameRatings.Select(f => new GameStatsModel
                     {
                         GameType = f.GameType,
@@ -126,16 +132,13 @@ namespace Infrastructure.Database.Repositories
                 })
                 .FirstOrDefaultAsync();
 
+            if (player == null)
+                return null;
+
+            player.FriendshipStatus = friendship?.Status ?? FriendshipStatus.None;
+            player.FriendshipRequesterId = friendship?.RequesterId;
+
             return player;
-        }
-        
-        public async Task GetPendingFriendRequests(Guid userId)
-        {
-            var requests = await _context.Friendship
-                .Where(f => 
-                    (f.FirstUserId == userId || f.SecondUserId == userId) 
-                    && f.RequesterId != userId)
-                .ToListAsync();
         }
     }
 }

@@ -22,12 +22,12 @@ namespace RestAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("getFriends")]
-        public async Task<IActionResult> GetFriends()
+        [HttpGet("getFriendships")]
+        public async Task<IActionResult> GetFriendships()
         {
             var playerId = Guid.Parse(User.FindFirstValue("Id"));
 
-            var friends = await _friendshipService.GetFriendsAsync(playerId);
+            var friends = await _friendshipService.GetFriendshipsAsync(playerId);
             var friendsDto = _mapper.Map<IEnumerable<FriendDto>>(friends);
 
             return Ok(friendsDto);
@@ -85,16 +85,6 @@ namespace RestAPI.Controllers
             await _friendshipService.RemoveFriendAsync(senderId, userId);
 
             return NoContent();
-        }
-
-        [HttpGet("getPendingFriendRequests")]
-        public async Task<IActionResult> GetPendingFriendRequests()
-        {
-            var userId = Guid.Parse(User.FindFirstValue("Id"));
-
-
-
-            return Ok();
         }
 
         [HttpPost("removeFriend")]

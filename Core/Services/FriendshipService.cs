@@ -1,5 +1,4 @@
 ﻿using Core.Enums;
-using Core.Interfaces.Games;
 using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.Friendship;
@@ -29,14 +28,14 @@ namespace Core.Services
             await _friendshipRepo.ChangeStatusAsync(senderId, receiverId, FriendshipStatus.Accepted);
         }
 
-        public async Task RemoveFriendAsync(Guid userId, Guid friendId) 
+        public async Task RemoveFriendAsync(Guid firstUserId, Guid secondUserId) 
         {
-            await _friendshipRepo.RemoveFriendship(userId, friendId);
+            await _friendshipRepo.RemoveFriendship(firstUserId, secondUserId);
         }
 
-        public async Task<IEnumerable<FriendModel>> GetFriendsAsync(Guid userId) 
+        public async Task<IEnumerable<FriendModel>> GetFriendshipsAsync(Guid userId) 
         {
-            var friends = await _friendshipRepo.GetFriendsAsync(userId);
+            var friends = await _friendshipRepo.GetFriendshipsAsync(userId);
             var friendIds = friends.Select(f => f.Id);
 
             var onlineUserIds = await _onlineUsersCache.GetOnlineUsersAsync(friendIds);

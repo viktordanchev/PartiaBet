@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import useApiRequest from '../../hooks/useApiRequest';
 
 import ProfileImage from '../../assets/images/profile-photo.jpg';
@@ -6,6 +7,8 @@ import ProfileImage from '../../assets/images/profile-photo.jpg';
 const PlayerInfo = ({ playerData }) => {
     const apiRequest = useApiRequest();
     const [friendshipStatus, setFriendshipStatus] = useState(playerData.friendshipStatus);
+    const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
+    const userId = decodedToken['Id'];
     
     const handleAddFriend = async () => {
         await apiRequest('friends', 'sendFriendRequest', 'POST', true, false, playerData.id);
@@ -19,6 +22,11 @@ const PlayerInfo = ({ playerData }) => {
 
     const handleCancelFriendRequest = async () => {
         await apiRequest('friends', 'cancelFriendRequest', 'POST', true, false, playerData.id);
+        setFriendshipStatus('None');
+    };
+
+    const handleAcceptFriendRequest = async () => {
+        await apiRequest('friends', 'acceptFriendRequest', 'POST', true, false, playerData.id);
         setFriendshipStatus('None');
     };
 
@@ -48,12 +56,21 @@ const PlayerInfo = ({ playerData }) => {
                 </button>
             )}
 
-            {friendshipStatus == 'Pending' && (
-                <button className="px-3 py-2 rounded-xl bg-red-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
-                    onClick={handleCancelFriendRequest}>
-                    Cancel
-                </button>
-            )}
+            <div className="flex gap-6">
+                {(friendshipStatus == 'Pending' && playerData.friendshipRequesterId != userId) && (
+                    <button className="px-3 py-2 rounded-xl bg-green-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
+                        onClick={handleAcceptFriendRequest}>
+                        Accept
+                    </button>
+                )}
+
+                {(friendshipStatus == 'Pending') && (
+                    <button className="px-3 py-2 rounded-xl bg-red-600 text-white font-medium shadow-md transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
+                        onClick={handleCancelFriendRequest}>
+                        Cancel
+                    </button>
+                )}
+            </div>
         </article>
     );
 };

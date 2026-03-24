@@ -17,6 +17,10 @@ namespace RestAPI.Dtos.Friendship
 
         public FriendshipStatus FriendshipStatus { get; set; }
 
+        public Guid? FriendshipRequesterId { get; set; }
+
+        public bool IsOnline { get; set; }
+
         public IEnumerable<GameStatsDto> GamesStats { get; set; }
     }
 }
