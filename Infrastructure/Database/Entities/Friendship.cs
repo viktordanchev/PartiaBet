@@ -18,6 +18,9 @@ namespace Infrastructure.Database.Entities
         [ForeignKey(nameof(SecondUserId))]
         public User SecondUser { get; set; } = null!;
 
+        [Required]
+        public Guid RequesterId { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public FriendshipStatus Status { get; set; }

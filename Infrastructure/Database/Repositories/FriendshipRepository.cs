@@ -128,5 +128,14 @@ namespace Infrastructure.Database.Repositories
 
             return player;
         }
+        
+        public async Task GetPendingFriendRequests(Guid userId)
+        {
+            var requests = await _context.Friendship
+                .Where(f => 
+                    (f.FirstUserId == userId || f.SecondUserId == userId) 
+                    && f.RequesterId != userId)
+                .ToListAsync();
+        }
     }
 }

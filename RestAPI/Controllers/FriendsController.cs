@@ -87,6 +87,16 @@ namespace RestAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("getPendingFriendRequests")]
+        public async Task<IActionResult> GetPendingFriendRequests()
+        {
+            var userId = Guid.Parse(User.FindFirstValue("Id"));
+
+
+
+            return Ok();
+        }
+
         [HttpPost("removeFriend")]
         public async Task<IActionResult> RemoveFriend([FromBody] Guid friendId)
         {
