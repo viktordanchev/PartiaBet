@@ -6,7 +6,7 @@ import ProfileImage from '../../assets/images/profile-photo.jpg';
 const PlayerInfo = ({ playerData }) => {
     const apiRequest = useApiRequest();
     const [friendshipStatus, setFriendshipStatus] = useState(playerData.friendshipStatus);
-    console.log(friendshipStatus);
+    
     const handleAddFriend = async () => {
         await apiRequest('friends', 'sendFriendRequest', 'POST', true, false, playerData.id);
         setFriendshipStatus('Pending');

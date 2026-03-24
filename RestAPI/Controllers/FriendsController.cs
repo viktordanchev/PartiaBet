@@ -64,7 +64,7 @@ namespace RestAPI.Controllers
 
             await _friendshipService.SendFriendRequestAsync(userId, receiverId);
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("acceptFriendRequest")]
@@ -74,7 +74,7 @@ namespace RestAPI.Controllers
 
             await _friendshipService.AcceptFriendRequestAsync(senderId, userId);
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("cancelFriendRequest")]
@@ -84,7 +84,7 @@ namespace RestAPI.Controllers
 
             await _friendshipService.RemoveFriendAsync(senderId, userId);
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("removeFriend")]
@@ -94,7 +94,7 @@ namespace RestAPI.Controllers
 
             await _friendshipService.RemoveFriendAsync(userId, friendId);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

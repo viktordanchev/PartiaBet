@@ -39,7 +39,9 @@ namespace Infrastructure.Database.Repositories
         public async Task RemoveFriendship(Guid userId, Guid friendId)
         {
             var friendship = await _context.Friendship
-                .Where(f => f.FirstUserId == userId && f.SecondUserId == friendId)
+                .Where(f =>
+                    (f.FirstUserId == userId && f.SecondUserId == friendId) ||
+                    (f.SecondUserId == userId && f.FirstUserId == friendId))
                 .FirstOrDefaultAsync();
 
             if (friendship == null)
@@ -95,6 +97,13 @@ namespace Infrastructure.Database.Repositories
 
         public async Task<PlayerDataModel?> GetPlayerDataAsync(Guid requesterId, Guid playerId)
         {
+            var friendshipStatus = await _context.Friendship
+                .Where(f =>
+                    (f.FirstUserId == requesterId && f.SecondUserId == playerId) ||
+                    (f.SecondUserId == requesterId && f.FirstUserId == playerId))
+                .Select(f => (FriendshipStatus?)f.Status)
+                .FirstOrDefaultAsync() ?? FriendshipStatus.None;
+
             var player = await _context.Users
                 .Where(u => u.Id == playerId)
                 .Select(u => new PlayerDataModel
@@ -102,10 +111,7 @@ namespace Infrastructure.Database.Repositories
                     Id = u.Id,
                     ProfileImageUrl = u.ImageUrl,
                     Username = u.Username,
-                    FriendshipStatus = u.Friendships
-                        .Where(f => f.FirstUserId == requesterId || f.SecondUserId == requesterId)
-                        .Select(f => (FriendshipStatus?)f.Status)
-                        .FirstOrDefault() ?? FriendshipStatus.None,
+                    FriendshipStatus = friendshipStatus,
                     GamesStats = u.GameRatings.Select(f => new GameStatsModel
                     {
                         GameType = f.GameType,

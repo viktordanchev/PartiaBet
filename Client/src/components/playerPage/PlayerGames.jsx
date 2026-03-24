@@ -26,7 +26,7 @@ const PlayerGames = ({ games }) => {
 
                         return (
                             <tr
-                                key={game.name}
+                                key={game.gameType}
                                 className="border-t border-white/10"
                             >
                                 <td className="py-3 pl-4">{game.gameType}</td>
