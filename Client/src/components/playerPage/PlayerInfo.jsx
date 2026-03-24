@@ -12,7 +12,6 @@ const PlayerInfo = ({ playerData }) => {
     
     const handleAddFriend = async () => {
         await apiRequest('friends', 'sendFriendRequest', 'POST', true, false, playerData.id);
-        console.log(playerData.friendshipRequesterId);
         setFriendshipStatus('Pending');
     };
 
