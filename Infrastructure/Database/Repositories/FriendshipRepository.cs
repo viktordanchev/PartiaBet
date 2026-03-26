@@ -88,6 +88,17 @@ namespace Infrastructure.Database.Repositories
             return friends;
         }
 
+        public async Task<IEnumerable<Guid>> GetUserFriendsAsync(Guid userId)
+        {
+            var friends = await _context.Friendship
+                .AsNoTracking()
+                .Where(f => f.FirstUserId == userId || f.SecondUserId == userId)
+                .Select(f => f.FirstUserId == userId ? f.SecondUserId : f.FirstUserId)
+                .ToListAsync();
+
+            return friends;
+        }
+
         public async Task<IEnumerable<FriendModel>> GetAllUsersAsync(string searchQuery)
         {
             var users = await _context.Users

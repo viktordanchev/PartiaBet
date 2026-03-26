@@ -52,5 +52,6 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 app.MapHub<MatchHub>("/match");
+app.MapHub<PresenceHub>("/presence");
 
 app.Run();

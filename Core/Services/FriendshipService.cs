@@ -48,6 +48,11 @@ namespace Core.Services
             return friends;
         }
 
+        public async Task<IEnumerable<Guid>> GetUserFriendsAsync(Guid userId)
+        {
+            return await _friendshipRepo.GetUserFriendsAsync(userId);
+        }
+
         public async Task<IEnumerable<FriendModel>> GetAllUsersAsync(string searchQuery)
         {
             if (string.IsNullOrWhiteSpace(searchQuery))

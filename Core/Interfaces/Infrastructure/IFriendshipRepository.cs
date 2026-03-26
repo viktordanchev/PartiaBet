@@ -9,6 +9,7 @@ namespace Core.Interfaces.Infrastructure
         Task AddFriendship(Guid senderId, Guid receiverId);
         Task ChangeStatusAsync(Guid userId, Guid friendId, FriendshipStatus status);
         Task<IEnumerable<FriendModel>> GetFriendshipsAsync(Guid userId);
+        Task<IEnumerable<Guid>> GetUserFriendsAsync(Guid userId);
         Task<IEnumerable<FriendModel>> GetAllUsersAsync(string searchQuery);
         Task<PlayerDataModel?> GetPlayerDataAsync(Guid requesterId, Guid playerId);
     }
