@@ -7,6 +7,7 @@ const PresenceHubContext = createContext();
 export const PresenceHubProvider = ({ children }) => {
     const { isAuthenticated } = useAuth();
     const [connection, setConnection] = useState(null);
+    const [userStatus, setUserStatus] = useState(null);
 
     useEffect(() => {
         const createConnection = async () => {
@@ -16,6 +17,20 @@ export const PresenceHubProvider = ({ children }) => {
 
         createConnection();
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (!connection) return;
+
+        connection.on("FriendStatusChange", handleUpdateUserStatus);
+    }, [connection]);
+
+    const handleUpdateUserStatus = (user, status) => {
+        setUserStatus({
+            username: user.username,
+            profilePictureUrl: user.profilePictureUrl,
+            isOnline: status
+        });
+    };
 
     const stopConnection = async () => {
         if (connection) {
@@ -42,7 +57,7 @@ export const PresenceHubProvider = ({ children }) => {
     };
 
     return (
-        <PresenceHubContext.Provider value={{ connection, startConnection, stopConnection }}>
+        <PresenceHubContext.Provider value={{ connection, startConnection, stopConnection, userStatus }}>
             {children}
         </PresenceHubContext.Provider>
     );

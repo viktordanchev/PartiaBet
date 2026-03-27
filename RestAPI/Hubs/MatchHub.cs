@@ -12,46 +12,43 @@ namespace RestAPI.Hubs
     {
         private readonly IMatchService _matchService;
         private readonly IGameProvider _gameProvider;
-        private readonly IMatchPlayersManager _matchPlayersManager;
+        private readonly IUserConnectionTracker _userConnectionTracker;
         private readonly IMapper _mapper;
         private readonly IHubContext<MatchHub> _hubContext;
 
         public MatchHub(IMatchService matchService,
             IGameProvider gameProvider,
-            IMatchPlayersManager matchPlayersManager,
+            IUserConnectionTracker userConnectionTracker,
             IMapper mapper,
             IHubContext<MatchHub> hubContext)
         {
             _matchService = matchService;
             _gameProvider = gameProvider;
-            _matchPlayersManager = matchPlayersManager;
+            _userConnectionTracker = userConnectionTracker;
             _mapper = mapper;
             _hubContext = hubContext;
         }
 
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            var user = Context.User?.FindFirst("Id")?.Value;
+            var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
 
-            if (user == null) 
-                return base.OnDisconnectedAsync(exception);
+            await Task.Delay(5000);
 
-            var userId = Guid.Parse(user);
-            _matchPlayersManager.MarkAsDisconnected(userId);
+            _userConnectionTracker.RemoveConnection(userId);
 
-            _ = Task.Run(async () =>
+            if (_userConnectionTracker.HasConnections(userId))
             {
-                await Task.Delay(5000);
+                await base.OnDisconnectedAsync(exception);
+                return;
+            }
 
-                if (_matchPlayersManager.IsStillDisconnected(userId))
-                {
-                    var result = await _matchService.HandlePlayerDisconnectAsync(userId);
+            var result = await _matchService.HandlePlayerDisconnectAsync(userId);
 
-                    await _hubContext.Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
-                }
-            });
+            await _hubContext.Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
 
-            return base.OnDisconnectedAsync(exception);
+
+            await base.OnDisconnectedAsync(exception);
         }
 
         public override Task OnConnectedAsync()
@@ -61,7 +58,7 @@ namespace RestAPI.Hubs
             if (user != null)
             {
                 var userId = Guid.Parse(user);
-                _matchPlayersManager.MarkAsConnected(userId);
+                _userConnectionTracker.AddConnection(userId);
             }
 
             return base.OnConnectedAsync();
@@ -123,7 +120,7 @@ namespace RestAPI.Hubs
             var playerId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
             var result = await _matchService.MakeMoveAsync(matchId, playerId, jsonData);
 
-            if (result.Status == MoveStatus.Invalid) 
+            if (result.Status == MoveStatus.Invalid)
                 return;
 
             await Clients.Group($"{matchId}").SendAsync("ReceiveMove", result.GameBoard, result.NextPlayerId, result.Duration);
@@ -155,7 +152,7 @@ namespace RestAPI.Hubs
         {
             var userId = Guid.Parse(Context.User.FindFirst("Id").Value);
 
-            _matchPlayersManager.MarkAsConnected(userId);
+            _userConnectionTracker.AddConnection(userId);
             var result = await _matchService.PlayerRejoinMatchAsync(userId);
 
             await Clients.Group($"{result.MatchId}").SendAsync("RejoinPlayer", userId);

@@ -14,6 +14,7 @@ using Infrastructure.Services;
 using Infrastructure.Services.Configs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestAPI.Filters;
@@ -66,7 +67,9 @@ namespace RestAPI.Extensions
                         var accessToken = context.Request.Query["access_token"];
                         var path = context.HttpContext.Request.Path;
 
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/match"))
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/match") ||
+                            path.StartsWithSegments("/presence")))
                         {
                             context.Token = accessToken;
                         }
@@ -106,7 +109,8 @@ namespace RestAPI.Extensions
 
             services.AddSingleton<IMatchTurnManager, MatchTurnManager>();
             services.AddSingleton<IGameProvider, GameProvider>();
-            services.AddSingleton<IMatchPlayersManager, MatchPlayersManager>();
+            services.AddSingleton<IUserConnectionTracker, UserConnectionTracker>();
+            services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
                 var configuration = "localhost:6379";

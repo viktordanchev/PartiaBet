@@ -14,7 +14,7 @@ namespace Infrastructure.CacheRedis
 
         public async Task SetUserOnlineAsync(Guid userId)
         {
-            await _redis.StringSetAsync($"online:user:{userId}", "1", TimeSpan.FromSeconds(60));
+            await _redis.StringSetAsync($"online:user:{userId}", "1");
             await _redis.SetAddAsync("online:users", userId.ToString());
         }
 

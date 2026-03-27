@@ -16,6 +16,7 @@ import NavigationBar from './components/NavigationBar';
 import SessionEndNotification from './components/SessionEndNotification';
 import ProtectedRoute from './components/ProtectedRoute';
 import ActiveMatchAlert from './components/ActiveMatchAlert/ActiveMatchAlert';
+import FriendStatusAlert from './components/FriendStatusAlert';
 
 function App() {
     const location = useLocation();
@@ -24,7 +25,10 @@ function App() {
 
     return (
         <>
-            <ActiveMatchAlert />
+            <div className="fixed top-6 right-6 z-20 flex flex-col items-end gap-3">
+                <ActiveMatchAlert />
+                <FriendStatusAlert />
+            </div>
             {!pagesNoNav && <NavigationBar />}
             <div className={`flex-grow flex flex-col ${!pagesNoNav && "ml-80"}`}>
                 <Header isLogoVis={pagesNoNav} />

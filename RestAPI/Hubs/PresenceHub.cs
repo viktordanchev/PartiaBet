@@ -10,24 +10,31 @@ namespace RestAPI.Hubs
     {
         private readonly IOnlineUsersCache _cache;
         private readonly IFriendshipService _friendshipService;
+        private readonly IAccountService _accountService;
+        private readonly IUserConnectionTracker _userConnectionTracker;
 
         public PresenceHub(IOnlineUsersCache cache,
-            IFriendshipService friendshipService)
+            IFriendshipService friendshipService,
+            IAccountService accountService,
+            IUserConnectionTracker userConnectionTracker)
         {
             _cache = cache;
             _friendshipService = friendshipService;
+            _accountService = accountService;
+            _userConnectionTracker = userConnectionTracker;
         }
 
         public override async Task OnConnectedAsync()
         {
             var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            await _cache.SetUserOnlineAsync(userId);
+            var userEmail = Context.User?.FindFirst("Email")?.Value;
 
-            var freinds = await _friendshipService.GetUserFriendsAsync(userId);
+            _userConnectionTracker.AddConnection(userId);
 
-            foreach (var friend in freinds)
+            if (_userConnectionTracker.GetConnectionCount(userId) == 1)
             {
-                await Clients.User(friend.ToString()).SendAsync("FriendGoesOnline", userId);
+                await _cache.SetUserOnlineAsync(userId);
+                await SendFriendStatusUpdate(userId, true);
             }
 
             await base.OnConnectedAsync();
@@ -36,22 +43,35 @@ namespace RestAPI.Hubs
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
+            var userEmail = Context.User?.FindFirst("Email")?.Value;
+
+            await Task.Delay(5000);
+
+            _userConnectionTracker.RemoveConnection(userId);
+
+            if (_userConnectionTracker.HasConnections(userId))
+            {
+                await base.OnDisconnectedAsync(exception);
+                return;
+            }
+
             await _cache.SetUserOfflineAsync(userId);
 
-            var freinds = await _friendshipService.GetUserFriendsAsync(userId);
-
-            foreach (var friend in freinds)
-            {
-                await Clients.User(friend.ToString()).SendAsync("FriendGoesOffline", userId);
-            }
+            await SendFriendStatusUpdate(userId, false);
 
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task Heartbeat()
+        private async Task SendFriendStatusUpdate(Guid userId, bool isOnline)
         {
-            var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
-            await _cache.SetUserOnlineAsync(userId);
+            var friends = await _friendshipService.GetUserFriendsAsync(userId);
+            var userData = await _accountService.GetUserDataAsync(Context.User?.FindFirst("Email")?.Value);
+
+            var tasks = friends.Select(friend =>
+                 Clients.User(friend.ToString())
+                     .SendAsync("FriendStatusChange", userData, isOnline));
+
+            await Task.WhenAll(tasks);
         }
     }
 }

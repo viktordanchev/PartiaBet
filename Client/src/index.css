@@ -20,6 +20,30 @@
     }
 }
 
+@keyframes slideInRight {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
 @layer utilities {
     .scrollbar-main {
         scrollbar-width: auto;
@@ -67,6 +91,14 @@
 
 .animate-bounce-left-right {
     animation: bounceLeftRight 0.2s ease-in-out 3;
+}
+
+.animate-slide-in {
+    animation: slideInRight 0.4s ease-out forwards;
+}
+
+.animate-slide-out {
+    animation: slideOutRight 0.4s ease-in forwards;
 }
 
 html, body {

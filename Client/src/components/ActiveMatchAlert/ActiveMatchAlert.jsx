@@ -56,7 +56,7 @@ function ActiveMatchAlert() {
     if ((minutes === 0 && seconds === 0) || inMatch) return null;
 
     return (
-        <div className="card-wrapper fixed z-10 top-10 right-10 w-50 h-50 p-1 flex flex-col justify-between rounded-xl">
+        <div className="card-wrapper relative z-10 w-50 h-50 p-1 flex flex-col justify-between rounded-xl">
             <div className="z-20 h-full w-full p-3 border border-gray-500 rounded-xl bg-gray-900 flex flex-col text-center text-white font-semibold">
                 <div className="flex-1 flex items-center justify-center text-lg">
                     Match will end after {minutes}:{seconds.toString().padStart(2, '0')} minutes!

@@ -8,12 +8,10 @@ import { useLoading } from '../contexts/LoadingContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotifications } from '../contexts/NotificationsContext';
 import { loginSchema } from '../constants/validationSchemes';
-import { usePresenceHub } from '../contexts/PresenceHubContext';
 
 function LoginPage() {
     const navigate = useNavigate();
     const apiRequest = useApiRequest();
-    const { startConnection } = usePresenceHub();
     const { updateToken } = useAuth();
     const { setIsLoading } = useLoading();
     const { showMessage } = useNotifications();
@@ -32,7 +30,6 @@ function LoginPage() {
             showMessage(response.error, 'error');
         } else {
             updateToken(response.token);
-            startConnection();
             navigate('/');
         }
 
