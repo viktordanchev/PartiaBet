@@ -27,14 +27,14 @@ function FriendStatusAlert() {
     if (!userStatus || !visible) return null;
 
     return (
-        <article className={`h-25 w-70 bg-gray-900 rounded-xl border border-gray-500 shadow-xl shadow-gray-900 p-3 flex items-center gap-2
+        <article className={`h-20 w-60 bg-gray-900 rounded-xl border border-gray-500 shadow-xl shadow-gray-900 p-3 flex items-center gap-2
             ${leaving ? "animate-slide-out" : "animate-slide-in"}`}>
 
-            <img className="w-16 h-16 rounded-full object-cover"
+            <img className="w-12 h-12 rounded-full object-cover"
                 src={userStatus.profileImageUrl ? userStatus.profileImageUrl : ProfileImage} />
 
             <div className="flex flex-col">
-                <h2 className="text-white text-lg font-semibold">{userStatus.username}</h2>
+                <h2 className="text-white text-md font-semibold">{userStatus.username}</h2>
 
                 <span className={`flex items-center text-sm ${userStatus.isOnline ? "text-green-400" : "text-red-400"}`}>
                     <span className={`w-2 h-2 rounded-full mr-2 ${userStatus.isOnline ? "bg-green-400" : "bg-red-400"}`}></span>

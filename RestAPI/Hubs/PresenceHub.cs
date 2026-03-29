@@ -29,7 +29,7 @@ namespace RestAPI.Hubs
             var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
             var userEmail = Context.User?.FindFirst("Email")?.Value;
 
-            _userConnectionTracker.AddConnection(userId);
+            _userConnectionTracker.AddConnection, Context.ConnectionId);
 
             if (_userConnectionTracker.GetConnectionCount(userId) == 1)
             {
@@ -47,7 +47,7 @@ namespace RestAPI.Hubs
 
             await Task.Delay(5000);
 
-            _userConnectionTracker.RemoveConnection(userId);
+            _userConnectionTracker.RemoveConnection(userId, Context.ConnectionId);
 
             if (_userConnectionTracker.HasConnections(userId))
             {

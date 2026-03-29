@@ -92,7 +92,8 @@ namespace Infrastructure.Database.Repositories
         {
             var friends = await _context.Friendship
                 .AsNoTracking()
-                .Where(f => f.FirstUserId == userId || f.SecondUserId == userId)
+                .Where(f => (f.FirstUserId == userId || f.SecondUserId == userId) 
+                    && f.Status == FriendshipStatus.Accepted)
                 .Select(f => f.FirstUserId == userId ? f.SecondUserId : f.FirstUserId)
                 .ToListAsync();
 

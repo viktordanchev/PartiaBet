@@ -16,13 +16,12 @@ export const MatchHubProvider = ({ children }) => {
     const [matchStarted, setMatchStarted] = useState('');
     const [resumeMatch, setResumeMatch] = useState(false);
     const [matchEnd, setMatchEnd] = useState(null);
-
+    
     useEffect(() => {
-        const matchId = sessionStorage.getItem('connection-matchId');
-        const gameType = sessionStorage.getItem('connection-gameType');
-
         const createConnection = async () => {
             const newConnection = await startConnection();
+            const matchId = sessionStorage.getItem('connection-matchId');
+            const gameType = sessionStorage.getItem('connection-gameType');
 
             if (matchId) {
                 await newConnection.invoke("JoinMatchGroup", matchId);
@@ -35,9 +34,7 @@ export const MatchHubProvider = ({ children }) => {
             setConnection(newConnection);
         };
 
-        if (matchId || gameType) {
-            createConnection();
-        }
+        createConnection();
     }, [isAuthenticated]);
 
     useEffect(() => {
@@ -114,13 +111,8 @@ export const MatchHubProvider = ({ children }) => {
         return newConnection;
     };
 
-    const ensureConnection = async () => {
-        if (connection) return connection;
-        return await startConnection();
-    };
-
     return (
-        <MatchHubContext.Provider value={{ connection, ensureConnection, stopConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted, resumeMatch, matchEnd }}>
+        <MatchHubContext.Provider value={{ connection, stopConnection, newPlayer, newMove, newMatch, leaverData, removedPlayer, rejoinedPlayer, matchStarted, resumeMatch, matchEnd }}>
             {children}
         </MatchHubContext.Provider>
     );

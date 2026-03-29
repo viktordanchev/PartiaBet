@@ -9,6 +9,10 @@ function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        document.title = `PartiaBet`;
+    }, []);
+
+    useEffect(() => {
         const receiveData = async () => {
             const games = await apiRequest('games', 'getAll', 'GET', false, false, undefined);
             

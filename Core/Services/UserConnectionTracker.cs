@@ -5,25 +5,31 @@ namespace Core.Services
 {
     public class UserConnectionTracker : IUserConnectionTracker
     {
-        private readonly ConcurrentDictionary<Guid, int> _connections = new();
+        private readonly ConcurrentDictionary<Guid, HashSet<string>> _connections = new();
 
-        public void AddConnection(Guid userId)
+        public void AddConnection(Guid userId, string connectionId)
         {
-            _connections.AddOrUpdate(userId, 1, (_, count) => count + 1);
+            var connections = _connections.GetOrAdd(userId, _ => new HashSet<string>());
+
+            lock (connections)
+            {
+                connections.Add(connectionId);
+            }
         }
 
-        public void RemoveConnection(Guid userId)
+        public void RemoveConnection(Guid userId, string connectionId)
         {
-            if (!_connections.TryGetValue(userId, out var count))
+            if (!_connections.TryGetValue(userId, out var connections))
                 return;
 
-            if (count <= 1)
+            lock (connections)
             {
-                _connections.TryRemove(userId, out _);
-            }
-            else
-            {
-                _connections[userId] = count - 1;
+                connections.Remove(connectionId);
+
+                if (connections.Count == 0)
+                {
+                    _connections.TryRemove(userId, out _);
+                }
             }
         }
 
@@ -34,7 +40,9 @@ namespace Core.Services
 
         public int GetConnectionCount(Guid userId)
         {
-            return _connections.TryGetValue(userId, out var count) ? count : 0;
+            return _connections.TryGetValue(userId, out var connections)
+                ? connections.Count
+                : 0;
         }
     }
 }
