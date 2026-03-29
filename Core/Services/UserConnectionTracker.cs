@@ -5,11 +5,13 @@ namespace Core.Services
 {
     public class UserConnectionTracker : IUserConnectionTracker
     {
-        private readonly ConcurrentDictionary<Guid, HashSet<string>> _connections = new();
+        private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, HashSet<string>>> _connections = new();
 
-        public void AddConnection(Guid userId, string connectionId)
+        public void AddConnection(Guid userId, string hubName, string connectionId)
         {
-            var connections = _connections.GetOrAdd(userId, _ => new HashSet<string>());
+            var userHubs = _connections.GetOrAdd(userId, _ => new ConcurrentDictionary<string, HashSet<string>>());
+
+            var connections = userHubs.GetOrAdd(hubName, _ => new HashSet<string>());
 
             lock (connections)
             {
@@ -17,9 +19,12 @@ namespace Core.Services
             }
         }
 
-        public void RemoveConnection(Guid userId, string connectionId)
+        public void RemoveConnection(Guid userId, string hubName, string connectionId)
         {
-            if (!_connections.TryGetValue(userId, out var connections))
+            if (!_connections.TryGetValue(userId, out var userHubs))
+                return;
+
+            if (!userHubs.TryGetValue(hubName, out var connections))
                 return;
 
             lock (connections)
@@ -28,21 +33,35 @@ namespace Core.Services
 
                 if (connections.Count == 0)
                 {
-                    _connections.TryRemove(userId, out _);
+                    userHubs.TryRemove(hubName, out _);
                 }
+            }
+
+            if (userHubs.IsEmpty)
+            {
+                _connections.TryRemove(userId, out _);
             }
         }
 
-        public bool HasConnections(Guid userId)
+        public int GetConnectionCount(Guid userId, string hubName)
         {
-            return _connections.ContainsKey(userId);
+            if (_connections.TryGetValue(userId, out var userHubs) &&
+                userHubs.TryGetValue(hubName, out var connections))
+            {
+                return connections.Count;
+            }
+
+            return 0;
         }
 
-        public int GetConnectionCount(Guid userId)
+        public bool HasConnections(Guid userId, string hubName)
         {
-            return _connections.TryGetValue(userId, out var connections)
-                ? connections.Count
-                : 0;
+            return GetConnectionCount(userId, hubName) > 0;
+        }
+
+        public bool HasAnyConnections(Guid userId)
+        {
+            return _connections.ContainsKey(userId);
         }
     }
 }

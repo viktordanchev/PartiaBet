@@ -29,9 +29,9 @@ namespace RestAPI.Hubs
             var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
             var userEmail = Context.User?.FindFirst("Email")?.Value;
 
-            _userConnectionTracker.AddConnection, Context.ConnectionId);
+            _userConnectionTracker.AddConnection(userId, "presence", Context.ConnectionId);
 
-            if (_userConnectionTracker.GetConnectionCount(userId) == 1)
+            if (_userConnectionTracker.GetConnectionCount(userId, "presence") == 1)
             {
                 await _cache.SetUserOnlineAsync(userId);
                 await SendFriendStatusUpdate(userId, true);
@@ -47,9 +47,9 @@ namespace RestAPI.Hubs
 
             await Task.Delay(5000);
 
-            _userConnectionTracker.RemoveConnection(userId, Context.ConnectionId);
+            _userConnectionTracker.RemoveConnection(userId, "presence", Context.ConnectionId);
 
-            if (_userConnectionTracker.HasConnections(userId))
+            if (_userConnectionTracker.HasConnections(userId, "presence"))
             {
                 await base.OnDisconnectedAsync(exception);
                 return;

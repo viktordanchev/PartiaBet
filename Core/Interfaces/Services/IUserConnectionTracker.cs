@@ -2,9 +2,10 @@
 {
     public interface IUserConnectionTracker
     {
-        void AddConnection(Guid userId, string connectionId);
-        void RemoveConnection(Guid userId, string connectionId);
-        bool HasConnections(Guid userId);
-        int GetConnectionCount(Guid userId);
+        void AddConnection(Guid userId, string hubName, string connectionId);
+        void RemoveConnection(Guid userId, string hubName, string connectionId);
+        int GetConnectionCount(Guid userId, string hubName);
+        bool HasConnections(Guid userId, string hubName);
+        bool HasAnyConnections(Guid userId);
     }
 }

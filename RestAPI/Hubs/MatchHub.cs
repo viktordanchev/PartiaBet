@@ -35,9 +35,9 @@ namespace RestAPI.Hubs
 
             await Task.Delay(5000);
 
-            _userConnectionTracker.RemoveConnection(userId, Context.ConnectionId);
+            _userConnectionTracker.RemoveConnection(userId, "match", Context.ConnectionId);
 
-            if (_userConnectionTracker.HasConnections(userId))
+            if (_userConnectionTracker.HasConnections(userId, "match"))
             {
                 await base.OnDisconnectedAsync(exception);
                 return;
@@ -58,7 +58,7 @@ namespace RestAPI.Hubs
             if (user != null)
             {
                 var userId = Guid.Parse(user);
-                _userConnectionTracker.AddConnection(userId, Context.ConnectionId);
+                _userConnectionTracker.AddConnection(userId, "match", Context.ConnectionId);
             }
 
             return base.OnConnectedAsync();
@@ -152,7 +152,7 @@ namespace RestAPI.Hubs
         {
             var userId = Guid.Parse(Context.User.FindFirst("Id").Value);
 
-            _userConnectionTracker.AddConnection(userId, Context.ConnectionId);
+            _userConnectionTracker.AddConnection(userId, "match", Context.ConnectionId);
             var result = await _matchService.PlayerRejoinMatchAsync(userId);
 
             await Clients.Group($"{result.MatchId}").SendAsync("RejoinPlayer", userId);
