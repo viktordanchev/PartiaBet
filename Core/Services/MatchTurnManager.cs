@@ -3,6 +3,7 @@ using Core.Interfaces.Services;
 using Core.Models.Match;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
+using static Common.Constants.Constants;
 
 namespace Core.Services
 {
@@ -11,8 +12,6 @@ namespace Core.Services
         private readonly ConcurrentDictionary<Guid, CancellationTokenSource> _timers;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private const int FixedTurnMinutes = 1;
-        private const int ChessTurnMinutes = 10;
-        private const int ReconectToMatchMinutes = 5;
 
         public MatchTurnManager(IServiceScopeFactory serviceScopeFactory)
         {
@@ -46,7 +45,7 @@ namespace Core.Services
             {
                 try
                 {
-                    var countdown = TimeSpan.FromMinutes(ReconectToMatchMinutes);
+                    var countdown = TimeSpan.FromSeconds(MatchEndCountdownSeconds);
                     await Task.Delay(countdown, cts.Token);
                     _timers.TryRemove(matchId, out _);
 

@@ -47,7 +47,6 @@ namespace RestAPI.Hubs
 
             await _hubContext.Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
 
-
             await base.OnDisconnectedAsync(exception);
         }
 

@@ -4,6 +4,8 @@ using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.Match;
 using Core.Results.Match;
+using System.Data;
+using static Common.Constants.Constants;
 
 namespace Core.Services
 {
@@ -56,18 +58,16 @@ namespace Core.Services
 
                 var player = match.Players.First(p => p.Id == playerId);
                 player.Status = PlayerStatus.Disconnected;
-
-                var rejoinDeadline = DateTime.UtcNow.AddMinutes(5);
-                var rejoinWindow = TimeSpan.FromMinutes(5);
+                player.Timer.IsPaused = true;
 
                 _matchTurnManager.StartDisconnectCountdown(match.Id);
 
-                match.RejoinDeadline = rejoinDeadline;
+                match.RejoinDeadline = DateTime.Now.AddSeconds(MatchEndCountdownSeconds);
                 match.Status = MatchStatus.Paused;
 
                 await _matchCache.SetMatchAsync(match.Id, match);
 
-                return HandlePlayerDisconnectResult.Success(match.Id, rejoinWindow.TotalSeconds);
+                return HandlePlayerDisconnectResult.Success(match.Id, MatchEndCountdownSeconds);
             }
             finally
             {
@@ -153,12 +153,12 @@ namespace Core.Services
                     var player = match.Players.First(p => p.Id == playerId);
                     match.Players.Remove(player);
 
+                    await _matchCache.SetMatchAsync(match.Id, match);
+
                     if (match.Players.Count == 0)
                     {
                         await _matchCache.RemoveMatchAsync(match);
                     }
-
-                    await _matchCache.SetMatchAsync(match.Id, match);
                 }
 
                 return LeaveMatchQueueResult.Success(match.Id, isRemoved, match.GameType);
@@ -199,6 +199,7 @@ namespace Core.Services
                 var player = match.Players.First(p => p.Id == playerId);
 
                 player.Status = PlayerStatus.Active;
+                player.Timer.IsPaused = false;
 
                 if (match.Players.All(p => p.Status == PlayerStatus.Active))
                 {
