@@ -7,6 +7,7 @@ import LobbyList from '../components/matchPage/waitingLobby/LobbyList';
 import EndingScreen from '../components/matchPage/EndingScreen';
 import useApiRequest from '../hooks/useApiRequest';
 import { useMatchHub } from '../contexts/MatchHubContext';
+import PausedMatch from '../components/MatchPage/PausedMatch'
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
@@ -91,18 +92,7 @@ const MatchPage = () => {
 
                     {match?.status === "Created" && <LobbyList match={match} />}
 
-                    {isPaused && (
-                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-                            <div className="bg-gray-900 p-6 rounded-xl text-center">
-                                <p className="text-xl font-semibold text-white">
-                                    Match is paused
-                                </p>
-                                <p className="text-gray-400 mt-2">
-                                    Waiting for players to rejoin...
-                                </p>
-                            </div>
-                        </div>
-                    )}
+                    {isPaused && <PausedMatch />}
 
                     {match?.status !== "Created" &&
                         <>

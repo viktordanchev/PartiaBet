@@ -45,7 +45,10 @@ namespace RestAPI.Hubs
 
             var result = await _matchService.HandlePlayerDisconnectAsync(userId);
 
-            await _hubContext.Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
+            if (result.IsSuccess)
+            {
+                await _hubContext.Clients.Group($"{result.MatchId}").SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
+            }
 
             await base.OnDisconnectedAsync(exception);
         }

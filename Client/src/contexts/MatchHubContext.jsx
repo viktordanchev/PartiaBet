@@ -72,7 +72,6 @@ export const MatchHubProvider = ({ children }) => {
     };
 
     const handleRejoinCountdown = (playerId, timeLeft) => {
-        console.log(`Player ${playerId} has ${timeLeft} seconds left to rejoin.`);
         setLeaverData({ playerId, timeLeft });
     };
 

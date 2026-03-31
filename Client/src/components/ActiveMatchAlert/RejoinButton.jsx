@@ -6,13 +6,12 @@ import { useMatchHub } from '../../contexts/MatchHubContext';
 function RejoinButton({ onRejoin }) {
     const navigate = useNavigate();
     const { setIsLoading } = useLoading();
-    const { ensureConnection } = useMatchHub();
+    const { connection } = useMatchHub();
 
     const rejoinMatch = async () => {
         const matchId = sessionStorage.getItem('connection-matchId');
 
         setIsLoading(true);
-        const connection = await ensureConnection();
         await connection.invoke("JoinMatchGroup", matchId);
         await connection.invoke("RejoinMatch");
         setIsLoading(false);

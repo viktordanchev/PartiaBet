@@ -32,7 +32,7 @@ function ActiveMatchAlert() {
     useEffect(() => {
         const fetchRejoinTime = async () => {
             const response = await apiRequest('matches', 'getMatchCountdown', 'GET', true, false);
-
+            
             if (!response || response.timeLeftToRejoin === 0) return;
 
             sessionStorage.setItem('connection-matchId', response.matchId);
@@ -47,7 +47,7 @@ function ActiveMatchAlert() {
 
     useEffect(() => {
         if (!leaverData) return;
-        console.log('Received leaverData:', leaverData);
+        
         startTimer(leaverData.timeLeft);
     }, [leaverData]);
 

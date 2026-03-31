@@ -13,8 +13,8 @@ const Profile = ({ token }) => {
                 className="w-13 rounded-full"
             />
             <div className="flex flex-col text-gray-300">
-                <p className="text-xl font-semibold">{userName}</p>
-                <div className="text-xs flex gap-1">
+                <p className="text-lg font-semibold">{userName}</p>
+                <div className="text-sm flex gap-1">
                     <p>Balance</p>
                     <p className="font-bold">0</p>
                 </div>

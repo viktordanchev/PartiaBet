@@ -2,6 +2,6 @@
 {
     public static class Constants
     {
-        public const int MatchEndCountdownSeconds = 500;
+        public const int MatchEndCountdownSeconds = 300;
     }
 }

@@ -13,7 +13,7 @@ namespace Core.Services
     {
         private IMatchRepository _matchRepository;
         private IMatchCache _matchCache;
-        private IRedisLockService _redisLock;
+        private IRedisLockService _redisLock; 
         private IGameFactory _gameFactory;
         private IGameProvider _gameProvider;
         private IMatchTurnManager _matchTurnManager;
@@ -51,6 +51,9 @@ namespace Core.Services
             {
                 var match = await _matchCache.GetMatchAsync(matchId);
 
+                if (match.Status == MatchStatus.Paused)
+                    return HandlePlayerDisconnectResult.Invalid();
+
                 var playerInTurn = match.Players.First(p => p.IsOnTurn);
                 var remaining = playerInTurn.Timer.TurnExpiresAt - DateTime.UtcNow;
                 remaining += TimeSpan.FromSeconds(5);
@@ -62,7 +65,7 @@ namespace Core.Services
 
                 _matchTurnManager.StartDisconnectCountdown(match.Id);
 
-                match.RejoinDeadline = DateTime.Now.AddSeconds(MatchEndCountdownSeconds);
+                match.RejoinDeadline = DateTime.UtcNow.AddSeconds(MatchEndCountdownSeconds);
                 match.Status = MatchStatus.Paused;
 
                 await _matchCache.SetMatchAsync(match.Id, match);
