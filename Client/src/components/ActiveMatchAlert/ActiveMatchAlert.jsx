@@ -4,12 +4,10 @@ import { useTimer } from 'react-timer-hook';
 import { useAuth } from '../../contexts/AuthContext';
 import RejoinButton from './RejoinButton';
 import useApiRequest from '../../hooks/useApiRequest';
-import { useMatchHub } from '../../contexts/MatchHubContext';
 
 const COUNTDOWN_KEY = 'matchEndCountdown';
 
 function ActiveMatchAlert() {
-    const { leaverData } = useMatchHub();
     const { isAuthenticated } = useAuth();
     const apiRequest = useApiRequest();
 
@@ -44,12 +42,6 @@ function ActiveMatchAlert() {
             fetchRejoinTime();
         }
     }, [isAuthenticated]);
-
-    useEffect(() => {
-        if (!leaverData) return;
-        
-        startTimer(leaverData.timeLeft);
-    }, [leaverData]);
 
     useEffect(() => {
         const stored = localStorage.getItem(COUNTDOWN_KEY);

@@ -4,7 +4,6 @@ using Core.Interfaces.Infrastructure;
 using Core.Interfaces.Services;
 using Core.Models.Match;
 using Core.Results.Match;
-using System.Data;
 using static Common.Constants.Constants;
 
 namespace Core.Services
@@ -56,7 +55,7 @@ namespace Core.Services
 
                 var playerInTurn = match.Players.First(p => p.IsOnTurn);
                 var remaining = playerInTurn.Timer.TurnExpiresAt - DateTime.UtcNow;
-                remaining += TimeSpan.FromSeconds(5);
+                remaining += TimeSpan.FromSeconds(GracePeriodSeconds);
                 playerInTurn.Timer.TimeLeft = remaining;
 
                 var player = match.Players.First(p => p.Id == playerId);

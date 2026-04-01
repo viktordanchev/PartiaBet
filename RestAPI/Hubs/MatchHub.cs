@@ -5,6 +5,7 @@ using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using RestAPI.Dtos.Match;
+using static Common.Constants.Constants;
 
 namespace RestAPI.Hubs
 {
@@ -33,7 +34,7 @@ namespace RestAPI.Hubs
         {
             var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
 
-            await Task.Delay(5000);
+            await Task.Delay(TimeSpan.FromSeconds(GracePeriodSeconds));
 
             _userConnectionTracker.RemoveConnection(userId, "match", Context.ConnectionId);
 
