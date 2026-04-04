@@ -12,22 +12,22 @@ namespace Infrastructure.Database.Entities
         [Required]
         public decimal Amount { get; set; }
 
-        public DateTime DateAndTime { get; set; }
+        [Required]
+        public DateTime DateTimeUTC { get; set; } = DateTime.UtcNow;
 
+        [Required]
         public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
 
         [Required]  
         public TransactionType Type { get; set; }
 
         [Required]
-        public Guid ReceiverId { get; set; }
+        public TransactionMethod TransactionMethod { get; set; }
 
-        [ForeignKey(nameof(ReceiverId))]
-        public User Receiver { get; set; } = null!;
+        [Required]
+        public Guid UserId { get; set; }
 
-        public Guid SenderId { get; set; }
-
-        [ForeignKey(nameof(SenderId))]
-        public User? Sender { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public User User { get; set; } = null!;
     }
 }

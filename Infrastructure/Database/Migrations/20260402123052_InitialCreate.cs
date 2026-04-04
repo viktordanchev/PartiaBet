@@ -119,29 +119,23 @@ namespace Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TransactionHistory",
+                name: "Transactions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    DateAndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateTimeUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    ReceiverId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SenderId = table.Column<Guid>(type: "uuid", nullable: false)
+                    TransactionMethod = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TransactionHistory", x => x.Id);
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TransactionHistory_Users_ReceiverId",
-                        column: x => x.ReceiverId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TransactionHistory_Users_SenderId",
-                        column: x => x.SenderId,
+                        name: "FK_Transactions_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -240,14 +234,9 @@ namespace Infrastructure.Database.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TransactionHistory_ReceiverId",
-                table: "TransactionHistory",
-                column: "ReceiverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransactionHistory_SenderId",
-                table: "TransactionHistory",
-                column: "SenderId");
+                name: "IX_Transactions_UserId",
+                table: "Transactions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserMatch_MatchId",
@@ -287,7 +276,7 @@ namespace Infrastructure.Database.Migrations
                 name: "Friendship");
 
             migrationBuilder.DropTable(
-                name: "TransactionHistory");
+                name: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "UserGameRatings");

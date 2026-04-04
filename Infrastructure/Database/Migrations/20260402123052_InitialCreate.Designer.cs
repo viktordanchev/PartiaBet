@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(PartiaBetDbContext))]
-    [Migration("20260324025024_InitialCreate")]
+    [Migration("20260402123052_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -114,28 +114,26 @@ namespace Infrastructure.Database.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime>("DateAndTime")
+                    b.Property<DateTime>("DateTimeUTC")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("ReceiverId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TransactionMethod")
                         .HasColumnType("integer");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("TransactionHistory");
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("Infrastructure.Database.Entities.User", b =>
@@ -307,21 +305,13 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Infrastructure.Database.Entities.Transaction", b =>
                 {
-                    b.HasOne("Infrastructure.Database.Entities.User", "Receiver")
+                    b.HasOne("Infrastructure.Database.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("ReceiverId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Database.Entities.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Infrastructure.Database.Entities.UserGameRating", b =>

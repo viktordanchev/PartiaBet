@@ -17,7 +17,7 @@ namespace Infrastructure.Database
         public DbSet<UserMatch> UserMatch { get; set; }
         public DbSet<Match> MatchHistory { get; set; }
         public DbSet<Friendship> Friendship { get; set; }
-        public DbSet<Transaction> TransactionHistory { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<UserGameRating> UserGameRatings { get; set; }
 
