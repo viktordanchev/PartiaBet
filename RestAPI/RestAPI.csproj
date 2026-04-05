@@ -13,6 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dtos\Games\Chess\**" />
+    <Content Remove="Dtos\Games\Chess\**" />
+    <EmbeddedResource Remove="Dtos\Games\Chess\**" />
+    <None Remove="Dtos\Games\Chess\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
@@ -40,7 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dtos\Games\Chess\" />
     <Folder Include="Hubs\" />
   </ItemGroup>
 
