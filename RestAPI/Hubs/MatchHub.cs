@@ -158,8 +158,6 @@ namespace RestAPI.Hubs
             _userConnectionTracker.AddConnection(userId, "match", Context.ConnectionId);
             var result = await _matchService.PlayerRejoinMatchAsync(userId);
 
-            await Clients.Group($"{result.MatchId}").SendAsync("RejoinPlayer", userId);
-
             if (result.MatchStatus == MatchStatus.Ongoing)
             {
                 await Clients.Group($"{result.MatchId}").SendAsync("MatchResumed");
