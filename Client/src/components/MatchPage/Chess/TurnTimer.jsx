@@ -8,7 +8,12 @@ const getExpiry = (seconds) => {
 };
 
 const TurnTimer = ({ timeLeft, isActive, isPaused }) => {
-    const { seconds, minutes, restart, pause } = useTimer({
+    const {
+        seconds,
+        minutes,
+        restart,
+        pause
+    } = useTimer({
         expiryTimestamp: getExpiry(timeLeft),
         autoStart: false
     });
@@ -24,7 +29,7 @@ const TurnTimer = ({ timeLeft, isActive, isPaused }) => {
         } else {
             pause();
         }
-    }, [isActive, timeLeft, isPaused]);
+    }, [isActive, isPaused]);
 
     return (
         <article className="h-fit w-fit bg-gray-300 px-2 text-2xl text-center font-semibold rounded shadow-xl shadow-gray-900">

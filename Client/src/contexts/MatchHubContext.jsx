@@ -81,9 +81,9 @@ export const MatchHubProvider = ({ children }) => {
             updateState({ newMatch: match });
         };
 
-        const handleReceiveMove = (gameBoard, newPlayerId, turnEndUTC) => {
+        const handleReceiveMove = (gameBoard, newPlayerId, duration) => {
             updateState({
-                newMove: { gameBoard, newPlayerId, turnEndUTC }
+                newMove: { gameBoard, newPlayerId, duration }
             });
         };
 
