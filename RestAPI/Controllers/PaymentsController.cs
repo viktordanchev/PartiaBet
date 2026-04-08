@@ -9,7 +9,7 @@ namespace RestAPI.Controllers
     [Route("api/payments")]
     public class PaymentsController : Controller
     {
-        [HttpPost("deposit")]
+        [HttpPost("makeDeposit")]
         public async Task<IActionResult> MakeDeposit([FromBody] DepositRequestDto data)
         {
 
