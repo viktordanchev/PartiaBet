@@ -9,6 +9,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import GamePage from './pages/GamePage';
 import MatchPage from './pages/MatchPage';
 import PlayerPage from './pages/PlayerPage';
+import ProfilePage from './pages/ProfilePage';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -38,6 +39,10 @@ function App() {
                         <Route path="/friends" element={
                             <ProtectedRoute>
                                 <FriendsPage />
+                            </ProtectedRoute>} />
+                        <Route path="/profile" element={
+                            <ProtectedRoute>
+                                <ProfilePage />
                             </ProtectedRoute>} />
 
                         <Route path="/games/:game" element={<GamePage />} />
