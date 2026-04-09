@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useLocation, useMatch } from 'react-router-dom';
+import { Route, Routes, useLocation, useMatch, Navigate } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -40,10 +40,11 @@ function App() {
                             <ProtectedRoute>
                                 <FriendsPage />
                             </ProtectedRoute>} />
-                        <Route path="/profile" element={
+                        <Route path="/profile/:tab" element={
                             <ProtectedRoute>
                                 <ProfilePage />
                             </ProtectedRoute>} />
+                        <Route path="/profile" element={<Navigate to="/profile/personalInfo" replace />} />
 
                         <Route path="/games/:game" element={<GamePage />} />
                         <Route path="/games/:game/match/:matchId" element={
