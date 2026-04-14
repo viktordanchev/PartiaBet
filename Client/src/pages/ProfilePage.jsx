@@ -41,7 +41,7 @@ function ProfilePage() {
                             ${index === tabs.length - 1 && 'rounded-tr-xl'}
                             ${activeTab === tab.key
                                 ? 'bg-gray-900/30 text-maincolor'
-                                : 'bg-gray-900 text-gray-300 hover:bg-gray-900/30'
+                                : 'bg-gray-900 text-gray-300 hover:cursor-pointer hover:bg-gray-900/30'
                             }`}
                     >
                         {tab.label}

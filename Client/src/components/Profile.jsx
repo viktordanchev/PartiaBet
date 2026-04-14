@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import ProfileImg from '../assets/images/profile-photo.jpg';
 
 const Profile = ({ token }) => {
@@ -12,9 +14,10 @@ const Profile = ({ token }) => {
     return (
         <div className="flex items-center gap-6">
 
-            <button className="px-6 py-1 text-lg rounded-xl bg-gray-900 font-medium text-maincolor border-2 border-maincolor transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
+            <button className="px-4 py-1 space-x-3 text-lg rounded-xl bg-gray-900 font-medium text-yellow-200 border-2 border-yellow-200 transform transition-all duration-300 ease-in-out hover:cursor-pointer hover:scale-105"
                 onClick={() => navigate('/profile/deposit')}>
-                Deposit
+                <FontAwesomeIcon icon={faDollarSign} />
+                <span>Deposit</span>
             </button>
 
             <div className="flex items-center gap-3">
