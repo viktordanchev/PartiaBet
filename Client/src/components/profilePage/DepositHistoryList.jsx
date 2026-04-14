@@ -25,7 +25,7 @@ const DepositHistoryList = () => {
     }, []);
 
     return (
-        <section className="space-y-2">
+        <article className="space-y-2">
             <h2 className="text-2xl font-semibold">Deposit History</h2>
 
             <table className="min-w-full text-center bg-gray-800 rounded-xl overflow-hidden border border-gray-600 [&_th]:border [&_td]:border [&_th]:border-gray-600 [&_td]:border-gray-600">
@@ -59,7 +59,7 @@ const DepositHistoryList = () => {
                     )}
                 </tbody>
             </table>
-        </section>
+        </article>
     );
 };
 
