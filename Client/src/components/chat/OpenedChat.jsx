@@ -2,6 +2,8 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
+import ChatHistory from './ChatHistory';
+
 const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
 
     if (!activeFriend) {
@@ -31,9 +33,7 @@ const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
 
             </div>
 
-            <div className="flex-1 p-3 text-sm text-gray-600 bg-white">
-                Chat with {activeFriend.name}
-            </div>
+            <ChatHistory />
 
             <div className="h-1/9 bg-slate-600 px-3 flex items-center gap-3">
 
