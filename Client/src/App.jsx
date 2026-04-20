@@ -18,6 +18,7 @@ import SessionEndNotification from './components/SessionEndNotification';
 import ProtectedRoute from './components/ProtectedRoute';
 import ActiveMatchAlert from './components/ActiveMatchAlert/ActiveMatchAlert';
 import FriendStatusAlert from './components/FriendStatusAlert';
+import Chat from './components/chat/Chat';
 
 function App() {
     const location = useLocation();
@@ -66,6 +67,7 @@ function App() {
                 <Footer />
             </div>
             <SessionEndNotification />
+            <Chat/>
         </>
     );
 }
