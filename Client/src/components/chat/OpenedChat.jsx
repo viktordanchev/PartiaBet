@@ -17,7 +17,7 @@ const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
     return (
         <div className="w-4/5 h-full flex flex-col justify-between text-white">
 
-            <div className="h-1/9 bg-slate-600 px-3 flex justify-between items-center">
+            <div className="h-1/11 bg-slate-600 px-3 flex justify-between items-center">
 
                 <p className="text-lg">
                     {activeFriend.name}
@@ -35,14 +35,14 @@ const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
 
             <ChatHistory />
 
-            <div className="h-1/9 bg-slate-600 px-3 flex items-center gap-3">
+            <div className="h-1/11 bg-slate-600 px-3 flex items-center gap-3">
 
                 <input className="w-full focus:outline-none"
                     placeholder={`Message...`}
                     type="text"/>
 
                 <button className="cursor-pointer flex justify-center items-center">
-                    <FontAwesomeIcon className="text-xl" icon={faPaperPlane} />
+                    <FontAwesomeIcon className="text-lg" icon={faPaperPlane} />
                 </button>
 
             </div>
