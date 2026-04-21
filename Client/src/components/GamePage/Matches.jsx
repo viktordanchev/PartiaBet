@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react';
 import MatchList from './matches/MatchList';
 import useApiRequest from '../../hooks/useApiRequest';
 import Loading from '../Loading';
-import { useAppHub } from '../../contexts/AppHubContext';
-
+import { useSignalREvent } from "../../hooks/signalR/useSignalREvent";
 
 const Matches = ({ gameType }) => {
-    const { matchState } = useAppHub();
-    const { newMatch, newPlayer, removedPlayer } = matchState;
     const apiRequest = useApiRequest();
     const [matches, setMatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -25,35 +22,37 @@ const Matches = ({ gameType }) => {
         receiveData();
     }, []);
 
-    useEffect(() => {
-        if (newMatch) {
-            setMatches(prevMatches =>
-                [newMatch, ...prevMatches]
-            );
-        } else if (newPlayer) {
-            setMatches(prevMatches =>
-                prevMatches.map(match => {
-                    if (match.id !== newPlayer.matchId) return match;
+    useSignalREvent("ReceiveMatch", (newMatch) => {
+        setMatches(prevMatches =>
+            [newMatch, ...prevMatches]
+        );
+    });
 
-                    return {
-                        ...match,
-                        players: [...match.players, newPlayer]
-                    };
-                })
-            );
-        } else if (removedPlayer) {
-            setMatches(prevMatches =>
-                prevMatches.map(match => {
-                    if (!match.players.some(p => p.id === removedPlayer.id)) return match;
+    useSignalREvent("ReceivePlayer", (matchId, player) => {
+        setMatches(prevMatches =>
+            prevMatches.map(match => {
+                if (match.id !== matchId) return match;
 
-                    return {
-                        ...match,
-                        players: match.players.filter(p => p.id !== removedPlayer.id)
-                    };
-                })
-            );
-        }
-    }, [newMatch, newPlayer, removedPlayer]);
+                return {
+                    ...match,
+                    players: [...match.players, player]
+                };
+            })
+        );
+    });
+
+    useSignalREvent("RemovePlayer", (matchId, playerId) => {
+        setMatches(prevMatches =>
+            prevMatches.map(match => {
+                if (match.id !== matchId) return match;
+
+                return {
+                    ...match,
+                    players: match.players.filter(p => p.id !== playerId)
+                };
+            })
+        );
+    });
 
     return (
         <article className="col-span-2 bg-gray-800 p-3 rounded text-gray-300 border border-gray-500 shadow-xl shadow-gray-900 space-y-6">

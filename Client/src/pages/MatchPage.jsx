@@ -7,26 +7,12 @@ import LobbyList from '../components/matchPage/waitingLobby/LobbyList';
 import EndingScreen from '../components/matchPage/EndingScreen';
 import useApiRequest from '../hooks/useApiRequest';
 import { useAppHub } from '../contexts/AppHubContext';
+import { useSignalREvent } from "../hooks/signalR/useSignalREvent";
 import PausedMatch from '../components/MatchPage/PausedMatch';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-    
-    const {
-        connection,
-        stopConnection,
-        matchState
-    } = useAppHub();
-
-    const {
-        newPlayer,
-        removedPlayer,
-        matchStarted,
-        leaverData,
-        resumeMatch,
-        matchEnd
-    } = matchState;
-
+    const { connection, stopConnection } = useAppHub();
     const apiRequest = useApiRequest();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -36,18 +22,10 @@ const MatchPage = () => {
 
     //Load match
     useEffect(() => {
-        console.log("Fetching match data...");
         const receiveData = async () => {
             setIsLoading(true);
 
-            const data = await apiRequest(
-                'matches',
-                'getMatch',
-                'POST',
-                true,
-                false,
-                matchId
-            );
+            const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
            
             if (!data) return;
 
@@ -59,52 +37,42 @@ const MatchPage = () => {
         receiveData();
     }, [matchStarted, resumeMatch, matchId]);
 
-    //Match end
-    useEffect(() => {
-        if (!matchEnd) return;
-
+    useSignalREvent("EndMatch", () => {
         setIsEnded(true);
-    }, [matchEnd]);
+    });
 
-    //Pause match
-    useEffect(() => {
-        if (!leaverData) return;
-
+    useSignalREvent("RejoinCountdown", () => {
         setIsPaused(true);
-    }, [leaverData]);
+    });
 
-    //Add player
-    useEffect(() => {
-        if (!match || !newPlayer) return;
-
+    useSignalREvent("ReceivePlayer", (matchId, player) => {
         setMatch(prev => {
-            if (!prev) return prev;
+            if (!prev || prev.id !== matchId) return prev;
 
-            const exists = prev.players.some(p => p.id === newPlayer.player.id);
+            const exists = prev.players.some(p => p.id === player.id);
             if (exists) return prev;
 
             return {
                 ...prev,
-                players: [...prev.players, newPlayer.player]
+                players: [...prev.players, player]
             };
         });
-    }, [newPlayer]);
+    });
 
-    //Remove player
-    useEffect(() => {
-        if (!match || !removedPlayer) return;
-
+    useSignalREvent("RemovePlayer", (matchId, playerId) => {
         setMatch(prev => {
-            if (!prev) return prev;
+            if (!prev || prev.id !== matchId) return prev;
+
+            const exists = prev.players.some(p => p.id === playerId);
+            if (!exists) return prev;
 
             return {
                 ...prev,
-                players: prev.players.filter(p => p.id !== removedPlayer.playerId)
+                players: prev.players.filter(p => p.id !== playerId)
             };
         });
-    }, [removedPlayer]);
+    });
 
-    //Cleanup on unmount
     useEffect(() => {
         return () => {
             if (connection) {
