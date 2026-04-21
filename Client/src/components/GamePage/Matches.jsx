@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import MatchList from './matches/MatchList';
 import useApiRequest from '../../hooks/useApiRequest';
 import Loading from '../Loading';
-import { useMatchHub } from '../../contexts/MatchHubContext';
+import { useAppHub } from '../../contexts/AppHubContext';
+
 
 const Matches = ({ gameType }) => {
-    const { newMatch, newPlayer, removedPlayer } = useMatchHub();
+    const { matchState } = useAppHub();
+    const { newMatch, newPlayer, removedPlayer } = matchState;
     const apiRequest = useApiRequest();
     const [matches, setMatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);

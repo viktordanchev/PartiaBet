@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../../contexts/LoadingContext';
-import { useMatchHub } from '../../contexts/MatchHubContext';
+import { useAppHub } from '../../contexts/AppHubContext';
 
 function RejoinButton({ onRejoin }) {
     const navigate = useNavigate();
     const { setIsLoading } = useLoading();
-    const { connection } = useMatchHub();
+    const { connection } = useAppHub();
 
     const rejoinMatch = async () => {
         const matchId = sessionStorage.getItem('connection-matchId');

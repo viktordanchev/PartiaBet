@@ -81,5 +81,10 @@ namespace Core.Services
         {
             return await _userRepository.GetUserDataAsync(userEmail);
         }
+
+        public async Task<UserDataModel?> GetUserDataAsync(Guid userId)
+        {
+            return await _userRepository.GetUserDataAsync(userId);
+        }
     }
 }

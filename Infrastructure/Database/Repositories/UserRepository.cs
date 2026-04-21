@@ -115,5 +115,21 @@ namespace Infrastructure.Database.Repositories
 
             return userData;
         }
+
+        public async Task<UserDataModel?> GetUserDataAsync(Guid userId)
+        {
+            var user = await _database.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                return null;
+
+            var userData = new UserDataModel()
+            {
+                Username = user.Username,
+                ProfileImageUrl = user.ImageUrl ?? string.Empty
+            };
+
+            return userData;
+        }
     }
 }

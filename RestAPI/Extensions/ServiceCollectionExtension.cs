@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using RestAPI.Filters;
 using RestAPI.Mapper;
 using RestAPI.Services;
+using RestAPI.Services.Interfaces;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -67,9 +68,7 @@ namespace RestAPI.Extensions
                         var accessToken = context.Request.Query["access_token"];
                         var path = context.HttpContext.Request.Path;
 
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/match") ||
-                            path.StartsWithSegments("/presence")))
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/app"))
                         {
                             context.Token = accessToken;
                         }
@@ -107,6 +106,8 @@ namespace RestAPI.Extensions
             services.AddScoped<IRatingCalculator, RatingCalculator>();
             services.AddScoped<IMatchHubNotifier, MatchHubNotifier>();
             services.AddScoped<IFriendshipService, FriendshipService>();
+            services.AddScoped<IMatchRealtimeService, MatchRealtimeService>();
+            services.AddScoped<IPresenceRealtimeService, PresenceRealtimeService>();
 
             services.AddSingleton<IMatchTurnManager, MatchTurnManager>();
             services.AddSingleton<IGameProvider, GameProvider>();

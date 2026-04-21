@@ -8,9 +8,9 @@ namespace RestAPI.Services
 {
     public class MatchHubNotifier : IMatchHubNotifier
     {
-        private readonly IHubContext<MatchHub> _hubContext;
+        private readonly IHubContext<AppHub> _hubContext;
 
-        public MatchHubNotifier(IHubContext<MatchHub> hubContext)
+        public MatchHubNotifier(IHubContext<AppHub> hubContext)
         {
             _hubContext = hubContext;
         }

@@ -1,23 +1,26 @@
 ﻿using Core.Enums;
-using Microsoft.AspNetCore.SignalR;
 using RestAPI.Dtos.Match;
 
 namespace RestAPI.Services.Interfaces
 {
     public interface IMatchRealtimeService
     {
-        Task OnConnected(HubCallerContext context);
-        Task OnDisconnected(HubCallerContext context, Exception? ex);
+        Task OnConnectedAsync(Guid userId, string connectionId);
 
-        Task JoinGameGroup(string connectionId, GameType gameType);
-        Task JoinMatchGroup(string connectionId, Guid matchId);
+        Task OnDisconnectedAsync(Guid userId, string connectionId);
 
-        Task<Guid> CreateMatch(HubCallerContext context, AddMatchDto data);
-        Task JoinMatch(HubCallerContext context, Guid matchId);
+        Task JoinGameGroupAsync(string connectionId, GameType gameType);
 
-        Task MakeMove(HubCallerContext context, Guid matchId, string jsonData);
+        Task JoinMatchGroupAsync(string connectionId, Guid matchId);
 
-        Task LeaveMatchQueue(HubCallerContext context);
-        Task RejoinMatch(HubCallerContext context);
+        Task<Guid> CreateMatchAsync(Guid userId, string connectionId, AddMatchDto data);
+
+        Task JoinMatchAsync(Guid userId, string connectionId, Guid matchId);
+
+        Task MakeMoveAsync(Guid userId, Guid matchId, string jsonData);
+
+        Task LeaveMatchQueueAsync(Guid userId);
+
+        Task RejoinMatchAsync(Guid userId, string connectionId);
     }
 }

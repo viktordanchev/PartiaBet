@@ -3,12 +3,12 @@ import { useParams } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import Square from './Square';
 import getValidMoves from '../../../services/chess/getValidMoves';
-import { useMatchHub } from '../../../contexts/MatchHubContext';
+import { useAppHub } from '../../../contexts/AppHubContext';
 
 const Board = ({ data, isMyTurn }) => {
     const { matchId } = useParams();
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
-    const { connection } = useMatchHub();
+    const { connection } = useAppHub();
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [validSquares, setValidSquares] = useState([]);
     const isHostWhite = data.whitePlayerId === decodedToken['Id'];

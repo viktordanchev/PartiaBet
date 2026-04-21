@@ -1,6 +1,5 @@
 using RestAPI.Extensions;
 using RestAPI.Hubs;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,7 +50,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
-app.MapHub<MatchHub>("/match");
-app.MapHub<PresenceHub>("/presence");
+app.MapHub<AppHub>("/app");
 
 app.Run();

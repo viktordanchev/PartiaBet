@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Board from './Board';
 import PlayerCard from '../PlayerCard';
 import TurnTimer from './TurnTimer';
-import { useMatchHub } from '../../../contexts/MatchHubContext';
+import { useSignalREvent } from "../../../hooks/signalR/useSignalREvent";
 
 const ChessMatch = ({ data, isPaused }) => {
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const userId = decodedToken['Id'];
-    const { newMove } = useMatchHub();
     const [board, setBoard] = useState(data.board);
     const [players, setPlayers] = useState(() => {
         const map = {};
@@ -25,23 +24,19 @@ const ChessMatch = ({ data, isPaused }) => {
     const loggedPlayer = players[userId];
     const opponent = Object.values(players).find(p => p.id !== userId);
 
-    useEffect(() => {
-        if (!newMove) return;
-
-        const { gameBoard, newPlayerId, duration } = newMove;
-
+    useSignalREvent("ReceiveMove", (gameBoard, nextPlayerId, duration) => {
         setBoard(gameBoard);
 
         setPlayers(prev => ({
             ...prev,
-            [newPlayerId]: {
-                ...prev[newPlayerId],
+            [nextPlayerId]: {
+                ...prev[nextPlayerId],
                 turnTimeLeft: duration
             }
         }));
 
-        setPlayerInTurn(newPlayerId);
-    }, [newMove]);
+        setPlayerInTurn(nextPlayerId);
+    });
 
     return (
         <section className="flex gap-3">

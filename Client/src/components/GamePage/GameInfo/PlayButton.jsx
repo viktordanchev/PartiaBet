@@ -1,13 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClickOutside } from '../../../hooks/useClickOutside';
-import { useMatchHub } from '../../../contexts/MatchHubContext';
+import { useAppHub } from '../../../contexts/AppHubContext';
 import { useLoading } from '../../../contexts/LoadingContext';
 
 function PlayButton({ gameType }) {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
-    const { connection } = useMatchHub();
+    const { connection } = useAppHub();
     const { setIsLoading } = useLoading();
     const [showStakeOptions, setShowStakeOptions] = useState(false);
     const [betAmount, setBetAmount] = useState(0);

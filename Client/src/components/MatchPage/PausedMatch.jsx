@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useTimer } from 'react-timer-hook';
-import { useMatchHub } from '../../contexts/MatchHubContext';
+import { useAppHub } from '../../contexts/AppHubContext';
 import useApiRequest from '../../hooks/useApiRequest';
 
 function PausedMatch() {
-    const { leaverData } = useMatchHub();
+    const { matchState } = useAppHub();
+    const { leaverData } = matchState;
     const apiRequest = useApiRequest();
 
     const { seconds, minutes, restart } = useTimer({

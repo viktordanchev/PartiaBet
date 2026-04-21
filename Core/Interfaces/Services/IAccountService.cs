@@ -11,5 +11,6 @@ namespace Core.Interfaces.Services
         Task<UserClaimsModel> GetClaimsAsync(string email);
         Task UpdateUserAsync(UpdateUserModel data, string userEmail);
         Task<UserDataModel?> GetUserDataAsync(string userEmail);
+        Task<UserDataModel?> GetUserDataAsync(Guid userId);
     }
 }

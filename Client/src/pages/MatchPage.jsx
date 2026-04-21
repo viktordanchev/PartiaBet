@@ -6,22 +6,26 @@ import Spectators from '../components/matchPage/Spectators';
 import LobbyList from '../components/matchPage/waitingLobby/LobbyList';
 import EndingScreen from '../components/matchPage/EndingScreen';
 import useApiRequest from '../hooks/useApiRequest';
-import { useMatchHub } from '../contexts/MatchHubContext';
+import { useAppHub } from '../contexts/AppHubContext';
 import PausedMatch from '../components/MatchPage/PausedMatch';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
-
+    
     const {
         connection,
         stopConnection,
+        matchState
+    } = useAppHub();
+
+    const {
         newPlayer,
         removedPlayer,
         matchStarted,
         leaverData,
         resumeMatch,
         matchEnd
-    } = useMatchHub();
+    } = matchState;
 
     const apiRequest = useApiRequest();
 
@@ -32,6 +36,7 @@ const MatchPage = () => {
 
     //Load match
     useEffect(() => {
+        console.log("Fetching match data...");
         const receiveData = async () => {
             setIsLoading(true);
 

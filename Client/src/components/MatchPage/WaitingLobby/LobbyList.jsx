@@ -1,11 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PlayerProfileCard from './PlayerProfileCard';
-import { useMatchHub } from '../../../contexts/MatchHubContext';
+import { useAppHub } from '../../../contexts/AppHubContext';
 
 const LobbyList = ({ match }) => {
     const navigate = useNavigate();
-    const { connection } = useMatchHub();
+    const { connection } = useAppHub();
     
     const handleCancel = async () => {
         if (connection) {

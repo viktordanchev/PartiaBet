@@ -6,12 +6,12 @@ import Matches from '../components/gamePage/Matches';
 import GameRules from '../components/gamePage/GameRules';
 import Loading from '../components/Loading';
 import useApiRequest from '../hooks/useApiRequest';
-import { useMatchHub } from '../contexts/MatchHubContext';
+import { useAppHub } from '../contexts/AppHubContext';
 
 function GamePage() {
     const { game } = useParams();
     const apiRequest = useApiRequest();
-    const { connection } = useMatchHub();
+    const { connection } = useAppHub();
     const [isLoading, setIsLoading] = useState(true);
     const [gameData, setGameData] = useState(null);
 
@@ -26,7 +26,7 @@ function GamePage() {
             setIsLoading(false);
             setGameData(gameData);
         };
-
+        
         if (connection)
             receiveData();
     }, [connection]);

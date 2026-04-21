@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { useMatchHub } from '../../../contexts/MatchHubContext';
+import { useAppHub } from '../../../contexts/AppHubContext';
 import { useLoading } from '../../../contexts/LoadingContext';
 import PlayerCard from './PlayerCard';
 
 const MatchCard = ({ match }) => {
     const navigate = useNavigate();
-    const { connection } = useMatchHub();
+    const { connection } = useAppHub();
     const { setIsLoading } = useLoading();
     const isMatchFull = false;
     

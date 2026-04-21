@@ -15,14 +15,14 @@ namespace RestAPI.Services
         private readonly IGameProvider _gameProvider;
         private readonly IUserConnectionTracker _userConnectionTracker;
         private readonly IMapper _mapper;
-        private readonly IHubContext<MatchHub> _hub;
+        private readonly IHubContext<AppHub> _hub;
 
         public MatchRealtimeService(
             IMatchService matchService,
             IGameProvider gameProvider,
             IUserConnectionTracker userConnectionTracker,
             IMapper mapper,
-            IHubContext<MatchHub> hub)
+            IHubContext<AppHub> hub)
         {
             _matchService = matchService;
             _gameProvider = gameProvider;
@@ -31,21 +31,18 @@ namespace RestAPI.Services
             _hub = hub;
         }
 
-        public Task OnConnected(HubCallerContext context)
+        public async Task OnConnectedAsync(Guid userId, string connectionId)
         {
-            var userId = GetUserId(context);
-            _userConnectionTracker.AddConnection(userId, "match", context.ConnectionId);
+            _userConnectionTracker.AddConnection(userId, "match", connectionId);
 
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
-        public async Task OnDisconnected(HubCallerContext context, Exception? ex)
+        public async Task OnDisconnectedAsync(Guid userId, string connectionId)
         {
-            var userId = GetUserId(context);
-
             await Task.Delay(TimeSpan.FromSeconds(5));
 
-            _userConnectionTracker.RemoveConnection(userId, "match", context.ConnectionId);
+            _userConnectionTracker.RemoveConnection(userId, "match", connectionId);
 
             if (_userConnectionTracker.HasConnections(userId, "match"))
                 return;
@@ -60,7 +57,7 @@ namespace RestAPI.Services
             }
         }
 
-        public async Task JoinGameGroup(string connectionId, GameType gameType)
+        public async Task JoinGameGroupAsync(string connectionId, GameType gameType)
         {
             if (_gameProvider.IsValidGameType(gameType))
             {
@@ -68,41 +65,37 @@ namespace RestAPI.Services
             }
         }
 
-        public async Task JoinMatchGroup(string connectionId, Guid matchId)
+        public async Task JoinMatchGroupAsync(string connectionId, Guid matchId)
         {
             await _hub.Groups.AddToGroupAsync(connectionId, matchId.ToString());
         }
 
-        public async Task<Guid> CreateMatch(HubCallerContext context, AddMatchDto data)
+        public async Task<Guid> CreateMatchAsync(Guid userId, string connectionId, AddMatchDto data)
         {
-            var playerId = GetUserId(context);
-
             var match = await _matchService.CreateMatchAsync(data.GameType, data.BetAmount);
-            var matchStatus = await _matchService.JoinMatchAsync(match.Id, playerId);
+            var matchStatus = await _matchService.JoinMatchAsync(match.Id, userId);
 
             var matchDto = _mapper.Map<MatchDto>(match);
             var playerDto = _mapper.Map<PlayerDto>(matchStatus.AddedPlayer);
 
             matchDto.Players.Add(playerDto);
 
-            await _hub.Groups.AddToGroupAsync(context.ConnectionId, match.Id.ToString());
+            await _hub.Groups.AddToGroupAsync(connectionId, match.Id.ToString());
             await _hub.Clients.Group(match.GameType.ToString())
                 .SendAsync("ReceiveMatch", matchDto);
 
             return match.Id;
         }
 
-        public async Task JoinMatch(HubCallerContext context, Guid matchId)
+        public async Task JoinMatchAsync(Guid userId, string connectionId, Guid matchId)
         {
-            var playerId = GetUserId(context);
-
-            var result = await _matchService.JoinMatchAsync(matchId, playerId);
+            var result = await _matchService.JoinMatchAsync(matchId, userId);
 
             if (result.IsInvalid) return;
 
             var playerDto = _mapper.Map<PlayerDto>(result.AddedPlayer);
 
-            await _hub.Groups.AddToGroupAsync(context.ConnectionId, matchId.ToString());
+            await _hub.Groups.AddToGroupAsync(connectionId, matchId.ToString());
 
             await _hub.Clients.Group(result.GameType.ToString())
                 .SendAsync("ReceivePlayer", matchId, playerDto);
@@ -114,12 +107,9 @@ namespace RestAPI.Services
             }
         }
 
-        public async Task MakeMove(HubCallerContext context, Guid matchId, string jsonData)
+        public async Task MakeMoveAsync(Guid userId, Guid matchId, string jsonData)
         {
-            var playerId = GetUserId(context);
-
-            var result = await _matchService.MakeMoveAsync(matchId, playerId, jsonData);
-
+            var result = await _matchService.MakeMoveAsync(matchId, userId, jsonData);
             if (result.Status == MoveStatus.Invalid)
                 return;
 
@@ -137,24 +127,20 @@ namespace RestAPI.Services
             }
         }
 
-        public async Task LeaveMatchQueue(HubCallerContext context)
+        public async Task LeaveMatchQueueAsync(Guid userId)
         {
-            var playerId = GetUserId(context);
-
-            var result = await _matchService.LeaveMatchQueueAsync(playerId);
+            var result = await _matchService.LeaveMatchQueueAsync(userId);
 
             if (result.IsRemoved)
             {
                 await _hub.Clients.Group(result.GameType.ToString())
-                    .SendAsync("RemovePlayer", result.MatchId, playerId);
+                    .SendAsync("RemovePlayer", result.MatchId, userId);
             }
         }
 
-        public async Task RejoinMatch(HubCallerContext context)
+        public async Task RejoinMatchAsync(Guid userId, string connectionId)
         {
-            var userId = GetUserId(context);
-
-            _userConnectionTracker.AddConnection(userId, "match", context.ConnectionId);
+            _userConnectionTracker.AddConnection(userId, "match", connectionId);
 
             var result = await _matchService.PlayerRejoinMatchAsync(userId);
 
@@ -163,13 +149,6 @@ namespace RestAPI.Services
                 await _hub.Clients.Group(result.MatchId.ToString())
                     .SendAsync("MatchResumed");
             }
-        }
-
-        //private methods
-
-        private Guid GetUserId(HubCallerContext context)
-        {
-            return Guid.Parse(context.User?.FindFirst("Id")?.Value!);
         }
     }
 }

@@ -5,21 +5,18 @@ import App from './App.jsx';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { NotificationsProvider } from './contexts/NotificationsContext';
 import { AuthProvider } from './contexts/AuthContext';
-import { MatchHubProvider } from './contexts/MatchHubContext';
-import { PresenceHubProvider } from './contexts/PresenceHubContext';
+import { AppHubProvider } from './contexts/AppHubContext';
 
 createRoot(document.getElementById('root')).render(
     <LoadingProvider>
         <AuthProvider>
-            <MatchHubProvider>
-                <PresenceHubProvider>
-                    <BrowserRouter>
-                        <NotificationsProvider>
-                            <App />
-                        </NotificationsProvider>
-                    </BrowserRouter>
-                </PresenceHubProvider>
-            </MatchHubProvider>
+            <AppHubProvider>
+                <BrowserRouter>
+                    <NotificationsProvider>
+                        <App />
+                    </NotificationsProvider>
+                </BrowserRouter>
+            </AppHubProvider>
         </AuthProvider>
     </LoadingProvider>
 )
