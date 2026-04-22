@@ -1,6 +1,7 @@
 ﻿using Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using RestAPI.Dtos.Chat;
 using RestAPI.Dtos.Match;
 using RestAPI.Services.Interfaces;
 
@@ -10,12 +11,15 @@ namespace RestAPI.Hubs
     {
         private readonly IMatchRealtimeService _matchRealtimeService;
         private readonly IPresenceRealtimeService _presenceRealtimeService;
+        private readonly IChatRealtimeService _chatRealtimeService;
 
         public AppHub(IMatchRealtimeService matchRealtimeService,
-            IPresenceRealtimeService presenceRealtimeService)
+            IPresenceRealtimeService presenceRealtimeService,
+            IChatRealtimeService chatRealtimeService)
         {
             _matchRealtimeService = matchRealtimeService;
             _presenceRealtimeService = presenceRealtimeService;
+            _chatRealtimeService = chatRealtimeService;
         }
 
         public override async Task OnConnectedAsync()
@@ -97,6 +101,18 @@ namespace RestAPI.Hubs
 
         //Chat methods
 
+        [Authorize]
+        public async Task SendMessage(AddMessageDto data)
+        {
+            var userId = Guid.Parse(Context.User?.FindFirst("Id")?.Value);
 
+            await _chatRealtimeService.SendMessage(userId, data);
+        }
+
+        [Authorize]
+        public async Task SenderTyping(Guid receiverId)
+        {
+            await _chatRealtimeService.SenderTyping(receiverId);
+        }
     }
 }

@@ -88,6 +88,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IRedisLockService, RedisLockService>();
             services.AddScoped<IFriendshipRepository, FriendshipRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IChatRepository, ChatRepository>();
         }
 
         public static void AddServices(this IServiceCollection services)
@@ -101,6 +102,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IGamesService, GamesService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IMatchService, MatchService>();
+            services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IGameFactory, GameFactory>();
             services.AddScoped<IMemoryCacheService, MemoryCacheService>();
             services.AddScoped<IRatingCalculator, RatingCalculator>();
@@ -108,6 +110,7 @@ namespace RestAPI.Extensions
             services.AddScoped<IFriendshipService, FriendshipService>();
             services.AddScoped<IMatchRealtimeService, MatchRealtimeService>();
             services.AddScoped<IPresenceRealtimeService, PresenceRealtimeService>();
+            services.AddScoped<IChatRealtimeService, ChatRealtimeService>();
 
             services.AddSingleton<IMatchTurnManager, MatchTurnManager>();
             services.AddSingleton<IGameProvider, GameProvider>();
