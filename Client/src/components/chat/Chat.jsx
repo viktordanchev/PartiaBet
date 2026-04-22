@@ -1,17 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage } from '@fortawesome/free-solid-svg-icons';
+import useApiRequest from '../../hooks/useApiRequest';
+import { useClickOutside } from '../../hooks/useClickOutside';
 
 import OpenedChat from './OpenedChat';
 import ChatsList from './ChatsList';
+import Loading from '../Loading';
 
 const Chat = () => {
+    const containerRef = useRef(null);
+    const apiRequest = useApiRequest();
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [activeFriend, setActiveFriend] = useState(null);
+    const [friends, setFriends] = useState([]);
+
+    useClickOutside(containerRef, () => setIsChatOpen(false));
+
+    useEffect(() => {
+        const receiveData = async () => {
+            setIsLoading(true);
+            const friends = await apiRequest('friends', 'getFriendships', 'GET', true);
+            setIsLoading(false);
+
+            setFriends(friends);
+        };
+
+        receiveData();
+    }, []);
 
     return (
-        <section className={`fixed right-6 bottom-6 border border-gray-500 text-white bg-blue-500 flex overflow-hidden rounded-xl transition-all duration-500 ease-in-out ${isChatOpen ? "w-90 h-110" : "w-15 h-15 cursor-pointer items-center justify-center"}`}
-            onClick={() => !isChatOpen && setIsChatOpen(true)}>
+        <section className={`fixed right-6 bottom-6 border border-gray-500 text-white flex overflow-hidden rounded-xl transition-all duration-500 ease-in-out ${isChatOpen ? "w-90 h-110 bg-white" : "w-15 h-15 cursor-pointer items-center justify-center bg-blue-500"}`}
+            onClick={() => !isChatOpen && setIsChatOpen(true)}
+            ref={containerRef}>
+
+            {(isChatOpen && isLoading) && <Loading size={'small'} />}
 
             {!isChatOpen ? (
                 <FontAwesomeIcon icon={faMessage} className="text-2xl text-gray-300" />
@@ -20,6 +44,7 @@ const Chat = () => {
                     <ChatsList
                         activeFriend={activeFriend}
                         setActiveFriend={setActiveFriend}
+                        friends={friends}
                     />
                     <OpenedChat
                         setIsChatOpen={setIsChatOpen}

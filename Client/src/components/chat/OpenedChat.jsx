@@ -33,7 +33,7 @@ const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
 
             </div>
 
-            <ChatHistory />
+            <ChatHistory activeFriendId={activeFriend.id} />
 
             <div className="h-1/11 bg-slate-600 px-3 flex items-center gap-3">
 
