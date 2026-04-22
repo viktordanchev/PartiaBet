@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { useSignalREvent } from "../../../hooks/signalR/useSignalREvent";
+
 import Board from './Board';
 import PlayerCard from '../PlayerCard';
 import TurnTimer from './TurnTimer';
-import { useSignalREvent } from "../../../hooks/signalR/useSignalREvent";
 
-const ChessMatch = ({ data, isPaused }) => {
+const ChessGame = ({ data, isPaused }) => {
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const userId = decodedToken['Id'];
     const [board, setBoard] = useState(data.board);
@@ -70,4 +71,4 @@ const ChessMatch = ({ data, isPaused }) => {
     );
 };
 
-export default ChessMatch;
+export default ChessGame;

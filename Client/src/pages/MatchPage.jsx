@@ -1,14 +1,16 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
-import Loading from '../components/Loading';
-import ChessMatch from '../components/matchPage/chess/ChessMatch';
-import Spectators from '../components/matchPage/Spectators';
-import LobbyList from '../components/matchPage/waitingLobby/LobbyList';
-import EndingScreen from '../components/matchPage/EndingScreen';
 import useApiRequest from '../hooks/useApiRequest';
 import { useAppHub } from '../contexts/AppHubContext';
 import { useSignalREvent } from "../hooks/signalR/useSignalREvent";
-import PausedMatch from '../components/MatchPage/PausedMatch';
+
+import Loading from '../components/Loading';
+import ChessMatch from '../components/matchPage/chess/ChessGame';
+import Spectators from '../components/matchPage/Spectators';
+import LobbyList from '../components/matchPage/waitingLobby/LobbyList';
+import EndingScreen from '../components/matchPage/EndingScreen';
+import PausedMatch from '../components/matchPage/PausedMatch';
+import GameRenderer from '../components/matchPage/GameRenderer';
 
 const MatchPage = () => {
     const { game, matchId } = useParams();
@@ -18,27 +20,30 @@ const MatchPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [match, setMatch] = useState(null);
     const [isPaused, setIsPaused] = useState(false);
-    const [isEnded, setIsEnded] = useState(false);
+    const [playersStatsInTheEnd, setPlayersStatsInTheEnd] = useState(null);
 
-    //Load match
+    const fetchMatch = async () => {
+        setIsLoading(true);
+
+        const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
+
+        if (!data) return;
+
+        setMatch(data);
+        setIsPaused(data.status === 'Paused');
+        setIsLoading(false);
+    };
+
     useEffect(() => {
-        const receiveData = async () => {
-            setIsLoading(true);
+        fetchMatch();
+    }, [matchId]);
 
-            const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
-           
-            if (!data) return;
+    useSignalREvent("EndMatch", (players) => {
+        setPlayersStatsInTheEnd(players);
+    });
 
-            setMatch(data);
-            setIsPaused(data.status === 'Paused');
-            setIsLoading(false);
-        };
-
-        receiveData();
-    }, [matchStarted, resumeMatch, matchId]);
-
-    useSignalREvent("EndMatch", () => {
-        setIsEnded(true);
+    useSignalREvent("MatchResumed", () => {
+        fetchMatch();
     });
 
     useSignalREvent("RejoinCountdown", () => {
@@ -81,19 +86,6 @@ const MatchPage = () => {
         };
     }, [connection]);
 
-    const renderGame = (matchData) => {
-        switch (game) {
-            case "chess":
-                return <ChessMatch data={matchData} isPaused={isPaused} />;
-            case "dota":
-                return <div>Dota (TODO)</div>;
-            case "csgo":
-                return <div>CSGO (TODO)</div>;
-            default:
-                return <p>Game not supported</p>;
-        }
-    };
-
     if (isLoading) {
         return (
             <section className="flex-1 p-6 flex justify-center">
@@ -105,13 +97,13 @@ const MatchPage = () => {
     return (
         <section className="flex-1 p-6 flex justify-center gap-3">
             <>
-                {isEnded && matchEnd && (
-                    <EndingScreen players={matchEnd.winners} />
-                )}
+                {playersStatsInTheEnd &&
+                    <EndingScreen players={playersStatsInTheEnd} />
+                }
 
-                {match?.status === "Created" && (
+                {match?.status === "Created" &&
                     <LobbyList match={match} />
-                )}
+                }
 
                 {isPaused && <PausedMatch />}
 
@@ -124,7 +116,11 @@ const MatchPage = () => {
                             </p>
                         </div>
 
-                        {renderGame(match)}
+                        <GameRenderer
+                            game={game}
+                            matchData={match}
+                            isPaused={isPaused}
+                        />
                     </>
                 )}
             </>
