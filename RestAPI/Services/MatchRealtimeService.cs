@@ -53,7 +53,7 @@ namespace RestAPI.Services
             {
                 await _hub.Clients
                     .Group(result.MatchId.ToString())
-                    .SendAsync("RejoinCountdown", userId, result.TimeLeftToRejoin);
+                    .SendAsync("RejoinCountdown", result.RejoinDeadline);
             }
         }
 

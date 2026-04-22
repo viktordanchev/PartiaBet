@@ -4,10 +4,10 @@
     {
         public bool IsSuccess { get; set; }
         public Guid MatchId { get; set; }
-        public double TimeLeftToRejoin { get; set; }
+        public DateTime? RejoinDeadline { get; set; }
 
-        public static HandlePlayerDisconnectResult Success(Guid matchId, double timeLeftToRejoin) =>
-            new() { IsSuccess = true, MatchId = matchId, TimeLeftToRejoin = timeLeftToRejoin };
+        public static HandlePlayerDisconnectResult Success(Guid matchId, DateTime? rejoinDeadline) =>
+            new() { IsSuccess = true, MatchId = matchId, RejoinDeadline = rejoinDeadline };
 
         public static HandlePlayerDisconnectResult Invalid() =>
             new() { IsSuccess = false };

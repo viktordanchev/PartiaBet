@@ -1,5 +1,5 @@
 import React from 'react';
-import ChessGame from '../components/matchPage/chess/ChessGame';
+import ChessGame from './chess/ChessGame';
 
 const GameRenderer = ({ game, matchData, isPaused }) => {
     switch (game) {

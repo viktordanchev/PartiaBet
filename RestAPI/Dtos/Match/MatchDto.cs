@@ -18,6 +18,8 @@ namespace RestAPI.Dtos.Match
 
         public MatchStatus Status { get; set; }
 
+        public DateTime? RejoinDeadline { get; set; }
+
         public GameBoardModel Board { get; set; }
 
         public List<PlayerDto> Players { get; set; }

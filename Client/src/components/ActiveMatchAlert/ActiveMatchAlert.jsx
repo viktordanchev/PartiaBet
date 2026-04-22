@@ -18,10 +18,13 @@ function ActiveMatchAlert() {
 
     const inMatch = !!useMatch('/games/:game/match/:matchId');
 
-    const startTimer = (timeLeftSeconds) => {
-        if (!timeLeftSeconds || timeLeftSeconds <= 0) return;
+    const startTimer = (rejoinDeadline) => {
+        if (!rejoinDeadline) return;
 
-        const expiry = new Date(Date.now() + timeLeftSeconds * 1000);
+        const timeLeft = (new Date(rejoinDeadline) - Date.now()) / 1000;
+        if (timeLeft <= 0) return;
+
+        const expiry = new Date(Date.now() + timeLeft * 1000);
 
         restart(expiry, true);
         localStorage.setItem(COUNTDOWN_KEY, expiry.toISOString());
@@ -31,11 +34,11 @@ function ActiveMatchAlert() {
         const fetchRejoinTime = async () => {
             const response = await apiRequest('matches', 'getMatchCountdown', 'GET', true, false);
             
-            if (!response || response.timeLeftToRejoin === 0) return;
+            if (!response || !response.rejoinDeadline) return;
 
             sessionStorage.setItem('connection-matchId', response.matchId);
 
-            startTimer(response.timeLeftToRejoin);
+            startTimer(response.rejoinDeadline);
         };
 
         if (isAuthenticated) {

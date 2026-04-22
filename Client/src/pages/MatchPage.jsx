@@ -19,18 +19,20 @@ const MatchPage = () => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [match, setMatch] = useState(null);
-    const [isPaused, setIsPaused] = useState(false);
-    const [playersStatsInTheEnd, setPlayersStatsInTheEnd] = useState(null);
+    const [playersStatsInTheEnd, setFinalPlayerStats] = useState(null);
+    const [pauseState, setPauseState] = useState({
+        active: false,
+        rejoinDeadline: null
+    });
 
     const fetchMatch = async () => {
         setIsLoading(true);
 
         const data = await apiRequest('matches', 'getMatch', 'POST', true, false, matchId);
-
         if (!data) return;
 
         setMatch(data);
-        setIsPaused(data.status === 'Paused');
+        setPauseState({ active: data.status === 'Paused', rejoinDeadline: data.rejoinDeadline });
         setIsLoading(false);
     };
 
@@ -39,15 +41,20 @@ const MatchPage = () => {
     }, [matchId]);
 
     useSignalREvent("EndMatch", (players) => {
-        setPlayersStatsInTheEnd(players);
+        setFinalPlayerStats(players);
     });
 
     useSignalREvent("MatchResumed", () => {
+        localStorage.removeItem('matchEndCountdown');
         fetchMatch();
     });
 
-    useSignalREvent("RejoinCountdown", () => {
-        setIsPaused(true);
+    useSignalREvent("StartMatch", () => {
+        fetchMatch();
+    });
+
+    useSignalREvent("RejoinCountdown", (rejoinDeadline) => {
+        setPauseState({ active: true, rejoinDeadline });
     });
 
     useSignalREvent("ReceivePlayer", (matchId, player) => {
@@ -105,7 +112,7 @@ const MatchPage = () => {
                     <LobbyList match={match} />
                 }
 
-                {isPaused && <PausedMatch />}
+                {pauseState.active && <PausedMatch rejoinDeadline={pauseState.rejoinDeadline} />}
 
                 {match?.status !== "Created" && (
                     <>
@@ -119,7 +126,7 @@ const MatchPage = () => {
                         <GameRenderer
                             game={game}
                             matchData={match}
-                            isPaused={isPaused}
+                            isPaused={pauseState.active}
                         />
                     </>
                 )}

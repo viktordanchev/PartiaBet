@@ -1,40 +1,21 @@
 import React, { useEffect } from 'react';
 import { useTimer } from 'react-timer-hook';
-import { useAppHub } from '../../contexts/AppHubContext';
-import useApiRequest from '../../hooks/useApiRequest';
 
-function PausedMatch() {
-    const { matchState } = useAppHub();
-    const { leaverData } = matchState;
-    const apiRequest = useApiRequest();
-
+function PausedMatch({ rejoinDeadline }) {
     const { seconds, minutes, restart } = useTimer({
         expiryTimestamp: new Date(),
         autoStart: false
     });
 
-    const startTimer = (timeLeftSeconds) => {
-        if (!timeLeftSeconds || timeLeftSeconds <= 0) return;
+    useEffect(() => {
+        if (!rejoinDeadline) return;
+
+        const timeLeftSeconds = (new Date(rejoinDeadline) - new Date()) / 1000;
+        if (timeLeftSeconds <= 0) return;
 
         const expiry = new Date(Date.now() + timeLeftSeconds * 1000);
         restart(expiry, true);
-    };
-
-    useEffect(() => {
-        if (!leaverData) return;
-
-        startTimer(leaverData.timeLeft);
-    }, [leaverData]);
-
-    useEffect(() => {
-        const fetchRejoinTime = async () => {
-            const response = await apiRequest('matches', 'getMatchCountdown', 'GET', true, false); 
-           
-            startTimer(response.timeLeftToRejoin);
-        };
-
-        fetchRejoinTime();
-    }, []);
+    }, [rejoinDeadline]);
 
     return (
         <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center">

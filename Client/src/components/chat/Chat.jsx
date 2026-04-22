@@ -10,7 +10,7 @@ const Chat = () => {
     const [activeFriend, setActiveFriend] = useState(null);
 
     return (
-        <section className={`fixed right-6 bottom-6 text-white bg-blue-500 flex overflow-hidden rounded-xl transition-all duration-500 ease-in-out ${isChatOpen ? "w-90 h-110" : "w-15 h-15 cursor-pointer items-center justify-center"}`}
+        <section className={`fixed right-6 bottom-6 border border-gray-500 text-white bg-blue-500 flex overflow-hidden rounded-xl transition-all duration-500 ease-in-out ${isChatOpen ? "w-90 h-110" : "w-15 h-15 cursor-pointer items-center justify-center"}`}
             onClick={() => !isChatOpen && setIsChatOpen(true)}>
 
             {!isChatOpen ? (

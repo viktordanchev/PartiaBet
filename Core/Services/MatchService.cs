@@ -69,7 +69,7 @@ namespace Core.Services
 
                 await _matchCache.SetMatchAsync(match.Id, match);
 
-                return HandlePlayerDisconnectResult.Success(match.Id, MatchEndCountdownSeconds);
+                return HandlePlayerDisconnectResult.Success(match.Id, match.RejoinDeadline);
             }
             finally
             {
@@ -231,17 +231,11 @@ namespace Core.Services
             var matchId = await _matchCache.GetPlayerMatchIdAsync(playerId);
 
             if (matchId == Guid.Empty)
-                return HandlePlayerDisconnectResult.Success(matchId, 0);
+                return HandlePlayerDisconnectResult.Success(matchId, null);
 
             var match = await _matchCache.GetMatchAsync(matchId);
-            double timeLeft = 0;
-
-            if (match.RejoinDeadline != null)
-            {
-                timeLeft = (match.RejoinDeadline.Value - DateTime.UtcNow).TotalSeconds;
-            }
-
-            return HandlePlayerDisconnectResult.Success(matchId, timeLeft);
+            
+            return HandlePlayerDisconnectResult.Success(matchId, match.RejoinDeadline);
         }
 
         public async Task<MakeMoveResult> MakeMoveAsync(Guid matchId, Guid playerId, string moveDataJson)
