@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Constants;
 
 namespace Infrastructure.Database.Entities
 {
@@ -24,6 +25,7 @@ namespace Infrastructure.Database.Entities
         public DateTime DateAndTime { get; set; }
 
         [Required]
+        [MaxLength(Validations.Chat.MessageMaxLength)]
         public string Message { get; set; } = string.Empty;
     }
 }

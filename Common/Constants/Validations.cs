@@ -15,5 +15,10 @@
             public const decimal WithdrawMinSum = 50m;
             public const decimal WithdrawMaxSum = 10000m;
         }
+
+        public static class Chat
+        {
+            public const int MessageMaxLength = 1000;
+        }
     }
 }
