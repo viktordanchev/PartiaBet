@@ -13,7 +13,7 @@ const SearchBar = ({ setUsers, setIsLoading }) => {
             setIsLoading(true);
             const users = await apiRequest('friends', 'searchPlayers', 'POST', true, false, username);
             setIsLoading(false);
-
+            
             setUsers(users);
         };
 

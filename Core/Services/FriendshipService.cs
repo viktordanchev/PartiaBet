@@ -59,6 +59,14 @@ namespace Core.Services
                 return new List<FriendModel>();
 
             var users = await _friendshipRepo.GetAllUsersAsync(searchQuery.ToLower());
+            var usersIds = users.Select(f => f.Id);
+
+            var onlineUserIds = await _onlineUsersCache.GetOnlineUsersAsync(usersIds);
+
+            foreach (var user in users)
+            {
+                user.IsOnline = onlineUserIds.Contains(user.Id);
+            }
 
             return users;
         }

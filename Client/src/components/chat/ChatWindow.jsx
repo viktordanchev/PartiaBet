@@ -80,7 +80,7 @@ const ChatWindow = ({ setIsChatOpen, activeFriend }) => {
 
             </div>
 
-            {isLoading ? <Loading size={'small'} /> : <ChatHistory messages={messages} />}
+            {isLoading ? <div className="h-9/11 bg-slate-600/40"><Loading size={'small'} /></div> : <ChatHistory messages={messages} />}
 
             <div className="h-1/11 bg-slate-600 px-3 flex items-center gap-3">
 

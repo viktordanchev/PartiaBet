@@ -33,7 +33,8 @@ namespace Infrastructure.Database.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<Guid>("ReceiverId")
                         .HasColumnType("uuid");

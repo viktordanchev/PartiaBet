@@ -66,7 +66,7 @@ namespace Infrastructure.Database.Migrations
                     SenderId = table.Column<Guid>(type: "uuid", nullable: false),
                     ReceiverId = table.Column<Guid>(type: "uuid", nullable: false),
                     DateAndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false)
+                    Message = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
