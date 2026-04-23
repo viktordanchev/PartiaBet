@@ -38,6 +38,7 @@ namespace Infrastructure.Database.Repositories
                     cm.SenderId == receiverId && cm.ReceiverId == senderId)
                 .Select(cm => new MessageDataModel()
                 {
+                    Id = cm.Id,
                     SenderId = cm.SenderId,
                     DateAndTime = cm.DateAndTime,
                     Message = cm.Message

@@ -10,7 +10,7 @@ function FriendStatusAlert() {
     const hideTimerRef = useRef(null);
     const leaveTimerRef = useRef(null);
 
-    useSignalREvent("FriendStatusChanged", (userData, isOnline) => {
+    useSignalREvent("FriendStatusChange", (userData, isOnline) => {
         const data = {
             username: userData.username,
             profileImageUrl: userData.profileImageUrl,

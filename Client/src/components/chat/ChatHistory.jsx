@@ -2,16 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
-import useApiRequest from '../../hooks/useApiRequest';
 
-import Loading from '../Loading';
-
-const ChatHistory = ({ activeFriendId }) => {
-    const apiRequest = useApiRequest();
+const ChatHistory = ({ messages, isTyping }) => {
     const containerRef = useRef(null);
     const [showScrollButton, setShowScrollButton] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [messages, setMessages] = useState([]);
 
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const userId = decodedToken['Id'];
@@ -56,60 +50,34 @@ const ChatHistory = ({ activeFriendId }) => {
         return () => el.removeEventListener("scroll", handleScroll);
     }, []);
     
-    //useEffect(() => {
-    //    if (isAtBottom()) {
-    //        scrollToBottom();
-    //    }
-    //}, [isTyping]);
-
     useEffect(() => {
-        const receiveData = async () => {
-            setIsLoading(true);
-            const messages = await apiRequest('chat', 'getHistory', 'POST', true, false, activeFriendId);
-            setIsLoading(false);
-            
-            setMessages(messages);
-        };
-
-        receiveData();
-    }, []);
-
-    if (isLoading) {
-        return (
-            <div className="relative h-9/11 bg-slate-600/40">
-                <Loading size={'small'} />
-            </div>
-        );
-    }
+        if (isAtBottom()) {
+            scrollToBottom();
+        }
+    }, [isTyping]);
 
     return (
         <div className="relative h-9/11 bg-white">
 
-            <div
-                ref={containerRef}
-                className="h-full p-3 text-sm flex flex-col gap-2 overflow-y-auto scrollbar-hide"
-            >
+            <div className="h-full p-3 text-sm flex flex-col gap-2 overflow-y-auto scrollbar-hide"
+                ref={containerRef}>
+
                 {messages.map((msg) => {
                     const isMine = msg.senderId === userId;
 
                     return (
-                        <div
-                            key={msg.id}
-                            className={`flex ${isMine ? "justify-end" : "justify-start"}`}
-                        >
-                            <div
-                                className={`px-3 py-2 rounded-lg max-w-xs break-words ${isMine
-                                        ? "bg-blue-500 text-white rounded-br-none"
-                                        : "bg-gray-200 text-gray-800 rounded-bl-none"
-                                    }`}
-                            >
-                                {msg.text}
+                        <div key={msg.id}
+                            className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+
+                            <div className={`px-3 py-2 rounded-lg max-w-xs break-words ${isMine ? "bg-blue-500 text-white rounded-br-none" : "bg-gray-200 text-gray-800 rounded-bl-none"}`}>
+                                {msg.message}
                             </div>
+
                         </div>
                     );
                 })}
 
-                {/*{isTyping && (
+                {isTyping && (
                     <div className="flex justify-start">
                         <div className="bg-gray-200 text-gray-800 rounded-bl-none px-3 py-3 rounded-lg flex gap-1 items-center">
                             <span className="w-2 h-2 bg-gray-500 rounded-full animate-typing"></span>
@@ -117,7 +85,8 @@ const ChatHistory = ({ activeFriendId }) => {
                             <span className="w-2 h-2 bg-gray-500 rounded-full animate-typing" style={{ animationDelay: '0.6s' }}></span>
                         </div>
                     </div>
-                )}*/}
+                )}
+
             </div>
 
             {showScrollButton && (

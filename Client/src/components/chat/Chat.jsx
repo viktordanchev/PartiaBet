@@ -3,12 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage } from '@fortawesome/free-solid-svg-icons';
 import useApiRequest from '../../hooks/useApiRequest';
 import { useClickOutside } from '../../hooks/useClickOutside';
+import { useAuth } from '../../contexts/AuthContext';
 
 import OpenedChat from './OpenedChat';
 import ChatsList from './ChatsList';
 import Loading from '../Loading';
 
 const Chat = () => {
+    const { isAuthenticated } = useAuth();
     const containerRef = useRef(null);
     const apiRequest = useApiRequest();
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -27,8 +29,12 @@ const Chat = () => {
             setFriends(friends);
         };
 
-        receiveData();
-    }, []);
+        if (isAuthenticated) {
+            receiveData();
+        }
+    }, [isAuthenticated]);
+
+    if (!isAuthenticated) return;
 
     return (
         <section className={`fixed right-6 bottom-6 border border-gray-500 text-white flex overflow-hidden rounded-xl transition-all duration-500 ease-in-out ${isChatOpen ? "w-90 h-110 bg-white" : "w-15 h-15 cursor-pointer items-center justify-center bg-blue-500"}`}
