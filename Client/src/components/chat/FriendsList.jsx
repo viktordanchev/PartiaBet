@@ -2,7 +2,7 @@ import React from 'react';
 
 import ProfileImg from '../../assets/images/profile-photo.jpg';
 
-const ChatsList = ({ activeFriend, setActiveFriend, friends }) => {
+const FriendsList = ({ activeFriend, setActiveFriend, friends }) => {
     return (
         <article className="w-1/5 h-full bg-slate-600 flex flex-col items-center py-3 gap-3">
 
@@ -27,7 +27,7 @@ const ChatsList = ({ activeFriend, setActiveFriend, friends }) => {
 
                         </div>
 
-                        <div className="absolute left-14 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                        <div className="absolute z-20 left-14 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
                             {friend.username}
                         </div>
 
@@ -39,4 +39,4 @@ const ChatsList = ({ activeFriend, setActiveFriend, friends }) => {
     );
 };
 
-export default ChatsList;
+export default FriendsList;

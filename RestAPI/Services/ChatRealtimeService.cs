@@ -20,10 +20,10 @@ namespace RestAPI.Services
 
         public async Task SendMessage(Guid senderId, AddMessageDto data)
         {
-            var messageId = await _chatService.AddMessageAsync(senderId, data.ReceiverId, data.Message);
+            var messageModel = await _chatService.AddMessageAsync(senderId, data.ReceiverId, data.Message);
 
-            await _hub.Clients.User(data.ReceiverId.ToString())
-                .SendAsync("ReceiveMessage", senderId, data.Message);
+            await _hub.Clients.Users(data.ReceiverId.ToString(), senderId.ToString())
+                .SendAsync("ReceiveMessage", messageModel);
         }
 
         public async Task SenderTyping(Guid receiverId)

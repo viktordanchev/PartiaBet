@@ -14,7 +14,7 @@ namespace Infrastructure.Database.Repositories
             _context = context;
         }
 
-        public async Task<Guid> AddMessageAsync(Guid senderId, Guid receiverId, string message)
+        public async Task<MessageDataModel> AddMessageAsync(Guid senderId, Guid receiverId, string message)
         {
             var newMessage = new ChatMessage()
             {
@@ -27,7 +27,13 @@ namespace Infrastructure.Database.Repositories
             _context.ChatMessages.Add(newMessage);
             await _context.SaveChangesAsync();
 
-            return newMessage.Id;
+            return new MessageDataModel()
+            {
+                Id = newMessage.Id,
+                SenderId = senderId,
+                DateAndTime = newMessage.DateAndTime,
+                Message = message
+            };
         }
 
         public async Task<IEnumerable<MessageDataModel>> GetAllMessagesAsync(Guid senderId, Guid receiverId)
@@ -36,6 +42,7 @@ namespace Infrastructure.Database.Repositories
                 .AsNoTracking()
                 .Where(cm => cm.SenderId == senderId && cm.ReceiverId == receiverId ||
                     cm.SenderId == receiverId && cm.ReceiverId == senderId)
+                .OrderBy(cm => cm.DateAndTime)
                 .Select(cm => new MessageDataModel()
                 {
                     Id = cm.Id,

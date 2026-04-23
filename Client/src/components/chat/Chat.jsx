@@ -5,14 +5,15 @@ import useApiRequest from '../../hooks/useApiRequest';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useAuth } from '../../contexts/AuthContext';
 
-import OpenedChat from './OpenedChat';
-import ChatsList from './ChatsList';
+import ChatWindow from './ChatWindow';
+import FriendsList from './FriendsList';
 import Loading from '../Loading';
 
 const Chat = () => {
     const { isAuthenticated } = useAuth();
     const containerRef = useRef(null);
     const apiRequest = useApiRequest();
+
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [activeFriend, setActiveFriend] = useState(null);
@@ -47,12 +48,12 @@ const Chat = () => {
                 <FontAwesomeIcon icon={faMessage} className="text-2xl text-gray-300" />
             ) : (
                 <div className="h-full w-full flex">
-                    <ChatsList
+                    <FriendsList
                         activeFriend={activeFriend}
                         setActiveFriend={setActiveFriend}
                         friends={friends}
                     />
-                    <OpenedChat
+                    <ChatWindow
                         setIsChatOpen={setIsChatOpen}
                         activeFriend={activeFriend}
                     />

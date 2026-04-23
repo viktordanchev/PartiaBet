@@ -13,7 +13,7 @@ namespace Core.Services
             _chatRepository = chatRepository;
         }
 
-        public async Task<Guid> AddMessageAsync(Guid senderId, Guid receiverId, string message)
+        public async Task<MessageDataModel> AddMessageAsync(Guid senderId, Guid receiverId, string message)
         {
             return await _chatRepository.AddMessageAsync(senderId, receiverId, message);
         }

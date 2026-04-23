@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { jwtDecode } from 'jwt-decode';
 import useApiRequest from '../../hooks/useApiRequest';
 import { useAppHub } from '../../contexts/AppHubContext';
 import { useSignalREvent } from "../../hooks/signalR/useSignalREvent";
@@ -9,29 +8,18 @@ import { useSignalREvent } from "../../hooks/signalR/useSignalREvent";
 import ChatHistory from './ChatHistory';
 import Loading from '../Loading';
 
-const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
-    const typingTimeoutRef = useRef(null);
+const ChatWindow = ({ setIsChatOpen, activeFriend }) => {
     const apiRequest = useApiRequest();
     const { connection } = useAppHub();
+
     const [isLoading, setIsLoading] = useState(true);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
-
-    const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
 
     const sendMessage = async () => {
-        const newMessage = {
-            message: input,
-            senderId: decodedToken['Id'],
-            receiverId: activeFriend.id,
-        };
-
-        setMessages(prev => [...prev, newMessage]);
-
         await connection.invoke('SendMessage', {
-            receiverId: newMessage.receiverId,
-            message: newMessage.message
+            receiverId: activeFriend.id,
+            message: input
         });
 
         setInput('');
@@ -47,26 +35,8 @@ const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
         }
     }
 
-    useSignalREvent("ReceiveMessage", (senderId, message) => {
-        const newMessage = {
-            message,
-            senderId,
-            receiverId: decodedToken['Id']
-        };
-
-        setMessages(prev => [...prev, newMessage]);
-    });
-
-    useSignalREvent("SenderTyping", () => {
-        setIsTyping(true);
-
-        if (typingTimeoutRef.current) {
-            clearTimeout(typingTimeoutRef.current);
-        }
-
-        typingTimeoutRef.current = setTimeout(() => {
-            setIsTyping(false);
-        }, 3000);
+    useSignalREvent("ReceiveMessage", (messageData) => {
+        setMessages(prev => [...prev, messageData]);
     });
 
     useEffect(() => {
@@ -110,7 +80,7 @@ const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
 
             </div>
 
-            {isLoading ? <Loading size={'small'} /> : <ChatHistory messages={messages} isTyping={isTyping} />}
+            {isLoading ? <Loading size={'small'} /> : <ChatHistory messages={messages} />}
 
             <div className="h-1/11 bg-slate-600 px-3 flex items-center gap-3">
 
@@ -135,4 +105,4 @@ const OpenedChat = ({ setIsChatOpen, activeFriend }) => {
     );
 };
 
-export default OpenedChat;
+export default ChatWindow;

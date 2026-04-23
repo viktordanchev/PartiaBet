@@ -2,10 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
+import { useSignalREvent } from "../../hooks/signalR/useSignalREvent";
 
-const ChatHistory = ({ messages, isTyping }) => {
+const ChatHistory = ({ messages }) => {
     const containerRef = useRef(null);
+    const typingTimeoutRef = useRef(null);
+
     const [showScrollButton, setShowScrollButton] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
 
     const decodedToken = jwtDecode(localStorage.getItem('accessToken'));
     const userId = decodedToken['Id'];
@@ -35,6 +39,18 @@ const ChatHistory = ({ messages, isTyping }) => {
         setShowScrollButton(!atBottom);
     };
 
+    useSignalREvent("SenderTyping", () => {
+        setIsTyping(true);
+
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        typingTimeoutRef.current = setTimeout(() => {
+            setIsTyping(false);
+        }, 3000);
+    });
+
     useEffect(() => {
         scrollToBottom();
     }, []);
@@ -49,7 +65,7 @@ const ChatHistory = ({ messages, isTyping }) => {
 
         return () => el.removeEventListener("scroll", handleScroll);
     }, []);
-    
+
     useEffect(() => {
         if (isAtBottom()) {
             scrollToBottom();
@@ -66,11 +82,26 @@ const ChatHistory = ({ messages, isTyping }) => {
                     const isMine = msg.senderId === userId;
 
                     return (
-                        <div key={msg.id}
-                            className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+                        <div key={msg.id} className="relative">
 
-                            <div className={`px-3 py-2 rounded-lg max-w-xs break-words ${isMine ? "bg-blue-500 text-white rounded-br-none" : "bg-gray-200 text-gray-800 rounded-bl-none"}`}>
-                                {msg.message}
+                            <div className={`group flex ${isMine ? "justify-end" : "justify-start"}`}>
+
+                                <div className="relative">
+
+                                    <div className={`px-3 py-2 rounded-lg max-w-xs break-words ${isMine
+                                            ? "bg-blue-500 text-white rounded-br-none"
+                                            : "bg-gray-200 text-gray-800 rounded-bl-none"
+                                        }`}>
+                                        {msg.message}
+                                    </div>
+
+                                    {/* TOOLTIP */}
+                                    <div className={`absolute z-20 top-full mt-1 ${isMine ? "right-0" : "left-0"} bg-slate-800/80 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none`}>
+                                        {new Date(msg.dateAndTime).toLocaleString()}
+                                    </div>
+
+                                </div>
+
                             </div>
 
                         </div>
