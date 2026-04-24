@@ -48,7 +48,7 @@ function useApiRequest() {
                     `${apiUrl}/${controller}/${action}`,
                     requestOptions
                 );
-
+                console.log(response);
                 if (!response) return;
             }
 
@@ -88,7 +88,7 @@ function useApiRequest() {
                     'Content-Type': 'application/json'
                 }
             });
-
+            
             if (!response.ok) {
                 return null;
             }

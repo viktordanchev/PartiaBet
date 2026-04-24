@@ -73,7 +73,7 @@ namespace Core.Services
                 issuer: _jwtTokenConfig.Issuer,
                 audience: _jwtTokenConfig.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(100000),
+                expires: DateTime.Now.AddMinutes(_jwtTokenConfig.AccessTokenMinutes),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
