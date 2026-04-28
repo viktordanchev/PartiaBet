@@ -4,12 +4,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faMedal, faUser, faUserGroup, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from '../assets/images/logo.png';
+import useApiRequest from '../hooks/useApiRequest';
 
 const NavigationBar = () => {
     const navigate = useNavigate();
+    const apiRequest = useApiRequest();
     const { isAuthenticated, removeToken } = useAuth();
 
-    const logout = () => {
+    const logout = async () => {
+        const response = await apiRequest('account', 'logout', 'GET', true, true);
+        if (!response) return;
+
         removeToken();
         navigate('/');
     };

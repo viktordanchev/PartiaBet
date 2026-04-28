@@ -16,13 +16,10 @@ namespace Core.Services
     public class JwtTokenService : IJwtTokenService
     {
         private JwtTokenConfig _jwtTokenConfig;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public JwtTokenService(IOptions<JwtTokenConfig> jwtOptions,
-            IHttpContextAccessor httpContextAccessor)
+        public JwtTokenService(IOptions<JwtTokenConfig> jwtOptions)
         {
             _jwtTokenConfig = jwtOptions.Value;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -77,22 +74,6 @@ namespace Core.Services
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        /// <summary>
-        /// Set refresh token to cookie.
-        /// </summary>
-        public void SetRefreshTokenCookie(string refreshToken)
-        {
-            _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken,
-                    new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = true,
-                        IsEssential = true,
-                        SameSite = SameSiteMode.None,
-                        Expires = DateTime.Now.AddDays(_jwtTokenConfig.RefreshTokenDays)
-                    });
         }
 
         public string ReadRefreshToken(string token)

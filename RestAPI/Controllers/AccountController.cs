@@ -2,8 +2,10 @@
 using Core.Interfaces.Service;
 using Core.Interfaces.Services;
 using Core.Models.User;
+using Core.Services.Configs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RestAPI.Dtos.User;
 using System.Security.Claims;
 using static Common.Constants.ErrorMessages.Account;
@@ -21,20 +23,23 @@ namespace RestAPI.Controllers
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IHostEnvironment _environment;
         private readonly IMapper _mapper;
+        private readonly JwtTokenConfig _jwtTokenConfig;
 
         public AccountController(IMemoryCacheService memoryCacheService,
             IAccountService userService,
             IAccountTokenService accountTokenService,
             IJwtTokenService jwtTokenService,
             IHostEnvironment environment,
-            IMapper mapper)
+            IMapper mapper,
+            IOptions<JwtTokenConfig> jwtOptions)
         {
             _memoryCacheService = memoryCacheService;
             _userService = userService;
             _accountTokenService = accountTokenService;
             _jwtTokenService = jwtTokenService;
-            _environment = environment;
+            _environment = environment; 
             _mapper = mapper;
+            _jwtTokenConfig = jwtOptions.Value;
         }
 
         [HttpPost("login")]
@@ -51,7 +56,16 @@ namespace RestAPI.Controllers
             if (data.RememberMe)
             {
                 var refreshToken = _jwtTokenService.GenerateRefreshToken();
-                _jwtTokenService.SetRefreshTokenCookie(refreshToken);
+
+                Response.Cookies.Append("refreshToken", refreshToken,
+                    new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        IsEssential = true,
+                        SameSite = SameSiteMode.None,
+                        Expires = DateTime.Now.AddDays(_jwtTokenConfig.RefreshTokenDays)
+                    });
             }
 
             return Ok(new { Token = accessToken });
@@ -66,6 +80,22 @@ namespace RestAPI.Controllers
                 return BadRequest(new { Error = InvalidVrfCode });
             
             await _userService.RegisterUserAsync(dataModel);
+
+            return NoContent();
+        }
+
+        [HttpGet("logout")]
+        public IActionResult Logout()
+        {
+            if (Request.Cookies.ContainsKey("refreshToken"))
+            {
+                Response.Cookies.Append("refreshToken", "", new CookieOptions
+                {
+                    Expires = DateTime.UtcNow.AddDays(-1),
+                    HttpOnly = true,
+                    Secure = true,
+                });
+            }
 
             return NoContent();
         }

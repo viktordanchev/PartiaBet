@@ -6,7 +6,6 @@ namespace Core.Interfaces.Services
     {
         string GenerateRefreshToken();
         string GenerateAccessToken(UserClaimsModel userClaims);
-        void SetRefreshTokenCookie(string refreshToken);
         string ReadRefreshToken(string token);
     }
 }
