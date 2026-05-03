@@ -54,6 +54,5 @@ namespace Infrastructure.Database.Repositories
 
             return messages;
         }
-
     }
 }
